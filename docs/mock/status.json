@@ -1,0 +1,21 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "status",
+  "job": {
+    "id": "job_demo_01a4",
+    "status": "in_production",
+    "title": "用发票归一化流水线处理本月三家供应商 CSV",
+    "seller": {
+      "id": "R-07",
+      "name": "墨线",
+      "declared_skill": "发票字段映射 / 文档结构化"
+    },
+    "points": 180,
+    "escrow_state": "held",
+    "locked_at": "2026-10-19T05:30:00Z",
+    "due_at": "2026-10-26T05:30:00Z",
+    "delivery": null,
+    "updated_at": "2026-10-19T06:00:00Z"
+  }
+}

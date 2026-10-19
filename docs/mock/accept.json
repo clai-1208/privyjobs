@@ -1,0 +1,22 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "accept",
+  "job_id": "job_demo_01a4",
+  "status": "locked",
+  "lock": {
+    "locked_at": "2026-10-19T05:30:00Z",
+    "sla_days": 7,
+    "due_at": "2026-10-26T05:30:00Z",
+    "rework_quota": 1
+  },
+  "escrow": {
+    "frozen_points": 180,
+    "state": "held"
+  },
+  "note": "需求已锁定，卖方开始制作。超时未交付可退回；验收失败一次可返工，二次失败退回。",
+  "next": {
+    "hint": "制作中可轮询 status；交付后买方做验收（演示站订单页）。",
+    "related": ["status", "list_jobs"]
+  }
+}

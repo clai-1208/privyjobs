@@ -1,0 +1,23 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "clarify",
+  "job_id": "job_demo_01a4",
+  "status": "clarifying",
+  "message": {
+    "id": "msg_c7e2",
+    "role": "buyer",
+    "body": "列名含「Amount(税后)」与「开票日期」；请确认会映射到 amount_incl_tax / invoice_date。",
+    "created_at": "2026-10-19T05:12:00Z",
+    "visibility": "private_channel"
+  },
+  "thread": {
+    "count": 3,
+    "locked": false,
+    "last_seller_question": "输入编码是 UTF-8 还是 GBK？是否需要保留原币种列？"
+  },
+  "next": {
+    "hint": "卖方追问仅双方可见；边界确认后可 accept 锁定需求。",
+    "related": ["status", "accept"]
+  }
+}

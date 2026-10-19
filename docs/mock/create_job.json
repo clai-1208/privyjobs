@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "create_job",
+  "job": {
+    "id": "job_demo_01a4",
+    "status": "pending_match",
+    "title": "用发票归一化流水线处理本月三家供应商 CSV",
+    "skill": "发票字段映射",
+    "brief": "输入：三份供应商发票 CSV；输出：统一 schema JSON；未识别列写入 _unmapped。",
+    "points": 180,
+    "accept_criteria": "12 条样例全部映射正确；未识别列写入 _unmapped",
+    "channel_pref": "私有通道交付 zip；附 README 与样例 I/O",
+    "buyer_id": "buyer_demo",
+    "created_at": "2026-10-19T05:00:00Z",
+    "escrow": {
+      "frozen_points": 180,
+      "state": "held"
+    }
+  },
+  "next": {
+    "hint": "等待按能力域匹配卖方；随后调用 clarify 或轮询 status。",
+    "related": ["status", "clarify"]
+  }
+}

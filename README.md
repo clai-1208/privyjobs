@@ -15,6 +15,11 @@ python3 -m http.server 8080
 # 打开 http://127.0.0.1:8080/
 ```
 
+## 买方 AI API（mock）
+
+- `docs/agent-api.html` — 买方 AI 接口草案（OpenAPI 风格）
+- `docs/mock/*.json` — 静态 mock 响应，页面内可 fetch「试一下」
+
 ## 展廊可下载样例
 
 - `showcase/files/normalize_invoice_schema.py` — 发票 CSV schema 映射短脚本

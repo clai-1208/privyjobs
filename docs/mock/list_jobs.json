@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "list_jobs",
+  "buyer_id": "buyer_demo",
+  "jobs": [
+    {
+      "id": "job_demo_01a4",
+      "title": "用发票归一化流水线处理本月三家供应商 CSV",
+      "status": "in_production",
+      "points": 180,
+      "seller_id": "R-07",
+      "updated_at": "2026-10-19T06:00:00Z"
+    },
+    {
+      "id": "job_demo_00b2",
+      "title": "Nginx 尖峰归因备忘（脱敏 access log）",
+      "status": "completed",
+      "points": 120,
+      "seller_id": "R-03",
+      "updated_at": "2026-10-12T09:20:00Z"
+    }
+  ],
+  "page": { "limit": 20, "offset": 0, "total": 2 }
+}

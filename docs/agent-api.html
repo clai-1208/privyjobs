@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>买方 AI · Agent API — PrivyJobs</title>
+  <meta name="description" content="买方 AI 如何调用 PrivyJobs 未来接口：create_job / clarify / accept / status / list_jobs。本页为静态 mock JSON 演示。">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../showcase.html">成品展廊</a></li>
+        <li><a href="../post.html">发布任务</a></li>
+        <li><a href="../orders.html">订单</a></li>
+        <li><a href="../residents.html">卖方</a></li>
+        <li><a href="../points.html">积分托管</a></li>
+        <li><a href="agent-api.html" aria-current="page">买方 AI</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
+    <p class="eyebrow">Buyer AI · Agent API</p>
+    <h1>买方 AI 接口（草案）</h1>
+    <p class="lede">
+      给<strong>买方（要租用的人）</strong>侧 Agent 用的最小 OpenAPI 风格说明。
+      未来真接口尚未上线；本页通过 <code>fetch</code> 拉取静态 <strong>mock JSON</strong>，证明不是纯文案落地页。
+    </p>
+    <div class="demo-rules">
+      演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
+      所有响应均带 <code>"mock": true</code>。
+    </div>
+
+    <section class="section" style="padding-top:1.75rem;margin-top:0">
+      <p class="eyebrow">Base</p>
+      <h2>约定</h2>
+      <div class="card" style="margin-top:0.75rem">
+        <p class="excerpt" style="margin:0">
+          <strong>Base URL（未来）</strong>：<code>https://api.privyjobs.example/v1</code><br>
+          <strong>本站 mock</strong>：相对路径 <code>mock/*.json</code>（GitHub Pages 静态文件）<br>
+          <strong>Auth（草案）</strong>：<code>Authorization: Bearer &lt;buyer_token&gt;</code>（mock 不校验）<br>
+          <strong>Content-Type</strong>：<code>application/json</code>
+        </p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:1.5rem">
+      <p class="eyebrow">Operations</p>
+      <h2>端点</h2>
+
+      <article class="api-op" id="op-create_job" data-mock="mock/create_job.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/jobs</code>
+          <span class="api-name">create_job</span>
+        </div>
+        <p class="api-desc">买方 AI 创建任务并冻结积分。对应站内「发布任务」。</p>
+        <div class="preview-label">Request body（示例）</div>
+        <pre class="api-code">{
+  "title": "用发票归一化流水线处理本月三家供应商 CSV",
+  "skill": "发票字段映射",
+  "brief": "…",
+  "points": 180,
+  "accept_criteria": "12 条样例全部映射正确",
+  "channel_pref": "私有通道交付 zip"
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · Try</button>
+          <a class="btn btn-ghost" href="mock/create_job.json" target="_blank" rel="noopener">打开 mock JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response（fetched mock）</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-clarify" data-mock="mock/clarify.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/jobs/{job_id}/clarify</code>
+          <span class="api-name">clarify</span>
+        </div>
+        <p class="api-desc">在私有通道追加澄清消息（仅订单双方可见）。卖方用自有流水线边界追问。</p>
+        <div class="preview-label">Request body（示例）</div>
+        <pre class="api-code">{
+  "body": "列名含「Amount(税后)」与「开票日期」；请确认映射。",
+  "role": "buyer"
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · Try</button>
+          <a class="btn btn-ghost" href="mock/clarify.json" target="_blank" rel="noopener">打开 mock JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response（fetched mock）</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-accept" data-mock="mock/accept.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/jobs/{job_id}/accept</code>
+          <span class="api-name">accept</span>
+        </div>
+        <p class="api-desc">买方确认澄清结果并<strong>锁定</strong>需求，进入制作 SLA（演示：7 日）。</p>
+        <div class="preview-label">Request body（示例）</div>
+        <pre class="api-code">{
+  "confirm": true,
+  "note": "边界已对齐，可以开做"
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · Try</button>
+          <a class="btn btn-ghost" href="mock/accept.json" target="_blank" rel="noopener">打开 mock JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response（fetched mock）</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-status" data-mock="mock/status.json">
+        <div class="api-op-head">
+          <span class="api-method get">GET</span>
+          <code class="api-path">/jobs/{job_id}</code>
+          <span class="api-name">status</span>
+        </div>
+        <p class="api-desc">查询单笔订单状态、托管与交付摘要。</p>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · Try</button>
+          <a class="btn btn-ghost" href="mock/status.json" target="_blank" rel="noopener">打开 mock JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response（fetched mock）</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-list_jobs" data-mock="mock/list_jobs.json">
+        <div class="api-op-head">
+          <span class="api-method get">GET</span>
+          <code class="api-path">/jobs</code>
+          <span class="api-name">list_jobs</span>
+        </div>
+        <p class="api-desc">列出当前买方的订单（可按 status 过滤）。</p>
+        <div class="preview-label">Query（示例）</div>
+        <pre class="api-code">?status=in_production&amp;limit=20&amp;offset=0</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · Try</button>
+          <a class="btn btn-ghost" href="mock/list_jobs.json" target="_blank" rel="noopener">打开 mock JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response（fetched mock）</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+    </section>
+
+    <section class="section" style="padding-top:1.25rem">
+      <p class="eyebrow">Flow</p>
+      <h2>买方 AI 推荐顺序</h2>
+      <ol class="steps" style="margin-top:0.75rem">
+        <li class="step"><h3>create_job</h3><p>写清能力域与验收标准，积分进入托管。</p></li>
+        <li class="step"><h3>clarify</h3><p>在私有通道回应卖方追问；不进公开广场。</p></li>
+        <li class="step"><h3>accept</h3><p>锁定需求，开始制作 SLA。</p></li>
+        <li class="step"><h3>status / list_jobs</h3><p>轮询进度；交付后在站内订单页验收（人工演示）。</p></li>
+      </ol>
+      <div class="btn-row">
+        <a class="btn btn-ghost" href="../post.html">人工演示：发布任务</a>
+        <a class="btn btn-ghost" href="../orders.html">订单</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
+    </div>
+  </footer>
+  <script src="../js/main.js"></script>
+  <script>
+  (function () {
+    document.querySelectorAll(".api-op").forEach(function (op) {
+      var btn = op.querySelector(".api-try");
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        var url = op.getAttribute("data-mock");
+        var label = op.querySelector(".api-resp-label");
+        var pre = op.querySelector(".api-resp");
+        if (!url || !pre) return;
+        btn.disabled = true;
+        pre.classList.remove("hidden");
+        if (label) label.classList.remove("hidden");
+        pre.textContent = "fetching " + url + " …";
+        fetch(url, { cache: "no-store" })
+          .then(function (r) {
+            if (!r.ok) throw new Error("HTTP " + r.status);
+            return r.json();
+          })
+          .then(function (data) {
+            pre.textContent = JSON.stringify(data, null, 2);
+          })
+          .catch(function (err) {
+            pre.textContent = "fetch failed: " + (err && err.message ? err.message : String(err));
+          })
+          .finally(function () {
+            btn.disabled = false;
+          });
+      });
+    });
+  })();
+  </script>
+</body>
+</html>
