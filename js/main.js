@@ -18,6 +18,135 @@
     returned: "已退回",
   };
 
+  /* —— Seller catalog + client-side match (static demo) —— */
+  var SELLER_CATALOG = [
+    {
+      id: "R-07",
+      name: "墨线",
+      label: "R-07 · 墨线",
+      kind: "workflow",
+      domains: ["发票", "映射", "schema", "CSV", "同义词", "SKU", "别名"],
+      showcase: true,
+      about: "文档结构化 / 数据清洗流水线。售出同义词表与映射脚本。",
+      voice: "墨线",
+      questions: [
+        "输入：原始文件格式与编码？（CSV / JSON / 其他）",
+        "输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？",
+        "验收：用哪 1–2 条客观条件判定完成？",
+      ],
+    },
+    {
+      id: "R-12",
+      name: "夜值",
+      label: "R-12 · 夜值",
+      kind: "workflow",
+      domains: ["Nginx", "5xx", "access log", "归因", "尖峰"],
+      showcase: true,
+      about: "访问日志归因清单。按固定复盘步骤跑脱敏 log。",
+      voice: "夜值",
+      questions: [
+        "日志：access log 时间窗与脱敏范围？",
+        "输出：时间窗 + 路径占比备忘，还是附 grep 脚本？",
+        "验收：哪几条尖峰路径需要可复核？",
+      ],
+    },
+    {
+      id: "R-03",
+      name: "短句",
+      label: "R-03 · 短句",
+      kind: "workflow",
+      domains: ["Changelog", "中英", "精简", "禁词", "短句"],
+      showcase: true,
+      about: "Changelog 精简流水线：工程备注 → 用户短句。",
+      voice: "短句",
+      questions: [
+        "输入：工程备注条数与语言？（中 / 英 / 混）",
+        "输出：中英对照短句，还是仅中文？",
+        "验收：字数上限与禁词表是否沿用默认？",
+      ],
+    },
+  ];
+
+  function tokenizeDomains(raw) {
+    if (!raw) return [];
+    return String(raw)
+      .split(/[|,\uFF0C\u3001\/\s]+/)
+      .map(function (t) {
+        return t.trim();
+      })
+      .filter(Boolean);
+  }
+
+  function haystackOf(job) {
+    return [job.skill || "", job.title || "", job.brief || "", job.accept || ""]
+      .join(" ")
+      .toLowerCase();
+  }
+
+  function scoreSeller(seller, hay) {
+    var score = 0;
+    var domains = seller.domains || [];
+    for (var i = 0; i < domains.length; i++) {
+      var tok = String(domains[i]).toLowerCase();
+      if (tok && hay.indexOf(tok) >= 0) score += 1;
+    }
+    return score;
+  }
+
+  function sellersForMatch() {
+    var list = SELLER_CATALOG.slice();
+    var regs = getRegs();
+    for (var i = 0; i < regs.length; i++) {
+      var r = regs[i];
+      list.push({
+        id: r.id || "reg",
+        name: r.name || "本机登记",
+        label: (r.id ? r.id + " · " : "") + (r.name || "本机登记"),
+        kind: r.kind || "workflow",
+        domains: tokenizeDomains(r.domain).concat(tokenizeDomains(r.offer)),
+        showcase: false,
+        about: r.offer || "",
+        voice: r.name || "本机登记",
+        questions: [
+          "输入与格式边界是否清楚？",
+          "交付物形态是否确认？",
+          "验收标准是否可客观判定？",
+        ],
+        fromReg: true,
+      });
+    }
+    return list;
+  }
+
+  function matchSeller(job) {
+    var hay = haystackOf(job);
+    var sellers = sellersForMatch();
+    var best = null;
+    var bestScore = 0;
+    for (var j = 0; j < sellers.length; j++) {
+      var s2 = sellers[j];
+      var sc2 = scoreSeller(s2, hay);
+      if (sc2 <= 0) continue;
+      if (
+        !best ||
+        sc2 > bestScore ||
+        (sc2 === bestScore && s2.showcase && !best.showcase)
+      ) {
+        best = s2;
+        bestScore = sc2;
+      }
+    }
+    if (!best || bestScore <= 0) return null;
+    return { seller: best, score: bestScore };
+  }
+
+  function kindLabel(kind) {
+    if (kind === "channel") return "私有通道";
+    if (kind === "data") return "专有数据";
+    return "工作流 / 流水线";
+  }
+
+
   var TOUR_STEPS = [
     {
       id: 1,
@@ -729,7 +858,10 @@
         if (!freezePoints(order.points, order.id, order.title)) return false;
         order.escrow = "frozen";
       }
-      if (!order.resident) order.resident = "R-07 · 墨线";
+      if (!order.resident || order.resident === "待匹配") {
+        /* keep 待匹配; seller must already be matched at post time */
+        if (!order.resident) order.resident = "待匹配";
+      }
       order.status = STATUS.making;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
@@ -943,6 +1075,67 @@
     return reg;
   }
 
+  function renderSellerCatalog() {
+    var root = document.getElementById("seller-catalog");
+    if (!root) return;
+    var html = "";
+    for (var i = 0; i < SELLER_CATALOG.length; i++) {
+      var s = SELLER_CATALOG[i];
+      var tags = "";
+      tags +=
+        '<span class="tag accent">' +
+        escapeHtml(kindLabel(s.kind).split(" ")[0]) +
+        "</span>";
+      for (var d = 0; d < s.domains.length; d++) {
+        tags += '<span class="tag">' + escapeHtml(s.domains[d]) + "</span>";
+      }
+      html +=
+        '<article class="resident">' +
+        '<div class="id">' +
+        escapeHtml(s.id) +
+        "</div>" +
+        "<h3>" +
+        escapeHtml(s.name) +
+        "</h3>" +
+        '<p class="about">' +
+        escapeHtml(s.about || "") +
+        "</p>" +
+        '<div class="skills">' +
+        tags +
+        "</div>" +
+        "</article>";
+    }
+    root.innerHTML = html;
+  }
+
+  function wireTryMatch() {
+    var form = document.getElementById("try-match-form");
+    var out = document.getElementById("try-match-out");
+    if (!form || !out) return;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var skill = (document.getElementById("try-skill").value || "").trim();
+      if (!skill) {
+        out.textContent = "请输入能力域关键词。";
+        out.classList.remove("hidden");
+        return;
+      }
+      var m = matchSeller({ skill: skill, title: skill, brief: "" });
+      if (!m) {
+        out.innerHTML =
+          "结果：<strong>待匹配</strong>（0 命中）。演示不会伪造卖方。";
+      } else {
+        out.innerHTML =
+          "结果：会匹配到 <strong>" +
+          escapeHtml(m.seller.label) +
+          "</strong>（命中 " +
+          m.score +
+          " 个域词）。";
+      }
+      out.classList.remove("hidden");
+    });
+  }
+
   function renderRegs() {
     var root = document.getElementById("regs-list");
     if (!root) return;
@@ -1058,6 +1251,8 @@
   renderOrdersList();
   wireOrderActions();
   renderRegs();
+  renderSellerCatalog();
+  wireTryMatch();
   wireRegForm();
   renderPointsPanel();
   updatePostGate();
@@ -1166,7 +1361,8 @@
       ? escapeHtml(job.channel)
       : "私有通道交付（默认）";
 
-    return [
+    var matched = matchSeller(job);
+    var steps = [
       {
         delay: 500,
         step: 2,
@@ -1187,44 +1383,85 @@
           channelLine +
           "</p></div>",
       },
-      {
+    ];
+
+    if (!matched) {
+      steps.push({
         delay: 1100,
         step: 2,
-        status: "已匹配卖方，进入私下澄清",
+        status: "未匹配到卖方 · 请细化能力域",
         onShow: function () {
           updateOrder(currentOrderId, {
-            resident: "R-07 · 墨线",
+            resident: "待匹配",
             status: STATUS.clarify,
           });
         },
         html:
-          '<div class="msg system">平台按声明技能匹配到卖方 <strong>R-07「墨线」</strong>（文档结构化 / 数据清洗流水线）。对话仅订单双方可见。订单已写入本机；积分已冻结。<br>演示下一步：切换到<strong>卖方</strong>，在订单列表点「回应澄清」。</div>',
-      },
-      {
-        delay: 1600,
-        step: 3,
-        status: "澄清中 · 确认流水线边界（预览）",
-        html:
-          '<div class="msg agent"><div class="who">卖方 R-07 · 墨线</div><p>收到。我会用本机已跑通的映射流水线处理；开始前请确认三点：</p><ul style="margin:0.4rem 0 0 1.1rem;color:var(--ink-muted)">' +
-          "<li>输入：原始文件格式与编码？（CSV / JSON / 其他）</li>" +
-          "<li>输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？</li>" +
-          "<li>验收：用哪 1–2 条客观条件判定完成？</li></ul></div>",
-      },
-      {
+          '<div class="msg system">按声明技能扫描后<strong>暂无匹配</strong>。订单保持「待澄清」，卖方为「待匹配」。请回到发布页细化<strong>能力域</strong>（例如：发票映射、Nginx 5xx、Changelog 精简），或到 <a href="residents.html">卖方</a> 用「试匹配」自测。积分已冻结，可稍后在订单中申请退回。</div>',
+      });
+      steps.push({
         delay: 1400,
         step: 3,
-        html:
-          '<div class="msg buyer"><div class="who">买方 · 你</div><p>CSV，UTF-8；要可维护脚本包 + 同义词表；验收：样例全部通过，未识别列写入 <code>_unmapped</code>。</p></div>',
-      },
-      {
-        delay: 1100,
-        step: 3,
-        status: "澄清预览结束 · 请到订单页由卖方锁定",
+        status: "等待能力域细化",
         locked: false,
         html:
-          '<div class="msg system">以上为澄清预览。订单仍为「待澄清」。请切换身份为<strong>卖方</strong>，在 <a href="orders.html">订单</a> 点击「回应澄清」锁定需求并进入制作。<br>演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</div>',
+          '<div class="msg system">演示不会伪造卖方。匹配为浏览器端 token 重叠（静态 demo）；真 API 上线前不会托管你的流水线。</div>',
+      });
+      return steps;
+    }
+
+    var s = matched.seller;
+    var qHtml = "";
+    var qs = s.questions || [];
+    for (var qi = 0; qi < qs.length && qi < 3; qi++) {
+      qHtml += "<li>" + escapeHtml(qs[qi]) + "</li>";
+    }
+
+    steps.push({
+      delay: 1100,
+      step: 2,
+      status: "已匹配卖方，进入私下澄清",
+      onShow: function () {
+        updateOrder(currentOrderId, {
+          resident: s.label,
+          status: STATUS.clarify,
+        });
       },
-    ];
+      html:
+        '<div class="msg system">平台按声明技能匹配到卖方 <strong>' +
+        escapeHtml(s.label) +
+        "</strong>（" +
+        escapeHtml(kindLabel(s.kind)) +
+        " · 命中 " +
+        matched.score +
+        " 个域词）。对话仅订单双方可见。订单已写入本机；积分已冻结。<br>演示下一步：切换到<strong>卖方</strong>，在订单列表点「回应澄清」。</div>",
+    });
+    steps.push({
+      delay: 1600,
+      step: 3,
+      status: "澄清中 · 确认流水线边界（预览）",
+      html:
+        '<div class="msg agent"><div class="who">卖方 ' +
+        escapeHtml(s.label) +
+        "</div><p>收到。我会用本机已跑通的边界处理；开始前请确认：</p><ul style=\"margin:0.4rem 0 0 1.1rem;color:var(--ink-muted)\">" +
+        qHtml +
+        "</ul></div>",
+    });
+    steps.push({
+      delay: 1400,
+      step: 3,
+      html:
+        '<div class="msg buyer"><div class="who">买方 · 你</div><p>（预览答复）边界清楚；请按你的流水线执行，验收条件以单内为准。</p></div>',
+    });
+    steps.push({
+      delay: 1100,
+      step: 3,
+      status: "澄清预览结束 · 请到订单页由卖方锁定",
+      locked: false,
+      html:
+        '<div class="msg system">以上为澄清预览。订单仍为「待澄清」。请切换身份为<strong>卖方</strong>，在 <a href="orders.html">订单</a> 点击「回应澄清」锁定需求并进入制作。<br>演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</div>',
+    });
+    return steps;
   }
 
   function playSteps(steps, i) {

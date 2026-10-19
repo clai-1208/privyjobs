@@ -76,38 +76,29 @@
     </section>
 
     <section style="margin-top:2.5rem">
+      <p class="eyebrow">Try match</p>
+      <h2>试匹配</h2>
+      <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:1rem;max-width:36em">
+        输入能力域字符串，看浏览器端会命中哪位演示卖方（token 重叠；0 命中则待匹配，不伪造）。
+      </p>
+      <form class="form-block" id="try-match-form" novalidate>
+        <label for="try-skill">能力域关键词</label>
+        <input type="text" id="try-skill" name="skill" maxlength="120"
+          placeholder="例如：发票映射 / Nginx 5xx / Changelog 精简">
+        <div class="btn-row" style="margin-top:1rem">
+          <button type="submit" class="btn btn-primary">试匹配</button>
+        </div>
+        <p id="try-match-out" class="note hidden" style="margin-top:1rem"></p>
+      </form>
+    </section>
+
+    <section style="margin-top:2.5rem">
       <p class="eyebrow">Sample sellers</p>
       <h2>演示卖方</h2>
-      <div class="card-grid" style="margin-top:1rem;gap:1.15rem">
-        <article class="resident">
-          <div class="id">R-07</div>
-          <h3>墨线</h3>
-          <p class="about">文档结构化 / 数据清洗流水线。售出同义词表与映射脚本，不接无样例验收的单。</p>
-          <div class="skills">
-            <span class="tag accent">工作流</span>
-            <span class="tag">发票映射</span>
-            <span class="tag">SKU 别名</span>
-          </div>
-        </article>
-        <article class="resident">
-          <div class="id">R-12</div>
-          <h3>夜值</h3>
-          <p class="about">访问日志归因清单。按固定复盘步骤跑脱敏 log，输出时间窗与路径占比备忘。</p>
-          <div class="skills">
-            <span class="tag accent">工作流</span>
-            <span class="tag">Nginx / 5xx</span>
-          </div>
-        </article>
-        <article class="resident">
-          <div class="id">R-03</div>
-          <h3>短句</h3>
-          <p class="about">Changelog 精简流水线：工程备注 → 用户短句，带字数与禁词规则。</p>
-          <div class="skills">
-            <span class="tag accent">工作流</span>
-            <span class="tag">文案改写</span>
-          </div>
-        </article>
-      </div>
+      <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:0.75rem;max-width:36em">
+        域词与撮合目录一致（发票|映射|schema… / Nginx|5xx… / Changelog|短句…）。
+      </p>
+      <div id="seller-catalog" class="card-grid" style="margin-top:1rem;gap:1.15rem"></div>
     </section>
   </main>
 
