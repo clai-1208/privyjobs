@@ -286,6 +286,11 @@
     order.claimedAt = Date.now();
     order.matchExplain = "认领试做 · " + ident.label;
     order.matchHits = order.matchHits || [];
+    if (!order.clarifyQuestions || !order.clarifyQuestions.length) {
+      order.clarifyQuestions = questionsForOrder(order);
+    }
+    order.clarifyLocked = false;
+    order.clarifyRound = order.clarifyRound || 0;
     order.updatedAt = Date.now();
     writeJson(ORDERS_KEY, list);
     return true;
@@ -316,7 +321,7 @@
     {
       id: 3,
       title: "提交交付",
-      hint: "卖方在「制作中」订单点击「提交交付」。",
+      hint: "卖方在「制作中」填写结果摘要包（交付摘要 / 产物清单 / 验收对照）并提交。",
       href: "orders.html",
       page: "orders",
     },
@@ -887,6 +892,25 @@
         resident: "R-12 · 夜值",
         escrow: "frozen",
         reworkCount: 0,
+        clarifyLocked: true,
+        clarifyRound: 1,
+        clarifyQuestions: [
+          "日志：access log 时间窗与脱敏范围？",
+          "输出：时间窗 + 路径占比备忘，还是附 grep 脚本？",
+          "验收：哪几条尖峰路径需要可复核？",
+        ],
+        buyerAnswers:
+          "时间窗昨夜 00–06；脱敏已完成。要 Markdown 备忘 + 附 grep。尖峰 /api/v2/orders 与 /static/assets 需可复核。",
+        resultPackage: {
+          summary:
+            "按夜值复盘清单完成脱敏 access log 归因；锁定两处尖峰路径并给出时间窗占比。",
+          artifacts:
+            "night-5xx-memo.md；grep-hotpaths.sh；samples/peak-snippet.log（演示文件名）",
+          acceptCheck:
+            "时间窗 00–06 可复核；/api/v2/orders 与 /static/assets 占比表已附；与验收条件对齐。",
+          attachments: "night-5xx-memo.md, grep-hotpaths.sh",
+          deliveredAt: now - 1 * day,
+        },
         createdAt: now - 3 * day,
         updatedAt: now - 1 * day,
       },
@@ -902,6 +926,15 @@
         resident: "R-07 · 墨线",
         escrow: "frozen",
         reworkCount: 0,
+        clarifyLocked: true,
+        clarifyRound: 1,
+        clarifyQuestions: [
+          "输入：原始文件格式与编码？（CSV / JSON / 其他）",
+          "输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？",
+          "验收：用哪 1–2 条客观条件判定完成？",
+        ],
+        buyerAnswers:
+          "三源均为 UTF-8 CSV。要主表 CSV + 冲突裁决规则说明。抽查 20 行；未裁决单独列出。",
         createdAt: now - 1 * day,
         updatedAt: now - 6 * 3600000,
       },
@@ -917,6 +950,14 @@
         resident: "R-03 · 短句",
         escrow: "frozen",
         reworkCount: 0,
+        clarifyLocked: false,
+        clarifyRound: 0,
+        clarifyQuestions: [
+          "输入：工程备注条数与语言？（中 / 英 / 混）",
+          "输出：中英对照短句，还是仅中文？",
+          "验收：字数上限与禁词表是否沿用默认？",
+        ],
+        buyerAnswers: "",
         createdAt: now - 2 * 3600000,
         updatedAt: now - 2 * 3600000,
       },
@@ -954,13 +995,220 @@
     return null;
   }
 
+
+  function findCatalogSellerByResident(resident) {
+    var label = String(resident || "");
+    if (!label || label === "待匹配") return null;
+    for (var i = 0; i < SELLER_CATALOG.length; i++) {
+      var s = SELLER_CATALOG[i];
+      if (s.label === label || label.indexOf(s.name) >= 0 || label.indexOf(s.id) >= 0) {
+        return s;
+      }
+    }
+    var regs = getRegs();
+    for (var j = 0; j < regs.length; j++) {
+      var r = regs[j];
+      var regLabel = (r.id ? r.id + " · " : "") + (r.name || "本机登记");
+      if (regLabel === label || label.indexOf(r.name || "") >= 0) {
+        return {
+          questions: [
+            "输入与格式边界是否清楚？",
+            "交付物形态是否确认？",
+            "验收标准是否可客观判定？",
+          ],
+        };
+      }
+    }
+    return null;
+  }
+
+  function questionsForOrder(o) {
+    if (o && o.clarifyQuestions && o.clarifyQuestions.length) {
+      return o.clarifyQuestions.slice(0, 3);
+    }
+    var s = findCatalogSellerByResident(o && o.resident);
+    if (s && s.questions && s.questions.length) {
+      return s.questions.slice(0, 3);
+    }
+    return [
+      "输入与格式边界是否清楚？",
+      "交付物形态是否确认？",
+      "验收标准是否可客观判定？",
+    ];
+  }
+
+  function isClarifyLocked(o) {
+    if (!o) return false;
+    if (o.clarifyLocked) return true;
+    if (o.status === STATUS.making || o.status === STATUS.accept || o.status === STATUS.done) {
+      return true;
+    }
+    return false;
+  }
+
+  function renderClarifyBlock(o) {
+    if (!o) return "";
+    if (
+      o.status !== STATUS.clarify &&
+      o.status !== STATUS.making &&
+      !(o.clarifyQuestions && o.clarifyQuestions.length)
+    ) {
+      return "";
+    }
+    if (o.status === STATUS.accept || o.status === STATUS.done || o.status === STATUS.returned) {
+      /* result package owns the buyer view after deliver */
+      if (o.resultPackage) return "";
+    }
+    var qs = questionsForOrder(o);
+    var locked = isClarifyLocked(o);
+    var role = getRole();
+    var html = '<div class="clarify-block">';
+    if (locked) {
+      html +=
+        '<p class="lock-banner">需求已锁定 · 卖方停答开放问题，制作中</p>';
+      html +=
+        '<p class="clarify-cap-note">澄清已用满一轮。开放问答关闭；买方不可继续追问知识库。卖方私下制作，稍后提交结果摘要包。</p>';
+    } else {
+      html +=
+        '<p class="clarify-cap-note">澄清上限：卖方「回应澄清」仅一轮，随后锁定进入制作。买方只答复下方问题清单——<strong>不可继续追问知识库</strong>，也没有开放闲聊。</p>';
+    }
+    html += '<p class="clarify-qs-label">卖方问题清单（最多 3 问）</p><ol class="clarify-qs">';
+    for (var i = 0; i < qs.length; i++) {
+      html += "<li>" + escapeHtml(qs[i]) + "</li>";
+    }
+    html += "</ol>";
+    if (locked) {
+      if (o.buyerAnswers) {
+        html +=
+          '<div class="clarify-answers-ro"><span class="who">买方答复</span><p>' +
+          escapeHtml(o.buyerAnswers) +
+          "</p></div>";
+      }
+    } else if (role === "buyer") {
+      html +=
+        '<label class="clarify-answer-label" for="buyer-answer-' +
+        escapeHtml(o.id) +
+        '">你的答复（一轮内写清即可）</label>';
+      html +=
+        '<textarea class="clarify-answer-input" id="buyer-answer-' +
+        escapeHtml(o.id) +
+        '" rows="3" maxlength="800" placeholder="针对上方问题作答。提交后仍须等卖方「回应澄清」锁定；锁定后不能再追问。">' +
+        escapeHtml(o.buyerAnswers || "") +
+        "</textarea>";
+      html +=
+        '<div class="btn-row" style="margin-top:0.55rem">' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-save-answers="' +
+        escapeHtml(o.id) +
+        '">保存答复</button>' +
+        '<span class="action-hint">保存不会打开知识库问答；卖方锁定后停答。</span>' +
+        "</div>";
+    } else if (role === "seller") {
+      if (o.buyerAnswers) {
+        html +=
+          '<div class="clarify-answers-ro"><span class="who">买方已答复</span><p>' +
+          escapeHtml(o.buyerAnswers) +
+          "</p></div>";
+      } else {
+        html +=
+          '<p class="action-hint" style="margin-top:0.45rem">买方尚未写入答复亦可锁定（演示）；点「回应澄清」即停答并进入制作。</p>';
+      }
+    }
+    html += "</div>";
+    return html;
+  }
+
+  function renderResultPackageBlock(o) {
+    if (!o || !o.resultPackage) return "";
+    var p = o.resultPackage;
+    var html = '<div class="result-pack">';
+    html += '<p class="result-pack-title">结果摘要包</p>';
+    html +=
+      '<p class="clarify-cap-note">待验收后买方只看成品包，不看澄清以外的过程闲聊。</p>';
+    html +=
+      '<dl class="result-pack-fields">' +
+      "<dt>交付摘要</dt><dd>" +
+      escapeHtml(p.summary || "—") +
+      "</dd>" +
+      "<dt>产物清单</dt><dd>" +
+      escapeHtml(p.artifacts || "—") +
+      "</dd>" +
+      "<dt>验收对照</dt><dd>" +
+      escapeHtml(p.acceptCheck || "—") +
+      "</dd>";
+    if (p.attachments) {
+      html +=
+        "<dt>附件名（演示）</dt><dd>" +
+        escapeHtml(p.attachments) +
+        "</dd>";
+    }
+    html += "</dl></div>";
+    return html;
+  }
+
+  function renderDeliverForm(o) {
+    if (!o || !o._uiDeliver) return "";
+    var acceptHint = o.accept || "（单内验收标准）";
+    var html = '<div class="deliver-form" data-deliver-form="' + escapeHtml(o.id) + '">';
+    html += '<p class="result-pack-title">填写结果摘要包</p>';
+    html +=
+      '<p class="clarify-cap-note">「提交交付」= 交成品包，不是继续聊天。请填写结构化字段。</p>';
+    html +=
+      '<label for="dp-summary-' +
+      escapeHtml(o.id) +
+      '">交付摘要</label>' +
+      '<textarea id="dp-summary-' +
+      escapeHtml(o.id) +
+      '" rows="2" maxlength="500" placeholder="本次产出了什么、边界内如何完成">' +
+      escapeHtml((o.resultPackage && o.resultPackage.summary) || "") +
+      "</textarea>";
+    html +=
+      '<label for="dp-artifacts-' +
+      escapeHtml(o.id) +
+      '">产物清单</label>' +
+      '<textarea id="dp-artifacts-' +
+      escapeHtml(o.id) +
+      '" rows="2" maxlength="400" placeholder="文件 / 脚本 / 表名等（演示可用本地文件名）">' +
+      escapeHtml((o.resultPackage && o.resultPackage.artifacts) || "") +
+      "</textarea>";
+    html +=
+      '<label for="dp-accept-' +
+      escapeHtml(o.id) +
+      '">验收对照</label>' +
+      '<textarea id="dp-accept-' +
+      escapeHtml(o.id) +
+      '" rows="2" maxlength="400" placeholder="对照：「' +
+      escapeHtml(acceptHint).replace(/"/g, "&quot;") +
+      '」">' +
+      escapeHtml((o.resultPackage && o.resultPackage.acceptCheck) || "") +
+      "</textarea>";
+    html +=
+      '<label for="dp-files-' +
+      escapeHtml(o.id) +
+      '">附件名（可选 · 演示）</label>' +
+      '<input type="text" id="dp-files-' +
+      escapeHtml(o.id) +
+      '" maxlength="200" placeholder="例如：result.zip, README.md" value="' +
+      escapeHtml((o.resultPackage && o.resultPackage.attachments) || "") +
+      '">';
+    html +=
+      '<div class="btn-row" style="margin-top:0.65rem">' +
+      '<button type="button" class="btn btn-primary" data-order-action="deliver_submit" data-order-id="' +
+      escapeHtml(o.id) +
+      '">确认提交结果包</button>' +
+      '<button type="button" class="btn btn-ghost" data-order-action="deliver_cancel" data-order-id="' +
+      escapeHtml(o.id) +
+      '">取消</button>' +
+      "</div></div>";
+    return html;
+  }
+
   function actionsForStatus(status, role, order) {
     var acts = [];
     if (status === STATUS.clarify && role === "seller") {
       acts.push({ action: "clarify", label: "回应澄清", cls: "btn-primary" });
     }
     if (status === STATUS.making && role === "seller") {
-      acts.push({ action: "deliver", label: "提交交付", cls: "btn-primary" });
+      acts.push({ action: "deliver", label: "提交交付 · 结果摘要包", cls: "btn-primary" });
     }
     if (status === STATUS.accept && role === "buyer") {
       acts.push({ action: "approve", label: "验收通过", cls: "btn-primary" });
@@ -1014,7 +1262,16 @@
         alert("该单仍在待匹配池。请先在「待匹配」列表点「认领试做」，再回应澄清。");
         return false;
       }
+      if (order.clarifyLocked || (order.clarifyRound && order.clarifyRound >= 1)) {
+        alert("澄清已锁定：本单只能回应一轮。需求已进制作，请提交结果摘要包。");
+        return false;
+      }
+      order.clarifyQuestions = questionsForOrder(order);
+      order.clarifyLocked = true;
+      order.clarifyRound = 1;
+      order.clarifyLockedAt = Date.now();
       order.status = STATUS.making;
+      order._uiDeliver = false;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
       var t = getTour();
@@ -1027,6 +1284,39 @@
         alert("请切换到卖方身份后再提交交付。");
         return false;
       }
+      /* open structured result-package form instead of open chat */
+      order._uiDeliver = true;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      return true;
+    }
+
+    if (action === "deliver_cancel" && order.status === STATUS.making) {
+      order._uiDeliver = false;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      return true;
+    }
+
+    if (action === "deliver_submit" && order.status === STATUS.making) {
+      if (role !== "seller") {
+        alert("请切换到卖方身份后再提交交付。");
+        return false;
+      }
+      var pack = order._pendingPackage;
+      if (!pack || !pack.summary || !pack.artifacts || !pack.acceptCheck) {
+        alert("请填写结果摘要包：交付摘要、产物清单、验收对照（均为必填）。");
+        return false;
+      }
+      order.resultPackage = {
+        summary: pack.summary,
+        artifacts: pack.artifacts,
+        acceptCheck: pack.acceptCheck,
+        attachments: pack.attachments || "",
+        deliveredAt: Date.now(),
+      };
+      order._pendingPackage = null;
+      order._uiDeliver = false;
       order.status = STATUS.accept;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
@@ -1059,6 +1349,9 @@
       }
       order.reworkCount = (order.reworkCount || 0) + 1;
       order.status = STATUS.making;
+      order._uiDeliver = false;
+      order.previousResultPackage = order.resultPackage || order.previousResultPackage || null;
+      order.resultPackage = null;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
       appendLedger({
@@ -1101,17 +1394,22 @@
   function renderOrderActions(o) {
     var role = getRole();
     var acts = actionsForStatus(o.status, role, o);
+    if (o._uiDeliver) {
+      acts = acts.filter(function (a) {
+        return a.action !== "deliver";
+      });
+    }
     var html = '<div class="order-actions">';
     if (!acts.length) {
       if (o.status === STATUS.clarify && role === "buyer") {
         html +=
-          '<span class="action-hint">等待卖方回应澄清。可切换身份为卖方操作。</span>';
+          '<span class="action-hint">请答复上方问题清单并等待卖方「回应澄清」锁定。不可继续追问知识库。</span>';
       } else if (o.status === STATUS.making && role === "buyer") {
         html +=
-          '<span class="action-hint">卖方制作中。演示规则：锁定后 7 日未交付可退回。</span>';
+          '<span class="action-hint">需求已锁定 · 卖方停答开放问题，制作中。7 日未交付可退回。</span>';
       } else if (o.status === STATUS.accept && role === "seller") {
         html +=
-          '<span class="action-hint">待买方验收。请切换到买方。</span>';
+          '<span class="action-hint">结果摘要包已交 · 待买方验收。请切换到买方。</span>';
       } else if (o.status === STATUS.done || o.status === STATUS.returned) {
         html +=
           '<span class="action-hint">终态，无更多操作。</span>';
@@ -1145,7 +1443,7 @@
       roleEl.textContent =
         "当前身份：" +
         roleLabel(getRole()) +
-        "。买方：验收 / 退回；卖方：澄清 / 交付。";
+        "。买方：答复澄清清单 / 验收结果包；卖方：一轮澄清锁定 / 提交结果摘要包。";
     }
     if (!list.length) {
       root.innerHTML =
@@ -1195,6 +1493,9 @@
         escapeHtml(o.skill || "") +
         "</span>" +
         "</div>" +
+        renderClarifyBlock(o) +
+        renderResultPackageBlock(o) +
+        renderDeliverForm(o) +
         renderOrderActions(o) +
         "</article>";
     }
@@ -1295,11 +1596,57 @@
     if (!root || root._pjWired) return;
     root._pjWired = true;
     root.addEventListener("click", function (e) {
+      var saveBtn = e.target.closest("[data-save-answers]");
+      if (saveBtn) {
+        var sid = saveBtn.getAttribute("data-save-answers");
+        var ta = document.getElementById("buyer-answer-" + sid);
+        if (!sid || !ta) return;
+        if (getRole() !== "buyer") {
+          alert("请切换到买方身份后再保存答复。");
+          return;
+        }
+        var list = getOrders();
+        for (var i = 0; i < list.length; i++) {
+          if (list[i].id === sid) {
+            if (isClarifyLocked(list[i]) || list[i].status !== STATUS.clarify) {
+              alert("需求已锁定，不能再改答复或追问知识库。");
+              return;
+            }
+            list[i].buyerAnswers = (ta.value || "").trim();
+            list[i].clarifyQuestions = questionsForOrder(list[i]);
+            list[i].updatedAt = Date.now();
+            writeJson(ORDERS_KEY, list);
+            break;
+          }
+        }
+        renderOrdersList();
+        renderPendingPool();
+        return;
+      }
       var btn = e.target.closest("[data-order-action]");
       if (!btn) return;
       var id = btn.getAttribute("data-order-id");
       var action = btn.getAttribute("data-order-action");
       if (!id || !action) return;
+      if (action === "deliver_submit") {
+        var summaryEl = document.getElementById("dp-summary-" + id);
+        var artEl = document.getElementById("dp-artifacts-" + id);
+        var accEl = document.getElementById("dp-accept-" + id);
+        var fileEl = document.getElementById("dp-files-" + id);
+        var list2 = getOrders();
+        for (var j = 0; j < list2.length; j++) {
+          if (list2[j].id === id) {
+            list2[j]._pendingPackage = {
+              summary: summaryEl ? (summaryEl.value || "").trim() : "",
+              artifacts: artEl ? (artEl.value || "").trim() : "",
+              acceptCheck: accEl ? (accEl.value || "").trim() : "",
+              attachments: fileEl ? (fileEl.value || "").trim() : "",
+            };
+            writeJson(ORDERS_KEY, list2);
+            break;
+          }
+        }
+      }
       if (transitionOrder(id, action)) {
         renderOrdersList();
         renderPendingPool();
@@ -1822,6 +2169,10 @@
           status: STATUS.clarify,
           matchHits: matched.hits.slice(),
           matchExplain: explain,
+          clarifyQuestions: (s.questions || []).slice(0, 3),
+          clarifyLocked: false,
+          clarifyRound: 0,
+          buyerAnswers: "",
         });
       },
       html:
@@ -1833,7 +2184,7 @@
         escapeHtml(hitLine) +
         "（" +
         matched.score +
-        "）。对话仅订单双方可见。订单已写入本机；积分已冻结。<br>演示下一步：切换到<strong>卖方</strong>，在订单列表点「回应澄清」。</div>",
+        "）。澄清仅订单双方可见，且<strong>限一轮</strong>——不开放知识库追问。订单已写入本机；积分已冻结。<br>演示下一步：到订单答复问题清单，再切<strong>卖方</strong>点「回应澄清」锁定。</div>",
     });
     steps.push({
       delay: 1600,
@@ -1858,7 +2209,7 @@
       status: "澄清预览结束 · 请到订单页由卖方锁定",
       locked: false,
       html:
-        '<div class="msg system">以上为澄清预览。订单仍为「待澄清」。请切换身份为<strong>卖方</strong>，在 <a href="orders.html">订单</a> 点击「回应澄清」锁定需求并进入制作。<br>演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</div>',
+        '<div class="msg system">以上为澄清预览（买方答复区示意）。订单仍为「待澄清」。买方只答问题清单，<strong>不可继续追问知识库</strong>。请切<strong>卖方</strong>在 <a href="orders.html">订单</a> 点「回应澄清」——一轮后锁定：「需求已锁定 · 卖方停答开放问题，制作中」。交付须交<strong>结果摘要包</strong>。<br>演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</div>',
     });
     return steps;
   }

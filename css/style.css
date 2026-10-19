@@ -1044,3 +1044,107 @@ textarea { min-height: 8rem; resize: vertical; }
   font-size: 1.05rem;
   margin-bottom: 0.35rem;
 }
+
+/* —— Clarify cap + result package —— */
+.clarify-block,
+.result-pack,
+.deliver-form {
+  margin-top: 0.85rem;
+  padding: 0.85rem 0.95rem;
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.lock-banner {
+  margin: 0 0 0.45rem;
+  padding: 0.45rem 0.65rem;
+  background: var(--accent-soft);
+  border: 1px solid #dcc8c0;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.clarify-cap-note {
+  margin: 0 0 0.55rem;
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  line-height: 1.45;
+}
+.clarify-qs-label,
+.result-pack-title {
+  margin: 0 0 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.clarify-qs {
+  margin: 0 0 0.55rem 1.1rem;
+  padding: 0;
+  color: var(--ink);
+  font-size: 0.9rem;
+}
+.clarify-qs li { margin: 0.2rem 0; }
+.clarify-answer-label {
+  display: block;
+  margin: 0.35rem 0 0.25rem;
+  font-size: 0.85rem;
+}
+.clarify-answer-input,
+.deliver-form textarea,
+.deliver-form input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+  color: var(--ink);
+  border-radius: var(--radius);
+  resize: vertical;
+}
+.deliver-form label {
+  display: block;
+  margin: 0.55rem 0 0.25rem;
+  font-size: 0.85rem;
+}
+.clarify-answers-ro {
+  margin-top: 0.45rem;
+  padding: 0.55rem 0.65rem;
+  background: var(--bg-raised);
+  border: 1px dashed var(--line-strong);
+}
+.clarify-answers-ro .who {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  margin-bottom: 0.25rem;
+}
+.clarify-answers-ro p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--ink-muted);
+  white-space: pre-wrap;
+}
+.result-pack-fields {
+  margin: 0.35rem 0 0;
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.35rem 0.75rem;
+  font-size: 0.88rem;
+}
+.result-pack-fields dt {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  padding-top: 0.15rem;
+}
+.result-pack-fields dd {
+  margin: 0;
+  color: var(--ink);
+  white-space: pre-wrap;
+}

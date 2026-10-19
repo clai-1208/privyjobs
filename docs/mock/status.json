@@ -13,9 +13,12 @@
     },
     "points": 180,
     "escrow_state": "held",
+    "clarify_locked": true,
+    "clarify_rounds_used": 1,
     "locked_at": "2026-10-19T05:30:00Z",
     "due_at": "2026-10-26T05:30:00Z",
     "delivery": null,
+    "delivery_note": "制作完成后提交结果摘要包（交付摘要 / 产物清单 / 验收对照），非开放聊天。",
     "updated_at": "2026-10-19T06:00:00Z"
   }
 }

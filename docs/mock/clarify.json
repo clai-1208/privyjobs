@@ -4,6 +4,12 @@
   "operation": "clarify",
   "job_id": "job_demo_01a4",
   "status": "clarifying",
+  "clarify_cap": {
+    "max_rounds": 1,
+    "rounds_used": 1,
+    "locked_after_seller_reply": true,
+    "buyer_may_query_knowledge_base": false
+  },
   "message": {
     "id": "msg_c7e2",
     "role": "buyer",
@@ -13,11 +19,12 @@
   },
   "thread": {
     "count": 3,
-    "locked": false,
+    "locked": true,
+    "lock_note": "需求已锁定 · 卖方停答开放问题，制作中",
     "last_seller_question": "输入编码是 UTF-8 还是 GBK？是否需要保留原币种列？"
   },
   "next": {
-    "hint": "卖方追问仅双方可见；边界确认后可 accept 锁定需求。",
-    "related": ["status", "accept"]
+    "hint": "clarify 有限轮次已用尽；其后仅 status→making→deliver（结果摘要包），不可再追问。",
+    "related": ["status", "deliver"]
   }
 }
