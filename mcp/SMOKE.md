@@ -2,9 +2,13 @@
 
 ## Tools expected
 
-`create_job`, `clarify`, `set_settlement`, `deliver`, `accept`, `return_job`, `list_jobs`, `get_job`
+`find_sellers`, `match_sellers`, `get_quote`, `create_job`, `clarify`, `set_settlement`, `deliver`, `accept`, `return_job`, `list_jobs`, `get_job`
 
-## Automated roundtrip (no MCP client)
+## Path under test
+
+**find → quote → create_job → clarify → settle → deliver → accept**
+
+## Automated
 
 ```bash
 cd mcp
@@ -12,27 +16,26 @@ npm install
 npm run smoke
 ```
 
-This exercises the job handlers directly (local `.data/`), then resets the store:
+Exercises handlers directly (local `.data/`), prints sample JSON for `find_sellers` and `get_quote`, then resets the job store.
 
-1. `create_job` → status `clarify`
-2. `get_job` → same id
-3. `clarify` lock → `making`
-4. `set_settlement` wechat + both confirms + mark → `settlement_agreed`
-5. `deliver` result package → `accept`
-6. `accept` → `done`
-7. `list_jobs` status=done
+Expected end line: `SMOKE_OK`
 
-Expected console end line: `SMOKE_OK`
+### What smoke checks
 
-## Manual MCP client check (optional)
+1. `find_sellers` on invoice/schema need → ranked matches with domains_hit + score  
+2. `match_sellers` alias on Nginx/5xx need  
+3. `get_quote` for top seller → price_hint / turnaround / settlement_methods / disclaimers  
+4. Full order chain as before  
 
-With the server configured in Cursor/Claude Desktop:
+## Manual MCP client
 
-1. List tools — confirm the eight names above.
-2. Call `create_job` with title/skill/brief.
-3. Call `get_job` with the returned id.
+1. List tools — confirm discovery + order tools.  
+2. `find_sellers` `{ "skill": "发票映射" }`  
+3. `get_quote` `{ "seller_id": "R-07", "job_summary": "…" }`  
+4. Optionally `create_job` after human approval.
 
 ## Notes
 
-- Default mode does **not** need Cloudflare.
-- Settlement is recorded only; platform does not custody funds.
+- Scorer aligned with `worker/src/match.js` (domain-token overlap).  
+- Catalog: `docs/mock/sellers.json` — no full KB dump.  
+- Platform does not custody funds.

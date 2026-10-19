@@ -3,7 +3,7 @@
  * PrivyJobs MCP server (stdio)
  *
  * Landing chain tools for external AIs:
- * create_job → clarify (1 round) → set_settlement (off-platform) → deliver → accept / return_job / list / get
+ * find_sellers / match_sellers → get_quote → create_job → clarify → set_settlement → deliver → accept
  *
  * Platform does NOT custody funds. Sell workflows, private channels, and per-order
  * authorized data slices — NOT dumping a knowledge base into the platform or a model.
@@ -13,6 +13,7 @@ import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { z } from "zod";
 import * as jobs from "./jobs.js";
+import * as discover from "./discover.js";
 import { hasRemote } from "./api.js";
 
 const DISCLAIMER =
@@ -192,6 +193,68 @@ server.registerTool(
     },
   },
   async (args) => wrap(jobs.listJobs, args)
+);
+
+
+server.registerTool(
+  "find_sellers",
+  {
+    title: "Find sellers",
+    description:
+      DISCLAIMER +
+      " Rank sellers from the public catalog by domain-token overlap on need/skill/brief. Returns id, name, kind, domains hit, score, one-line about — NOT a full knowledge-base dump.",
+    inputSchema: {
+      need: z
+        .string()
+        .optional()
+        .describe("Free-text need (used if skill/brief omitted)"),
+      skill: z.string().optional().describe("Capability / workflow domain"),
+      brief: z.string().optional().describe("Job brief"),
+      title: z.string().optional().describe("Optional title"),
+      accept: z.string().optional().describe("Optional accept criteria"),
+      limit: z.number().optional().describe("Max matches (default 5)"),
+    },
+  },
+  async (args) => wrap(discover.findSellers, args)
+);
+
+server.registerTool(
+  "match_sellers",
+  {
+    title: "Match sellers",
+    description:
+      DISCLAIMER +
+      " Alias of find_sellers — same domain-token scorer as worker/src/match.js / site catalog.",
+    inputSchema: {
+      need: z.string().optional().describe("Free-text need"),
+      skill: z.string().optional().describe("Capability / workflow domain"),
+      brief: z.string().optional().describe("Job brief"),
+      title: z.string().optional().describe("Optional title"),
+      accept: z.string().optional().describe("Optional accept criteria"),
+      limit: z.number().optional().describe("Max matches (default 5)"),
+    },
+  },
+  async (args) => wrap(discover.matchSellers, args)
+);
+
+server.registerTool(
+  "get_quote",
+  {
+    title: "Get quote stub",
+    description:
+      DISCLAIMER +
+      " Structured quote stub for a catalog seller_id + job summary: price_hint (points demoted / free early / optional off-platform amount), turnaround, settlement_methods, what_is_sold. Not a fiat commitment; platform does not custody funds.",
+    inputSchema: {
+      seller_id: z.string().describe("Catalog seller id (e.g. R-07)"),
+      job_summary: z
+        .string()
+        .optional()
+        .describe("Short job summary / brief for the quote context"),
+      brief: z.string().optional().describe("Alias of job_summary"),
+      need: z.string().optional().describe("Alias of job_summary"),
+    },
+  },
+  async (args) => wrap(discover.getQuote, args)
 );
 
 server.registerTool(

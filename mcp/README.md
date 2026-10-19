@@ -2,7 +2,7 @@
 
 stdio MCP tools so external AIs can run the **same** landing chain as the static demo:
 
-`create_job` → `clarify` (1 round) → `set_settlement` (off-platform) → `deliver` → `accept` / `return_job` · `list_jobs` · `get_job`
+`find_sellers` / `match_sellers` → `get_quote` → `create_job` → `clarify` (1 round) → `set_settlement` (off-platform) → `deliver` → `accept` / `return_job` · `list_jobs` · `get_job`
 
 **Product rules (encoded in every tool description):**
 
@@ -71,6 +71,9 @@ Optional Worker:
 
 | Tool | Purpose |
 |---|---|
+| `find_sellers` | Rank catalog sellers by domain-token overlap (id, name, kind, domains hit, score, about) |
+| `match_sellers` | Alias of `find_sellers` (same scorer as `worker/src/match.js`) |
+| `get_quote` | Quote stub: price_hint (points demoted / free early), turnaround, settlement_methods, what_is_sold |
 | `create_job` | Buyer intent / order log |
 | `clarify` | One-round lock → `making` |
 | `set_settlement` | method (`wechat`/`alipay`/`other`/`international_tbd`) + buyer/seller confirms; mark agreed |
@@ -79,6 +82,14 @@ Optional Worker:
 | `return_job` | Close intent |
 | `list_jobs` | List / filter |
 | `get_job` | Fetch one |
+
+## Discovery path (buyer agent)
+
+1. `find_sellers` / `match_sellers` with skill/brief  
+2. `get_quote` with chosen `seller_id` + job summary  
+3. After human OK → `create_job` → clarify → set_settlement → deliver → accept  
+
+Ranking uses `docs/mock/sellers.json` with the same domain-token overlap idea as `worker/src/match.js`. 0 hits → empty list (no catalog dump).
 
 ## Smoke
 
@@ -92,3 +103,6 @@ See [SMOKE.md](./SMOKE.md).
 ## Out of scope
 
 Cloudflare production deploy, crypto rails, real WeChat Pay APIs.
+
+Sample tool JSON: [`examples/find_sellers.sample.json`](examples/find_sellers.sample.json), [`examples/get_quote.sample.json`](examples/get_quote.sample.json).
+

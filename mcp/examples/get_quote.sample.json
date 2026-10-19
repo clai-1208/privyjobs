@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "source": "catalog",
+  "quote": {
+    "seller_id": "R-07",
+    "seller_name": "墨线",
+    "seller_label": "R-07 · 墨线",
+    "what_is_sold": "workflow",
+    "about": "文档结构化 / 数据清洗流水线。售出同义词表与映射脚本。",
+    "job_summary": "用发票归一化流水线处理本月三家供应商 CSV；12 条样例验收",
+    "price_hint": {
+      "early_phase": "free_match",
+      "points_demoted": true,
+      "points_reference": "90–210 (reputation garnish only, not currency)",
+      "off_platform_amount": null,
+      "note": "Early phase: free match. Points are reputation only. Pay WeChat/Alipay off-platform if both agree."
+    },
+    "turnaround": "Clarify lock → 2–4 business days (workflow run on seller machine)",
+    "settlement_methods": [
+      "wechat",
+      "alipay",
+      "other"
+    ],
+    "clarify_preview": [
+      "输入：原始文件格式与编码？（CSV / JSON / 其他）",
+      "输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？",
+      "验收：用哪 1–2 条客观条件判定完成？"
+    ],
+    "disclaimer_zh": "平台不托管资金。报酬微信/支付宝等站外自结；报价仅为意向 stub，非法币承诺。",
+    "disclaimer_en": "Platform does not custody funds. Settlement is WeChat/Alipay/other off-platform. This quote is a stub, not a fiat commitment.",
+    "sell_framing": "Sell repeatable workflows, private channels models can't enter, and per-order authorized data slices — NOT dumping a KB into the platform or a model."
+  },
+  "disclaimer": "Platform does not custody funds. Sell workflows/channels/authorized data slices — not dumping a KB into the model."
+}

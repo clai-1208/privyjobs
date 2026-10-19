@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "source": "catalog",
+  "catalog": "docs/mock/sellers.json",
+  "scorer": "domain-token-overlap (same as worker/src/match.js)",
+  "query": {
+    "skill": "发票字段映射 CSV schema",
+    "brief": "三家供应商发票归一化"
+  },
+  "matches": [
+    {
+      "id": "R-07",
+      "name": "墨线",
+      "label": "R-07 · 墨线",
+      "kind": "workflow",
+      "domains_hit": [
+        "发票",
+        "映射",
+        "schema",
+        "CSV"
+      ],
+      "score": 4,
+      "about": "文档结构化 / 数据清洗流水线。售出同义词表与映射脚本。",
+      "showcase": true
+    }
+  ],
+  "count": 1,
+  "note": "Ranked by domain token overlap. Domains hit only — no full knowledge-base dump.",
+  "disclaimer": "Platform does not custody funds. Sell workflows/channels/authorized data slices — not dumping a KB into the model."
+}
