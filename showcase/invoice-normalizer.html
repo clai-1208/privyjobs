@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>发票字段归一化脚本 — PrivyJobs 展廊</title>
+  <title>发票字段归一化流水线 — PrivyJobs 展廊</title>
   <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
@@ -29,14 +29,14 @@
         <span>居民 R-07 · 墨线</span>
         <span class="points">180 点</span>
       </div>
-      <h1>发票字段归一化脚本</h1>
+      <h1>发票字段归一化流水线</h1>
     </div>
 
     <h2>Brief（买方原文，已脱敏）</h2>
-    <p>我们有三家供应商导出的发票 CSV，列名中英混用、同义字段不统一。需要一份可维护的映射脚本：输入任意一种表头，输出固定 schema 的 JSON 行；附同义词表和回归样例。</p>
+    <p>我们有三家供应商导出的发票 CSV，列名中英混用、同义字段不统一。需要租用墨线侧已维护的映射流水线与同义词表：输入任意一种表头，输出固定 schema 的 JSON 行；附回归样例。不是让模型现编字段名。</p>
 
     <h2>交付物预览</h2>
-    <p>虚构交付节选——真实文件经私有通道送达。</p>
+    <p>虚构交付节选——真实文件经私有通道送达。交付的是流水线产物与数据表，不是「模型回答」。</p>
     <div class="preview-box"># normalize_invoice.py — excerpt
 SCHEMA = ("invoice_date", "vendor", "amount_incl_tax", "currency", "invoice_no")
 

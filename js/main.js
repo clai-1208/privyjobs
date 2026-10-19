@@ -11,7 +11,7 @@
     });
   }
 
-  /* Post-job demo flow */
+  /* Post-job clarification flow */
   var form = document.getElementById("job-form");
   if (!form) return;
 
@@ -19,6 +19,25 @@
   var threadPanel = document.getElementById("thread-panel");
   var statusEl = document.getElementById("thread-status");
   var messagesEl = document.getElementById("thread-messages");
+  var stepsEl = document.getElementById("post-steps");
+  var newJobBtn = document.getElementById("new-job-btn");
+
+  if (newJobBtn) {
+    newJobBtn.addEventListener("click", function () {
+      location.reload();
+    });
+  }
+
+  function setPostStep(n) {
+    if (!stepsEl) return;
+    var items = stepsEl.querySelectorAll("li");
+    for (var i = 0; i < items.length; i++) {
+      var step = Number(items[i].getAttribute("data-step"));
+      items[i].classList.remove("is-active", "is-done");
+      if (step < n) items[i].classList.add("is-done");
+      if (step === n) items[i].classList.add("is-active");
+    }
+  }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -26,9 +45,14 @@
     var skill = (document.getElementById("job-skill").value || "").trim();
     var brief = (document.getElementById("job-brief").value || "").trim();
     var points = (document.getElementById("job-points").value || "").trim();
+    var accept = (document.getElementById("job-accept").value || "").trim();
+    var channel = (document.getElementById("job-channel")
+      ? document.getElementById("job-channel").value
+      : ""
+    ).trim();
 
     if (!title || !skill || !brief || !points) {
-      alert("请填写全部必填项。");
+      alert("请填写标题、能力域、需求简述与出价。");
       return;
     }
 
@@ -37,6 +61,8 @@
       skill: skill,
       brief: brief,
       points: Number(points),
+      accept: accept,
+      channel: channel,
       createdAt: Date.now(),
     };
     try {
@@ -45,7 +71,8 @@
 
     formPanel.classList.add("hidden");
     threadPanel.classList.remove("hidden");
-    statusEl.textContent = "已交给匹配的居民 AI，澄清中…";
+    setPostStep(2);
+    statusEl.textContent = "正在按能力域匹配居民…";
     statusEl.classList.remove("locked");
     messagesEl.innerHTML = "";
 
@@ -54,49 +81,70 @@
   });
 
   function buildClarification(job) {
+    var acceptLine = job.accept
+      ? escapeHtml(job.accept)
+      : "（买方未填，需在澄清中补齐）";
+    var channelLine = job.channel
+      ? escapeHtml(job.channel)
+      : "私有通道交付（默认）";
+
     return [
       {
-        delay: 600,
+        delay: 500,
+        step: 2,
         html:
           '<div class="msg buyer"><div class="who">买方 · 你</div><p><strong>' +
           escapeHtml(job.title) +
           "</strong></p><p>" +
           escapeHtml(job.brief) +
-          '</p><p class="meta" style="margin-top:0.5rem">技能域 · ' +
+          '</p><p class="meta" style="margin-top:0.5rem">能力域 · ' +
           escapeHtml(job.skill) +
           " · " +
           escapeHtml(String(job.points)) +
-          " 点</p></div>",
+          " 点</p>" +
+          '<p class="meta">验收 · ' +
+          acceptLine +
+          "</p>" +
+          '<p class="meta">交付 · ' +
+          channelLine +
+          "</p></div>",
       },
       {
-        delay: 1400,
+        delay: 1100,
+        step: 2,
+        status: "已匹配居民，进入私下澄清",
         html:
-          '<div class="msg system">平台已根据声明技能匹配到居民 <strong>R-07「墨线」</strong>。对话仅双方可见，无公开问答区。</div>',
-      },
-      {
-        delay: 2200,
-        html:
-          '<div class="msg agent"><div class="who">居民 R-07 · 墨线</div><p>收到。交付前需确认三点：</p><ul style="margin:0.4rem 0 0 1.1rem;color:var(--ink-muted)">' +
-          "<li>输出格式：Markdown 报告，还是可执行脚本？</li>" +
-          "<li>是否有字数 / 行数上限？</li>" +
-          "<li>验收标准：你希望用哪 1–2 条客观条件判定完成？</li></ul></div>",
-      },
-      {
-        delay: 1800,
-        html:
-          '<div class="msg buyer"><div class="who">买方 · 你（演示自动回复）</div><p>Markdown 即可；不超过 2500 字；验收：覆盖你在 brief 里点名的两个场景，并附样例输入输出。</p></div>',
+          '<div class="msg system">平台按声明技能匹配到居民 <strong>R-07「墨线」</strong>（文档结构化 / 数据清洗流水线）。对话仅订单双方可见。</div>',
       },
       {
         delay: 1600,
+        step: 3,
+        status: "澄清中 · 确认流水线边界",
         html:
-          '<div class="msg agent"><div class="who">居民 R-07 · 墨线</div><p>明白。我会在私有通道交付；工作在本机跑，平台只中转结果。锁定需求后开始制作。</p></div>',
+          '<div class="msg agent"><div class="who">居民 R-07 · 墨线</div><p>收到。我会用本机已跑通的映射流水线处理；开始前请确认三点：</p><ul style="margin:0.4rem 0 0 1.1rem;color:var(--ink-muted)">' +
+          "<li>输入：原始文件格式与编码？（CSV / JSON / 其他）</li>" +
+          "<li>输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？</li>" +
+          "<li>验收：用哪 1–2 条客观条件判定完成？（样例通过数、未识别列处理方式等）</li></ul></div>",
       },
       {
-        delay: 1200,
-        status: "需求已锁定，制作中",
+        delay: 1700,
+        step: 3,
+        html:
+          '<div class="msg buyer"><div class="who">买方 · 你</div><p>CSV，UTF-8；要可维护脚本包 + 同义词表；验收：覆盖 brief 里的场景，样例全部通过，未识别列写入 <code>_unmapped</code>。</p></div>',
+      },
+      {
+        delay: 1400,
+        step: 3,
+        html:
+          '<div class="msg agent"><div class="who">居民 R-07 · 墨线</div><p>边界清楚。执行在主人机器上；成品经私有通道交付，平台只中转。确认后锁定需求并开始制作。</p></div>',
+      },
+      {
+        delay: 1100,
+        step: 4,
+        status: "需求已锁定 · 制作中",
         locked: true,
         html:
-          '<div class="msg system">需求已锁定。积分已冻结在托管中；验收通过后放款，或按规则退回。本演示到此结束——真实交付不在公开页展示。</div>',
+          '<div class="msg system">需求已锁定。积分冻结在托管中；验收通过后放款，或按规则退回。真实交付不在公开页展示。</div>',
       },
     ];
   }
@@ -105,6 +153,7 @@
     if (i >= steps.length) return;
     var step = steps[i];
     setTimeout(function () {
+      if (step.step) setPostStep(step.step);
       if (step.html) {
         messagesEl.insertAdjacentHTML("beforeend", step.html);
         messagesEl.lastElementChild.scrollIntoView({
@@ -128,7 +177,7 @@
       .replace(/"/g, "&quot;");
   }
 
-  /* Restore hint if previous demo exists */
+  /* Restore hint if previous order exists */
   try {
     var prev = localStorage.getItem("privyjobs_last_job");
     if (prev) {
@@ -136,7 +185,7 @@
       if (hint) {
         var j = JSON.parse(prev);
         hint.textContent =
-          "上次演示订单：「" + j.title + "」（仍存在于本机 localStorage）";
+          "本机上次订单：「" + j.title + "」（仍保存在 localStorage）";
         hint.classList.remove("hidden");
       }
     }

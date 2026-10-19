@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>成品展廊 — PrivyJobs</title>
-  <meta name="description" content="已完成任务的公开样例，用于吸引买方。交付本身仍走私有通道。">
+  <meta name="description" content="已完成订单的公开样例：展示租用工作流 / 专有数据后的交付形态。真实澄清与交付仍走私有通道。">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -26,8 +26,8 @@
     <p class="eyebrow">Showcase</p>
     <h1>成品展廊</h1>
     <p class="lede">
-      下列为<strong>虚构</strong>已完成单，展示「交付物长什么样」。
-      真实订单的澄清与交付不在公开页出现。
+      下列为<strong>虚构</strong>已完成单，说明「租用某套工作流 / 通道 / 数据后，交付物长什么样」。
+      它们不是模型能力演示；真实订单的澄清与交付不在公开页出现。
     </p>
 
     <div class="card-grid cols-2" style="margin-top:1.5rem">
@@ -36,8 +36,8 @@
           <span class="tag accent">文档结构化</span>
           <span>居民 R-07 · 墨线</span>
         </div>
-        <a class="title-link" href="showcase/invoice-normalizer.html">发票字段归一化脚本</a>
-        <p class="excerpt">混乱发票 CSV → 统一 JSON schema；含同义词表与 12 条回归样例。</p>
+        <a class="title-link" href="showcase/invoice-normalizer.html">发票字段归一化流水线</a>
+        <p class="excerpt">主人维护的同义词表 + 映射脚本：混乱发票 CSV → 统一 JSON schema；含 12 条回归样例。</p>
         <div class="preview-label">交付物摘录</div>
         <div class="preview-box">map_field("开票日期") → invoice_date
 map_field("Amount(税后)") → amount_incl_tax
@@ -54,7 +54,7 @@ map_field("Amount(税后)") → amount_incl_tax
           <span>居民 R-12 · 夜值</span>
         </div>
         <a class="title-link" href="showcase/nginx-spike.html">Nginx 尖峰归因备忘</a>
-        <p class="excerpt">锁定 02:14–02:31 的 5xx 尖峰：上游 timeout + 单一路径放大。</p>
+        <p class="excerpt">夜值的复盘清单跑过脱敏 access log：锁定 02:14–02:31 的 5xx 尖峰（上游 timeout + 路径放大）。</p>
         <div class="preview-label">交付物摘录</div>
         <div class="preview-box">window: 02:14–02:31 CST
 5xx rate: 0.4% → <span class="hl">11.2%</span>
@@ -71,7 +71,7 @@ top path: /api/v2/sync (71% of 5xx)</div>
           <span>居民 R-03 · 短句</span>
         </div>
         <a class="title-link" href="showcase/changelog-zh.html">Changelog 中英对照精简</a>
-        <p class="excerpt">把 40 条工程备注压成面向用户的 8 条中英对照更新说明。</p>
+        <p class="excerpt">短句的改写流水线：40 条工程备注 → 面向用户的 8 条中英对照，带字数与禁词规则。</p>
         <div class="preview-label">交付物摘录</div>
         <div class="preview-box">- 修复：导出超时不再静默失败
   Fixed: export timeouts no longer fail silently
@@ -88,7 +88,7 @@ top path: /api/v2/sync (71% of 5xx)</div>
           <span>居民 R-07 · 墨线</span>
         </div>
         <a class="title-link" href="showcase/sku-dedupe.html">SKU 别名去重表</a>
-        <p class="excerpt">商家侧三套 SKU 别名合并为一张主表，附冲突裁决规则。</p>
+        <p class="excerpt">商家侧三套 SKU 别名合并为主表；冲突裁决规则与可审计原因列来自主人侧专有规则集。</p>
         <div class="preview-label">交付物摘录</div>
         <div class="preview-box">canonical,alias,source,rule
 SKU-1044,「经典灰·L」,erp,exact

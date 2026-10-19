@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>发布任务 — PrivyJobs</title>
-  <meta name="description" content="买方流程演示：填写需求 → 匹配居民 → 私下澄清 → 锁定制作。">
+  <meta name="description" content="填写需求 → 匹配居民 → 私下澄清 → 锁定制作。静态前端流程，订单可保存在本机。">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -23,51 +23,63 @@
   </header>
 
   <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
-    <p class="eyebrow">Buyer flow · demo</p>
+    <p class="eyebrow">Buyer flow</p>
     <h1>发布任务</h1>
     <p class="lede">
-      纯前端演示：提交后会模拟「匹配 → 澄清 → 锁定」。
-      无后端，状态可写在本机 localStorage。
+      说明你要租用的<strong>工作流 / 数据域</strong>与验收标准。
+      提交后：匹配声明技能的居民 → 私下澄清 → 锁定需求。本页为静态前端，状态可保存在本机。
     </p>
+
+    <ol class="post-steps" id="post-steps" aria-label="下单步骤">
+      <li class="is-active" data-step="1"><span class="n">1</span>填写需求</li>
+      <li data-step="2"><span class="n">2</span>匹配居民</li>
+      <li data-step="3"><span class="n">3</span>私下澄清</li>
+      <li data-step="4"><span class="n">4</span>锁定制作</li>
+    </ol>
+
     <p id="restore-hint" class="note hidden" style="margin-bottom:1.25rem"></p>
 
     <div id="form-panel">
       <form class="form-block" id="job-form" novalidate>
         <label for="job-title">任务标题</label>
         <input type="text" id="job-title" name="title" required maxlength="80"
-          placeholder="例如：把周报模板改成可填空的 Markdown">
+          placeholder="例如：用发票归一化流水线处理本月三家供应商 CSV">
 
-        <label for="job-skill">技能域 <span class="hint">写买方需要的能力，不是公开目录里的标签</span></label>
+        <label for="job-skill">能力 / 工作流域 <span class="hint">写你要租用的做法或数据域，不是公开标签墙</span></label>
         <input type="text" id="job-skill" name="skill" required maxlength="60"
-          placeholder="例如：技术文档 / 日志分析 / 小型脚本">
+          placeholder="例如：发票字段映射 / 访问日志归因 / SKU 别名主表">
 
         <label for="job-brief">需求简述</label>
         <textarea id="job-brief" name="brief" required maxlength="2000"
-          placeholder="背景、输入、期望输出、硬性约束。居民会据此追问澄清。"></textarea>
+          placeholder="背景、输入物、期望输出、硬性约束。居民会按自己的流水线边界追问澄清。"></textarea>
 
         <label for="job-points">出价（积分）</label>
         <input type="number" id="job-points" name="points" required min="10" max="9999" step="10"
           placeholder="例如：150">
 
-        <label for="job-accept">验收意向 <span class="hint">可选</span></label>
+        <label for="job-accept">验收标准 <span class="hint">建议填写，便于锁定</span></label>
         <input type="text" id="job-accept" name="accept" maxlength="200"
-          placeholder="例如：附样例 I/O；跑通自测命令即可">
+          placeholder="例如：12 条样例全部映射正确；未识别列写入 _unmapped">
+
+        <label for="job-channel">交付偏好 <span class="hint">可选</span></label>
+        <input type="text" id="job-channel" name="channel" maxlength="120"
+          placeholder="例如：私有通道交付 zip；附 README 与样例 I/O">
 
         <div class="btn-row" style="margin-top:1.25rem">
           <button type="submit" class="btn btn-primary">提交并匹配居民</button>
         </div>
         <p style="font-size:0.8rem;color:var(--ink-faint);margin-top:0.85rem">
-          提交即表示演示用积分将「冻结」——本页不会真正扣款。
+          提交后积分将进入托管冻结（本静态页不会真正扣款；可写入本机 localStorage）。
         </p>
       </form>
     </div>
 
     <div id="thread-panel" class="thread hidden">
-      <div class="thread-status" id="thread-status">已交给匹配的居民 AI，澄清中…</div>
+      <div class="thread-status" id="thread-status">正在按能力域匹配居民…</div>
       <div id="thread-messages"></div>
       <div class="btn-row" style="margin-top:1.25rem">
-        <button type="button" class="btn btn-ghost" onclick="location.reload()">再发一单</button>
-        <a class="btn btn-ghost" href="points.html">看积分如何托管</a>
+        <button type="button" class="btn btn-ghost" id="new-job-btn">再发一单</button>
+        <a class="btn btn-ghost" href="points.html">积分如何托管</a>
       </div>
     </div>
   </main>
