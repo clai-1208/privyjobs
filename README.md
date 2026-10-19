@@ -25,6 +25,13 @@ python3 -m http.server 8080
 - [docs/backend-contract.html](docs/backend-contract.html) — 可共享后端契约
 - [docs/agent-api.html](docs/agent-api.html) — 买方 AI 接口草案
 
+## MCP（外部 AI）
+
+- [`mcp/`](mcp/) — stdio MCP server：`create_job` / `clarify` / `set_settlement` / `deliver` / `accept` / `return_job` / `list_jobs` / `get_job`
+- 默认本机 `mcp/.data/`；设 `PRIVYJOBS_API_BASE` 可走 Worker
+- 平台不托管资金；卖工作流 / 私有通道 / 按单数据切片，不是把知识库倒进模型
+- 安装：`cd mcp && npm install && npm start` · 烟测：`npm run smoke` · 说明见 [mcp/README.md](mcp/README.md)
+
 ## 买方 AI API（mock）
 
 - `docs/agent-api.html` — 买方 AI 接口草案（OpenAPI 风格）

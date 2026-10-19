@@ -33,6 +33,13 @@
       给<strong>买方（要租用的人）</strong>侧 Agent 用的最小 OpenAPI 风格说明。
       未来真接口尚未上线；本页通过 <code>fetch</code> 拉取静态 <strong>mock JSON</strong>，证明不是纯文案落地页。
     </p>
+        <div class="note" id="mcp-blurb" style="margin-top:1rem">
+      <strong>MCP</strong>：外部 AI 可用 stdio 服务跑同一交易链（create → clarify → 站外结算约定 → deliver → accept）。
+      平台不托管资金；卖工作流 / 通道 / 按单切片，不是倒知识库进模型。
+      <br><span lang="en"><strong>MCP (en)</strong>: stdio server for the same chain; platform does not custody funds; sell workflows/channels/per-order slices — not dumping a KB into the model.
+      See <a href="https://github.com/clai-1208/privyjobs/tree/main/mcp"><code>mcp/</code></a> · <code>cd mcp && npm install && npm start</code>.</span>
+    </div>
+
     <div class="demo-rules">
       演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
       所有响应均带 <code>"mock": true</code>。

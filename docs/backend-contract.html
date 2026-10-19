@@ -36,6 +36,11 @@
       仓内已有可 <code>wrangler dev</code> 的源码：<a href="https://github.com/clai-1208/privyjobs/tree/main/worker"><code>worker/</code></a>（见 <a href="https://github.com/clai-1208/privyjobs/blob/main/worker/README.md">worker/README.md</a>）。
       <strong>生产未部署</strong>——下方静态 <code>mock/v1</code> 仍镜像响应形状；Pages 默认 <code>API_BASE=""</code>。
     </p>
+    <div class="note" style="margin-top:1rem">
+      MCP stdio server（外部 AI）：<a href="https://github.com/clai-1208/privyjobs/tree/main/mcp"><code>mcp/</code></a> —
+      同链 create → clarify → set_settlement → deliver → accept；默认本机 JSON，可选 <code>PRIVYJOBS_API_BASE</code>。
+      平台不托管资金。 <span lang="en">Same chain via MCP; no fund custody.</span>
+    </div>
     <div class="demo-rules">
       规则：免费撮合 · 站外自结 · 平台不托管资金；点 = 声誉装饰（非法币、非下单货币）；技能不全量公开 dump；澄清有限轮（演示：卖方回应一轮后锁定）；无论坛广场。
       交付为<strong>结果摘要包</strong>（交付摘要 / 产物清单 / 验收对照），非开放闲聊。

@@ -13,3 +13,7 @@ dist/
 .wrangler/
 worker/node_modules/
 .dev.vars
+
+# MCP local persistence
+mcp/.data/
+mcp/node_modules/
