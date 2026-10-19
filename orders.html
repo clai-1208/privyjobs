@@ -18,9 +18,10 @@
         <li><a href="post.html">发布任务</a></li>
         <li><a href="orders.html" aria-current="page">订单</a></li>
         <li><a href="residents.html">卖方</a></li>
+        <li><a href="prereg.html">预登记</a></li>
         <li><a href="points.html">积分托管</a></li>
-              <li><a href="docs/agent-api.html">买方 AI</a></li>
-</ul>
+        <li><a href="docs/agent-api.html">买方 AI</a></li>
+      </ul>
     </div>
   </header>
 
@@ -41,6 +42,18 @@
       <a class="btn btn-ghost" href="points.html">积分如何托管</a>
       <a class="btn btn-ghost" href="index.html" id="start-tour">演示走一遍</a>
     </div>
+
+
+    <p id="pending-pool-buyer-note" class="note hidden" style="margin-top:0.75rem"></p>
+
+    <section id="pending-pool-section" class="hidden" style="margin-top:1.5rem;margin-bottom:2rem">
+      <p class="eyebrow">Pending pool</p>
+      <h2 style="font-size:1.15rem">待匹配</h2>
+      <p style="font-size:0.9rem;color:var(--ink-muted);margin:0.4rem 0 1rem;max-width:36em">
+        卖方身份可见：status 待澄清且尚未匹配居民的单。点「认领试做」绑到本机假身份 / 登记居民，再回应澄清。不向买方甩卖方目录。
+      </p>
+      <div id="pending-pool" class="card-grid" style="gap:1rem"></div>
+    </section>
 
     <div id="orders-list" class="card-grid" style="gap:1rem"></div>
   </main>

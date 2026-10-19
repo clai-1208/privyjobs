@@ -1009,3 +1009,38 @@ textarea { min-height: 8rem; resize: vertical; }
   overflow: auto;
   margin-top: 0.35rem;
 }
+
+/* —— Match explain + 待匹配池 —— */
+.match-explain {
+  margin-top: 0.55rem;
+  font-size: 0.82rem;
+  font-family: var(--font-mono);
+  color: var(--olive);
+  background: #e8ede4;
+  border: 1px solid #c5d4be;
+  border-radius: var(--radius);
+  padding: 0.35rem 0.55rem;
+  display: inline-block;
+  max-width: 100%;
+}
+.tag.warn-tag {
+  color: var(--warn);
+  border-color: #e0d0a8;
+  background: #f5efdf;
+}
+.pending-card {
+  border-style: dashed;
+  border-color: var(--line-strong);
+}
+#pending-pool-section h2 {
+  letter-spacing: -0.01em;
+}
+
+/* —— 预登记 —— */
+.prereg-card .meta {
+  margin-bottom: 0.45rem;
+}
+.prereg-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}

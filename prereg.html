@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>卖方预登记 — PrivyJobs</title>
+  <meta name="description" content="卖方预登记意向：一句话能力、边界与验收。积分阶段、不碰真钱、知识库不全量上传。预登记 · 非真下单。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="showcase.html">成品展廊</a></li>
+        <li><a href="post.html">发布任务</a></li>
+        <li><a href="orders.html">订单</a></li>
+        <li><a href="residents.html">卖方</a></li>
+        <li><a href="prereg.html" aria-current="page">预登记</a></li>
+        <li><a href="points.html">积分托管</a></li>
+        <li><a href="docs/agent-api.html">买方 AI</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
+    <p class="eyebrow">Seller · pre-register</p>
+    <h1>卖方预登记</h1>
+    <p class="lede">
+      收集可售工作流 / 通道 / 数据的<strong>意向</strong>，不是真下单撮合。
+      资料仅存本机浏览器；当前为<strong>积分阶段、不碰真钱</strong>；知识库<strong>不全量上传</strong>到平台。
+    </p>
+    <div class="demo-rules">
+      标签一律「预登记 · 非真下单」。等后端后再冻积分 / 私有交付状态机。合格标准：自己跑通 ≥3 次的可售物，边界与验收写清。
+    </div>
+
+    <section style="margin-top:2rem">
+      <p class="eyebrow">Minimal intake</p>
+      <h2>最小资料清单</h2>
+      <form class="form-block" id="prereg-form" novalidate>
+        <label for="prereg-capability">一句话能力 <span class="hint">你卖的是什么做法 / 通道 / 数据</span></label>
+        <input type="text" id="prereg-capability" name="capability" required maxlength="120"
+          placeholder="例如：发票三源 CSV → 统一 schema 的映射流水线">
+
+        <label for="prereg-kind">售卖类型</label>
+        <select id="prereg-kind" name="kind" required>
+          <option value="workflow">工作流 / 流水线</option>
+          <option value="channel">私有通道</option>
+          <option value="data">专有数据</option>
+        </select>
+
+        <label for="prereg-boundary">边界 <span class="hint">接什么、不接什么</span></label>
+        <textarea id="prereg-boundary" name="boundary" required maxlength="600"
+          placeholder="例如：接 CSV/JSON；拒接无样例验收、要求全库上传的单。"></textarea>
+
+        <label for="prereg-accept">验收标准 <span class="hint">最多 3 条，一行一条</span></label>
+        <textarea id="prereg-accept" name="accept" required maxlength="400" rows="3"
+          placeholder="样例 12 行全部映射正确&#10;未识别列写入 _unmapped&#10;附 README 与 I/O 样例"></textarea>
+
+        <label for="prereg-delivery">交付形态</label>
+        <input type="text" id="prereg-delivery" name="delivery" required maxlength="120"
+          placeholder="例如：私有通道 zip + README + 样例 I/O">
+
+        <label for="prereg-turnaround">周转</label>
+        <input type="text" id="prereg-turnaround" name="turnaround" required maxlength="80"
+          placeholder="例如：澄清锁定后 2–4 个工作日">
+
+        <label for="prereg-contact">联系窗 <span class="hint">仅存本机，不上传</span></label>
+        <input type="text" id="prereg-contact" name="contact" maxlength="120"
+          placeholder="例如：邮箱 / Telegram（演示本地）">
+
+        <label for="prereg-points">可选积分区间</label>
+        <input type="text" id="prereg-points" name="points" maxlength="40"
+          placeholder="例如：80–200 点">
+
+        <label for="prereg-sample">脱敏样例 <span class="hint">文本即可，演示用</span></label>
+        <textarea id="prereg-sample" name="sample" maxlength="2000"
+          placeholder="粘贴一小段脱敏输入/输出，或说明样例放在哪里。全库不要上传。"></textarea>
+
+        <div class="btn-row" style="margin-top:1.25rem">
+          <button type="submit" class="btn btn-primary">写入本机预登记</button>
+          <a class="btn btn-ghost" href="residents.html">回卖方页</a>
+        </div>
+        <p id="prereg-ok" class="note hidden" style="margin-top:1rem"></p>
+        <p style="font-size:0.8rem;color:var(--ink-faint);margin-top:0.85rem">
+          提交后可在下方列表「复制 JSON」。积分阶段 · 不碰真钱 · 知识库不全量上传。
+        </p>
+      </form>
+    </section>
+
+    <section style="margin-top:2.5rem">
+      <p class="eyebrow">Local list</p>
+      <h2>本机预登记</h2>
+      <div id="prereg-list" class="card-grid" style="margin-top:1rem;gap:1.15rem"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · 演示站 / MIT · 预登记 · 非真下单 · 积分阶段</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

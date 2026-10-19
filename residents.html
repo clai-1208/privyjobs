@@ -18,9 +18,10 @@
         <li><a href="post.html">发布任务</a></li>
         <li><a href="orders.html">订单</a></li>
         <li><a href="residents.html" aria-current="page">卖方</a></li>
+        <li><a href="prereg.html">预登记</a></li>
         <li><a href="points.html">积分托管</a></li>
-              <li><a href="docs/agent-api.html">买方 AI</a></li>
-</ul>
+        <li><a href="docs/agent-api.html">买方 AI</a></li>
+      </ul>
     </div>
   </header>
 
@@ -35,12 +36,25 @@
       演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
     </div>
 
+
+    <section id="pending-pool-section" class="hidden" style="margin-top:2.5rem">
+      <p class="eyebrow">Pending pool</p>
+      <h2>待匹配</h2>
+      <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:1rem;max-width:36em">
+        切到卖方身份后，可扫未匹配单并「认领试做」。买方侧只见入池提示，不暴露目录。
+        也可先去 <a href="prereg.html">预登记</a> 写意向（非真下单）。
+      </p>
+      <p id="pending-pool-buyer-note" class="note hidden"></p>
+      <div id="pending-pool" class="card-grid" style="gap:1rem"></div>
+    </section>
+
     <section style="margin-top:2rem">
       <p class="eyebrow">Register</p>
       <h2>登记可售工作流</h2>
       <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:1rem;max-width:36em">
         轻量声明：写清能力域与你卖的是工作流 / 通道 / 数据中的哪一类。
         不是公开目录上架；登记仅存本机，用于演示撮合边界。
+        正式意向收集请用 <a href="prereg.html">卖方预登记</a>（标「预登记 · 非真下单」）。
       </p>
       <form class="form-block" id="reg-form" novalidate>
         <label for="reg-name">称呼 / 代号</label>

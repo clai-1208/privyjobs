@@ -9,6 +9,8 @@
   var ROLE_KEY = "privyjobs_role";
   var TOUR_KEY = "privyjobs_tour";
   var SELLER_EARN_KEY = "privyjobs_seller_earned";
+  var PREREG_KEY = "privyjobs_prereg";
+  var FAKE_SELLER_KEY = "privyjobs_fake_seller";
 
   var STATUS = {
     clarify: "待澄清",
@@ -157,12 +159,17 @@
 
   function scoreSeller(seller, hay) {
     var score = 0;
+    var hits = [];
     var domains = seller.domains || [];
     for (var i = 0; i < domains.length; i++) {
-      var tok = String(domains[i]).toLowerCase();
-      if (tok && hay.indexOf(tok) >= 0) score += 1;
+      var raw = String(domains[i] || "");
+      var tok = raw.toLowerCase();
+      if (tok && hay.indexOf(tok) >= 0) {
+        score += 1;
+        hits.push(raw);
+      }
     }
-    return score;
+    return { score: score, hits: hits };
   }
 
   function sellersForMatch() {
@@ -195,21 +202,93 @@
     var sellers = sellersForMatch();
     var best = null;
     var bestScore = 0;
+    var bestHits = [];
     for (var j = 0; j < sellers.length; j++) {
       var s2 = sellers[j];
       var sc2 = scoreSeller(s2, hay);
-      if (sc2 <= 0) continue;
+      if (sc2.score <= 0) continue;
       if (
         !best ||
-        sc2 > bestScore ||
-        (sc2 === bestScore && s2.showcase && !best.showcase)
+        sc2.score > bestScore ||
+        (sc2.score === bestScore && s2.showcase && !best.showcase)
       ) {
         best = s2;
-        bestScore = sc2;
+        bestScore = sc2.score;
+        bestHits = sc2.hits.slice();
       }
     }
     if (!best || bestScore <= 0) return null;
-    return { seller: best, score: bestScore };
+    return { seller: best, score: bestScore, hits: bestHits };
+  }
+
+  function formatHitTokens(hits) {
+    if (!hits || !hits.length) return "";
+    return hits.join("、");
+  }
+
+  function isPendingPoolOrder(o) {
+    if (!o) return false;
+    if (o.status !== STATUS.clarify) return false;
+    var r = o.resident || "";
+    return !r || r === "待匹配";
+  }
+
+  function getPendingPoolOrders() {
+    return getOrders().filter(isPendingPoolOrder);
+  }
+
+  function getFakeSellerIdentity() {
+    var saved = readJson(FAKE_SELLER_KEY, null);
+    if (saved && saved.label) return saved;
+    var regs = getRegs();
+    if (regs.length) {
+      var r = regs[0];
+      return {
+        id: r.id || "reg",
+        name: r.name || "本机登记",
+        label: (r.id ? r.id + " · " : "") + (r.name || "本机登记"),
+        fromReg: true,
+      };
+    }
+    return {
+      id: "local-seller",
+      name: "本机卖方",
+      label: "本机卖方 · 试做",
+      fromReg: false,
+    };
+  }
+
+  function setFakeSellerIdentity(ident) {
+    writeJson(FAKE_SELLER_KEY, ident);
+  }
+
+  function claimPendingOrder(orderId) {
+    var role = getRole();
+    if (role !== "seller") {
+      alert("请切换到卖方身份后再认领试做。");
+      return false;
+    }
+    var list = getOrders();
+    var order = null;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === orderId) {
+        order = list[i];
+        break;
+      }
+    }
+    if (!order || !isPendingPoolOrder(order)) {
+      alert("该单不在待匹配池，或已被认领。");
+      return false;
+    }
+    var ident = getFakeSellerIdentity();
+    order.resident = ident.label;
+    order.claimedBy = ident.label;
+    order.claimedAt = Date.now();
+    order.matchExplain = "认领试做 · " + ident.label;
+    order.matchHits = order.matchHits || [];
+    order.updatedAt = Date.now();
+    writeJson(ORDERS_KEY, list);
+    return true;
   }
 
   function kindLabel(kind) {
@@ -331,6 +410,7 @@
     renderIdentityBar();
     renderTourBanner();
     renderOrdersList();
+    renderPendingPool();
     renderPointsPanel();
     updatePostGate();
   }
@@ -931,8 +1011,8 @@
         order.escrow = "frozen";
       }
       if (!order.resident || order.resident === "待匹配") {
-        /* keep 待匹配; seller must already be matched at post time */
-        if (!order.resident) order.resident = "待匹配";
+        alert("该单仍在待匹配池。请先在「待匹配」列表点「认领试做」，再回应澄清。");
+        return false;
       }
       order.status = STATUS.making;
       order.updatedAt = Date.now();
@@ -1094,6 +1174,9 @@
         (o.reworkCount
           ? '<span class="tag">已返工 ' + o.reworkCount + " 次</span>"
           : "") +
+        (isPendingPoolOrder(o)
+          ? '<span class="tag warn-tag">待匹配池</span>'
+          : "") +
         "</div>" +
         "<h3>" +
         escapeHtml(o.title) +
@@ -1101,6 +1184,9 @@
         '<p class="excerpt">' +
         escapeHtml(o.brief || "") +
         "</p>" +
+        (o.matchExplain
+          ? '<p class="match-explain">' + escapeHtml(o.matchExplain) + "</p>"
+          : "") +
         '<div class="card-foot">' +
         '<span class="points">' +
         escapeHtml(String(o.points)) +
@@ -1116,6 +1202,94 @@
     detectTourAdvanceFromOrders();
   }
 
+  function renderPendingPool() {
+    var root = document.getElementById("pending-pool");
+    var buyerNote = document.getElementById("pending-pool-buyer-note");
+    var role = getRole();
+    var pool = getPendingPoolOrders();
+
+    if (buyerNote) {
+      if (role === "buyer" && pool.length) {
+        buyerNote.classList.remove("hidden");
+        buyerNote.textContent =
+          "有 " +
+          pool.length +
+          " 单未匹配 · 已进入待匹配池（不展示卖方目录）。卖方身份可扫池认领试做。";
+      } else if (role === "buyer") {
+        buyerNote.classList.add("hidden");
+        buyerNote.textContent = "";
+      } else {
+        buyerNote.classList.add("hidden");
+      }
+    }
+
+    if (!root) return;
+    var section = document.getElementById("pending-pool-section");
+    if (role !== "seller") {
+      root.innerHTML = "";
+      if (section) section.classList.add("hidden");
+      return;
+    }
+    if (section) section.classList.remove("hidden");
+    if (!pool.length) {
+      root.innerHTML =
+        '<p class="note">待匹配池为空。未命中域词的新单会出现在这里。</p>';
+      return;
+    }
+    var html = "";
+    for (var i = 0; i < pool.length; i++) {
+      var o = pool[i];
+      html +=
+        '<article class="card order-card pending-card" data-order-id="' +
+        escapeHtml(o.id) +
+        '">' +
+        '<div class="meta">' +
+        '<span class="status-pill status-clarify">待澄清</span>' +
+        '<span class="tag warn-tag">待匹配</span>' +
+        "<span>" +
+        escapeHtml(formatTime(o.createdAt)) +
+        "</span>" +
+        "</div>" +
+        "<h3>" +
+        escapeHtml(o.title) +
+        "</h3>" +
+        '<p class="excerpt">' +
+        escapeHtml(o.brief || "") +
+        "</p>" +
+        '<p class="match-explain">未匹配 · 进入待匹配池（不暴露卖方目录）</p>' +
+        '<div class="card-foot">' +
+        '<span class="points">' +
+        escapeHtml(String(o.points)) +
+        " 点</span>" +
+        '<span class="tag">' +
+        escapeHtml(o.skill || "") +
+        "</span>" +
+        "</div>" +
+        '<div class="order-actions">' +
+        '<button type="button" class="btn btn-primary" data-claim-order="' +
+        escapeHtml(o.id) +
+        '">认领试做</button>' +
+        '<span class="action-hint">绑到本机假身份 / 登记居民，再回应澄清。</span>' +
+        "</div>" +
+        "</article>";
+    }
+    root.innerHTML = html;
+  }
+
+  function wireClaimActions() {
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-claim-order]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-claim-order");
+      if (!id) return;
+      if (claimPendingOrder(id)) {
+        renderOrdersList();
+        renderPendingPool();
+        renderTourBanner();
+      }
+    });
+  }
+
   function wireOrderActions() {
     var root = document.getElementById("orders-list");
     if (!root || root._pjWired) return;
@@ -1128,6 +1302,7 @@
       if (!id || !action) return;
       if (transitionOrder(id, action)) {
         renderOrdersList();
+        renderPendingPool();
         renderPointsPanel();
         renderTourBanner();
       }
@@ -1195,14 +1370,16 @@
       var m = matchSeller({ skill: skill, title: skill, brief: "" });
       if (!m) {
         out.innerHTML =
-          "结果：<strong>待匹配</strong>（0 命中）。演示不会伪造卖方。";
+          "结果：<strong>未匹配 · 进入待匹配池</strong>（0 命中域词）。不展示卖方目录。";
       } else {
         out.innerHTML =
           "结果：会匹配到 <strong>" +
           escapeHtml(m.seller.label) +
-          "</strong>（命中 " +
+          "</strong> · 命中域词：" +
+          escapeHtml(formatHitTokens(m.hits)) +
+          "（" +
           m.score +
-          " 个域词）。";
+          "）。";
       }
       out.classList.remove("hidden");
     });
@@ -1284,6 +1461,142 @@
     });
   }
 
+  /* —— Seller 预登记（意向，非真下单） —— */
+  function getPreregs() {
+    var list = readJson(PREREG_KEY, []);
+    return Array.isArray(list) ? list : [];
+  }
+
+  function savePrereg(item) {
+    var list = getPreregs();
+    list.unshift(item);
+    writeJson(PREREG_KEY, list);
+    return item;
+  }
+
+  function renderPreregList() {
+    var root = document.getElementById("prereg-list");
+    if (!root) return;
+    var list = getPreregs();
+    if (!list.length) {
+      root.innerHTML =
+        '<p class="note">尚无预登记。上方表单写入本机后，会出现在此（标「预登记 · 非真下单」）。</p>';
+      return;
+    }
+    var html = "";
+    for (var i = 0; i < list.length; i++) {
+      var p = list[i];
+      html +=
+        '<article class="card prereg-card" data-prereg-id="' +
+        escapeHtml(p.id) +
+        '">' +
+        '<div class="meta">' +
+        '<span class="tag accent">预登记 · 非真下单</span>' +
+        '<span class="tag">' +
+        escapeHtml(kindLabel(p.kind)) +
+        "</span>" +
+        "<span>" +
+        escapeHtml(formatTime(p.createdAt)) +
+        "</span>" +
+        "</div>" +
+        "<h3>" +
+        escapeHtml(p.capability || "未命名能力") +
+        "</h3>" +
+        '<p class="excerpt">' +
+        escapeHtml(p.boundary || "") +
+        "</p>" +
+        '<div class="card-foot">' +
+        '<span class="tag">' +
+        escapeHtml(p.delivery || "") +
+        "</span>" +
+        (p.pointsRange
+          ? '<span class="points">' + escapeHtml(p.pointsRange) + "</span>"
+          : "") +
+        '<button type="button" class="btn btn-ghost btn-sm" data-copy-prereg="' +
+        escapeHtml(p.id) +
+        '">复制 JSON</button>' +
+        "</div>" +
+        "</article>";
+    }
+    root.innerHTML = html;
+  }
+
+  function wirePreregForm() {
+    var form = document.getElementById("prereg-form");
+    if (!form) return;
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var capability = (document.getElementById("prereg-capability").value || "").trim();
+      var kind = (document.getElementById("prereg-kind").value || "workflow").trim();
+      var boundary = (document.getElementById("prereg-boundary").value || "").trim();
+      var accept = (document.getElementById("prereg-accept").value || "").trim();
+      var delivery = (document.getElementById("prereg-delivery").value || "").trim();
+      var turnaround = (document.getElementById("prereg-turnaround").value || "").trim();
+      var contact = (document.getElementById("prereg-contact").value || "").trim();
+      var pointsRange = (document.getElementById("prereg-points").value || "").trim();
+      var sample = (document.getElementById("prereg-sample").value || "").trim();
+      if (!capability || !boundary || !accept || !delivery || !turnaround) {
+        alert("请至少填写：一句话能力、边界、验收、交付形态、周转。");
+        return;
+      }
+      var acceptLines = accept
+        .split(/\n+/)
+        .map(function (l) { return l.trim(); })
+        .filter(Boolean)
+        .slice(0, 3);
+      var item = {
+        id: uid("pre"),
+        capability: capability,
+        kind: kind,
+        boundary: boundary,
+        accept: acceptLines,
+        delivery: delivery,
+        turnaround: turnaround,
+        contact: contact,
+        pointsRange: pointsRange,
+        sample: sample,
+        label: "预登记 · 非真下单",
+        createdAt: Date.now(),
+      };
+      savePrereg(item);
+      form.reset();
+      renderPreregList();
+      var note = document.getElementById("prereg-ok");
+      if (note) {
+        note.textContent = "已写入本机 localStorage（预登记 · 非真下单 · 积分阶段 · 不碰真钱）。";
+        note.classList.remove("hidden");
+      }
+    });
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-copy-prereg]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-copy-prereg");
+      var list = getPreregs();
+      var found = null;
+      for (var i = 0; i < list.length; i++) {
+        if (list[i].id === id) {
+          found = list[i];
+          break;
+        }
+      }
+      if (!found) return;
+      var text = JSON.stringify(found, null, 2);
+      function ok() {
+        btn.textContent = "已复制";
+        setTimeout(function () {
+          btn.textContent = "复制 JSON";
+        }, 1500);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok).catch(function () {
+          window.prompt("复制以下 JSON", text);
+        });
+      } else {
+        window.prompt("复制以下 JSON", text);
+      }
+    });
+  }
+
   function updatePostGate() {
     var form = document.getElementById("job-form");
     var gate = document.getElementById("post-role-gate");
@@ -1321,12 +1634,16 @@
   renderTourBanner();
   wireTourStart();
   renderOrdersList();
+  renderPendingPool();
   wireOrderActions();
+  wireClaimActions();
   renderRegs();
   renderSellerCatalog();
   loadSellerCatalog();
   wireTryMatch();
   wireRegForm();
+  wirePreregForm();
+  renderPreregList();
   renderPointsPanel();
   updatePostGate();
 
@@ -1462,23 +1779,25 @@
       steps.push({
         delay: 1100,
         step: 2,
-        status: "未匹配到卖方 · 请细化能力域",
+        status: "未匹配 · 进入待匹配池",
         onShow: function () {
           updateOrder(currentOrderId, {
             resident: "待匹配",
             status: STATUS.clarify,
+            matchHits: [],
+            matchExplain: "未匹配 · 进入待匹配池",
           });
         },
         html:
-          '<div class="msg system">按声明技能扫描后<strong>暂无匹配</strong>。订单保持「待澄清」，卖方为「待匹配」。请回到发布页细化<strong>能力域</strong>（例如：发票映射、Nginx 5xx、Changelog 精简），或到 <a href="residents.html">卖方</a> 用「试匹配」自测。积分已冻结，可稍后在订单中申请退回。</div>',
+          '<div class="msg system"><strong>未匹配 · 进入待匹配池</strong>。订单保持「待澄清」。买方侧只见这一条说明——<strong>不展示卖方目录</strong>。可细化能力域后重发，或等待卖方身份在待匹配池「认领试做」。积分已冻结，可稍后在订单中申请退回。</div>',
       });
       steps.push({
         delay: 1400,
         step: 3,
-        status: "等待能力域细化",
+        status: "待匹配池 · 等待认领或细化",
         locked: false,
         html:
-          '<div class="msg system">演示不会伪造卖方。匹配为浏览器端 token 重叠（静态 demo）；真 API 上线前不会托管你的流水线。</div>',
+          '<div class="msg system">演示不会伪造卖方、也不会甩完整目录。域词 0 命中即入池；匹配为浏览器端 token 重叠（静态 demo）。</div>',
       });
       return steps;
     }
@@ -1490,14 +1809,19 @@
       qHtml += "<li>" + escapeHtml(qs[qi]) + "</li>";
     }
 
+    var hitLine = formatHitTokens(matched.hits);
+    var explain =
+      "命中域词：" + (hitLine || "（计分域词）") + "（" + matched.score + "）";
     steps.push({
       delay: 1100,
       step: 2,
-      status: "已匹配卖方，进入私下澄清",
+      status: "已匹配 · " + explain,
       onShow: function () {
         updateOrder(currentOrderId, {
           resident: s.label,
           status: STATUS.clarify,
+          matchHits: matched.hits.slice(),
+          matchExplain: explain,
         });
       },
       html:
@@ -1505,9 +1829,11 @@
         escapeHtml(s.label) +
         "</strong>（" +
         escapeHtml(kindLabel(s.kind)) +
-        " · 命中 " +
+        "）。<br><strong>命中域词：</strong>" +
+        escapeHtml(hitLine) +
+        "（" +
         matched.score +
-        " 个域词）。对话仅订单双方可见。订单已写入本机；积分已冻结。<br>演示下一步：切换到<strong>卖方</strong>，在订单列表点「回应澄清」。</div>",
+        "）。对话仅订单双方可见。订单已写入本机；积分已冻结。<br>演示下一步：切换到<strong>卖方</strong>，在订单列表点「回应澄清」。</div>",
     });
     steps.push({
       delay: 1600,
