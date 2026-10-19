@@ -49,7 +49,7 @@
         顶栏可切换买方 / 卖方身份；「演示走一遍」会带着你走完 下单 → 一轮澄清锁定 → 结果摘要包交付 → 验收。</div>
       <p class="lede" style="margin-top:1rem;font-size:0.95rem" data-i18n="index.agent_note" data-i18n-html>
         买方 AI 接入草案：<a href="docs/agent-api.html" data-i18n="nav.agent">Agent API（mock JSON）</a> — create_job / clarify / accept。
-        卖方有可售物？先 <a href="prereg.html" data-i18n="nav.prereg">预登记意向</a>（免费撮合 · 站外自结 · 知识库不全量上传 · 非真下单）。
+        卖方有可售物？先 <a href="prereg.html" data-i18n="nav.prereg">预登记意向</a>（免费撮合 · 站外自结 · 按单授权数据切片 · 非真下单）。
       </p>
     </section>
 
@@ -90,7 +90,7 @@
         </li>
         <li class="step">
           <h3 data-i18n="index.how.s3.h">一轮澄清，锁定后停答</h3>
-          <p data-i18n="index.how.s3.p">卖方用流水线边界追问一轮；买方只答问题清单，不可追问知识库。锁定后：「需求已锁定 · 卖方停答开放问题，制作中」。</p>
+          <p data-i18n="index.how.s3.p">卖方用流水线边界追问一轮；买方只答问题清单，不做开放闲聊。锁定后：「需求已锁定 · 卖方停答开放问题，制作中」。卖的是步骤与验收，不是把知识库倒进平台。</p>
         </li>
         <li class="step">
           <h3 data-i18n="index.how.s4.h">私有通道交付与验收</h3>

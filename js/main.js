@@ -366,6 +366,13 @@
         href: "orders.html",
         page: "orders",
       },
+      {
+        id: 5,
+        title: tt("tour.step5.title"),
+        hint: tt("tour.step5.hint"),
+        href: "orders.html",
+        page: "orders",
+      },
     ];
   }
   var TOUR_STEPS = getTourSteps();
@@ -542,7 +549,7 @@
     if (!t || typeof t !== "object") return { active: false, step: 1 };
     return {
       active: !!t.active,
-      step: Math.max(1, Math.min(4, Number(t.step) || 1)),
+      step: Math.max(1, Math.min(5, Number(t.step) || 1)),
       done: !!t.done,
     };
   }
@@ -563,10 +570,10 @@
     if (!t.active) return;
     if (toStep > t.step) {
       t.step = toStep;
-      if (toStep > 4) {
+      if (toStep > 5) {
         t.active = false;
         t.done = true;
-        t.step = 4;
+        t.step = 5;
       }
       saveTour(t);
       renderTourBanner();
@@ -574,7 +581,7 @@
   }
 
   function completeTour() {
-    saveTour({ active: false, step: 4, done: true, finishedAt: Date.now() });
+    saveTour({ active: false, step: 5, done: true, finishedAt: Date.now() });
     renderTourBanner();
   }
 
@@ -618,9 +625,11 @@
     var roleTip =
       t.step === 1
         ? tt("tour.keep_buyer")
-        : t.step === 2 || t.step === 3
+        : t.step === 2 || t.step === 4
           ? tt("tour.need_seller")
-          : tt("tour.need_buyer");
+          : t.step === 3
+            ? tt("tour.need_either")
+            : tt("tour.need_buyer");
     bar.innerHTML =
       '<div class="tour-inner">' +
       '<div class="tour-progress">' +
@@ -641,7 +650,7 @@
       '<div class="tour-copy">' +
       "<strong>" +
       escapeHtml(
-        tt("tour.banner", { n: String(t.step) + "/4", title: step.title })
+        tt("tour.banner", { n: String(t.step) + "/5", title: step.title })
       ) +
       "</strong>" +
       "<p>" +
@@ -957,6 +966,11 @@
         resident: "R-07 · 墨线",
         escrow: "released",
         reworkCount: 0,
+        settlementMethod: "wechat",
+        settlementBuyerOk: true,
+        settlementSellerOk: true,
+        settlementAgreed: true,
+        settlementAgreedAt: now - 11 * day,
         createdAt: now - 12 * day,
         updatedAt: now - 10 * day,
       },
@@ -972,6 +986,11 @@
         resident: "R-12 · 夜值",
         escrow: "frozen",
         reworkCount: 0,
+        settlementMethod: "alipay",
+        settlementBuyerOk: true,
+        settlementSellerOk: true,
+        settlementAgreed: true,
+        settlementAgreedAt: now - 2 * day,
         clarifyLocked: true,
         clarifyRound: 1,
         clarifyQuestions: [
@@ -1006,6 +1025,10 @@
         resident: "R-07 · 墨线",
         escrow: "frozen",
         reworkCount: 0,
+        settlementMethod: "",
+        settlementBuyerOk: false,
+        settlementSellerOk: false,
+        settlementAgreed: false,
         clarifyLocked: true,
         clarifyRound: 1,
         clarifyQuestions: [
@@ -1147,10 +1170,10 @@
       html +=
         '<p class="lock-banner">需求已锁定 · 卖方停答开放问题，制作中</p>';
       html +=
-        '<p class="clarify-cap-note">澄清已用满一轮。开放问答关闭；买方不可继续追问知识库。卖方私下制作，稍后提交结果摘要包。</p>';
+        '<p class="clarify-cap-note">澄清已用满一轮。开放问答关闭；买方不做开放闲聊追问。卖方私下制作，稍后提交结果摘要包。</p>';
     } else {
       html +=
-        '<p class="clarify-cap-note">澄清上限：卖方「回应澄清」仅一轮，随后锁定进入制作。买方只答复下方问题清单——<strong>不可继续追问知识库</strong>，也没有开放闲聊。</p>';
+        '<p class="clarify-cap-note">澄清上限：卖方「回应澄清」仅一轮，随后锁定进入制作。买方只答复下方问题清单——只答清单，不做开放闲聊。</p>';
     }
     html += '<p class="clarify-qs-label">卖方问题清单（最多 3 问）</p><ol class="clarify-qs">';
     for (var i = 0; i < qs.length; i++) {
@@ -1180,7 +1203,7 @@
         '<button type="button" class="btn btn-ghost btn-sm" data-save-answers="' +
         escapeHtml(o.id) +
         '">保存答复</button>' +
-        '<span class="action-hint">保存不会打开知识库问答；卖方锁定后停答。</span>' +
+        '<span class="action-hint">保存只记答复；卖方锁定后停答。</span>' +
         "</div>";
     } else if (role === "seller") {
       if (o.buyerAnswers) {
@@ -1282,13 +1305,146 @@
     return html;
   }
 
+
+  var SETTLE_METHODS = ["wechat", "alipay", "other", "intl_tbd"];
+
+  function settleMethodLabel(code) {
+    if (code === "wechat") return tt("settle.method.wechat");
+    if (code === "alipay") return tt("settle.method.alipay");
+    if (code === "other") return tt("settle.method.other");
+    if (code === "intl_tbd") return tt("settle.method.intl");
+    return "—";
+  }
+
+  function normalizeSettlement(o) {
+    if (!o) return o;
+    if (!o.settlementMethod) o.settlementMethod = "";
+    if (typeof o.settlementBuyerOk !== "boolean") o.settlementBuyerOk = false;
+    if (typeof o.settlementSellerOk !== "boolean") o.settlementSellerOk = false;
+    if (typeof o.settlementAgreed !== "boolean") o.settlementAgreed = false;
+    return o;
+  }
+
+  function canMarkSettlement(o) {
+    normalizeSettlement(o);
+    return (
+      !!o.settlementMethod &&
+      SETTLE_METHODS.indexOf(o.settlementMethod) >= 0 &&
+      o.settlementBuyerOk &&
+      o.settlementSellerOk
+    );
+  }
+
+  function renderSettlementBlock(o) {
+    if (!o) return "";
+    normalizeSettlement(o);
+    /* Show once clarify is locked / making / accept / done; hide on pure clarify unlock */
+    var show =
+      o.settlementAgreed ||
+      o.status === STATUS.making ||
+      o.status === STATUS.accept ||
+      o.status === STATUS.done ||
+      (o.status === STATUS.clarify && o.clarifyLocked);
+    if (!show) return "";
+    var role = getRole();
+    var html = '<div class="settle-block" data-settle-order="' + escapeHtml(o.id) + '">';
+    html +=
+      '<p class="settle-title">' + escapeHtml(tt("settle.title")) + "</p>";
+    html +=
+      '<p class="settle-disclaimer">' +
+      escapeHtml(tt("settle.disclaimer")) +
+      "</p>";
+    html +=
+      '<p class="settle-sell">' + escapeHtml(tt("settle.sell")) + "</p>";
+    if (o.settlementAgreed) {
+      html +=
+        '<p class="settle-marked"><strong>' +
+        escapeHtml(tt("settle.marked")) +
+        "</strong> · " +
+        escapeHtml(
+          tt("settle.done_meta", { method: settleMethodLabel(o.settlementMethod) })
+        ) +
+        "</p>";
+      html += "</div>";
+      return html;
+    }
+    html +=
+      '<label class="settle-method-label" for="settle-method-' +
+      escapeHtml(o.id) +
+      '">' +
+      escapeHtml(tt("settle.method")) +
+      "</label>";
+    html +=
+      '<select class="settle-method" id="settle-method-' +
+      escapeHtml(o.id) +
+      '" data-settle-method="' +
+      escapeHtml(o.id) +
+      '">' +
+      '<option value="">' +
+      escapeHtml(tt("settle.method.placeholder")) +
+      "</option>";
+    var opts = [
+      ["wechat", "settle.method.wechat"],
+      ["alipay", "settle.method.alipay"],
+      ["other", "settle.method.other"],
+      ["intl_tbd", "settle.method.intl"],
+    ];
+    for (var i = 0; i < opts.length; i++) {
+      html +=
+        '<option value="' +
+        opts[i][0] +
+        '"' +
+        (o.settlementMethod === opts[i][0] ? " selected" : "") +
+        ">" +
+        escapeHtml(tt(opts[i][1])) +
+        "</option>";
+    }
+    html += "</select>";
+    html +=
+      '<label class="settle-check"><input type="checkbox" data-settle-buyer="' +
+      escapeHtml(o.id) +
+      '"' +
+      (o.settlementBuyerOk ? " checked" : "") +
+      (role !== "buyer" ? " disabled" : "") +
+      "> " +
+      escapeHtml(tt("settle.buyer_ok")) +
+      "</label>";
+    html +=
+      '<label class="settle-check"><input type="checkbox" data-settle-seller="' +
+      escapeHtml(o.id) +
+      '"' +
+      (o.settlementSellerOk ? " checked" : "") +
+      (role !== "seller" ? " disabled" : "") +
+      "> " +
+      escapeHtml(tt("settle.seller_ok")) +
+      "</label>";
+    var can = canMarkSettlement(o);
+    html +=
+      '<div class="btn-row" style="margin-top:0.55rem">' +
+      '<button type="button" class="btn btn-primary btn-sm" data-settle-mark="' +
+      escapeHtml(o.id) +
+      '"' +
+      (can ? "" : " disabled") +
+      ">" +
+      escapeHtml(tt("settle.mark")) +
+      "</button>" +
+      '<span class="action-hint">' +
+      escapeHtml(role === "buyer" ? tt("settle.hint_buyer") : tt("settle.hint_seller")) +
+      "</span></div>";
+    html += "</div>";
+    return html;
+  }
+
   function actionsForStatus(status, role, order) {
     var acts = [];
     if (status === STATUS.clarify && role === "seller") {
       acts.push({ action: "clarify", label: tt("act.clarify"), cls: "btn-primary" });
     }
     if (status === STATUS.making && role === "seller") {
-      acts.push({ action: "deliver", label: tt("act.deliver"), cls: "btn-primary" });
+      normalizeSettlement(order);
+      if (order && order.settlementAgreed) {
+        acts.push({ action: "deliver", label: tt("act.deliver"), cls: "btn-primary" });
+      }
     }
     if (status === STATUS.accept && role === "buyer") {
       acts.push({ action: "approve", label: tt("act.approve"), cls: "btn-primary" });
@@ -1364,9 +1520,41 @@
       return true;
     }
 
+    if (action === "settle_mark") {
+      normalizeSettlement(order);
+      if (order.status !== STATUS.making && order.status !== STATUS.clarify) {
+        return false;
+      }
+      if (!order.clarifyLocked && order.status === STATUS.clarify) {
+        alert(tt("settle.gate_deliver"));
+        return false;
+      }
+      if (!order.settlementMethod) {
+        alert(tt("settle.need_method"));
+        return false;
+      }
+      if (!order.settlementBuyerOk || !order.settlementSellerOk) {
+        alert(tt("settle.need_both"));
+        return false;
+      }
+      order.settlementAgreed = true;
+      order.settlementAgreedAt = Date.now();
+      if (order.status === STATUS.clarify) order.status = STATUS.making;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      var ts = getTour();
+      if (ts.active && ts.step <= 3) advanceTour(4);
+      return true;
+    }
+
     if (action === "deliver" && order.status === STATUS.making) {
       if (role !== "seller") {
         alert("请切换到卖方身份后再提交交付。");
+        return false;
+      }
+      normalizeSettlement(order);
+      if (!order.settlementAgreed) {
+        alert(tt("settle.gate_deliver"));
         return false;
       }
       /* open structured result-package form instead of open chat */
@@ -1388,6 +1576,11 @@
         alert("请切换到卖方身份后再提交交付。");
         return false;
       }
+      normalizeSettlement(order);
+      if (!order.settlementAgreed) {
+        alert(tt("settle.gate_deliver"));
+        return false;
+      }
       var pack = order._pendingPackage;
       if (!pack || !pack.summary || !pack.artifacts || !pack.acceptCheck) {
         alert("请填写结果摘要包：交付摘要、产物清单、验收对照（均为必填）。");
@@ -1407,7 +1600,7 @@
       writeJson(ORDERS_KEY, list);
       apiNotify("deliver", order.id, { result_package: order.resultPackage });
       var t2 = getTour();
-      if (t2.active && t2.step <= 3) advanceTour(4);
+      if (t2.active && t2.step <= 4) advanceTour(5);
       return true;
     }
 
@@ -1493,10 +1686,25 @@
     if (!acts.length) {
       if (o.status === STATUS.clarify && role === "buyer") {
         html +=
-          '<span class="action-hint">请答复上方问题清单并等待卖方「回应澄清」锁定。不可继续追问知识库。</span>';
+          '<span class="action-hint">请答复上方问题清单并等待卖方「回应澄清」锁定。只答清单，不做开放闲聊。</span>';
       } else if (o.status === STATUS.making && role === "buyer") {
+        normalizeSettlement(o);
         html +=
-          '<span class="action-hint">需求已锁定 · 卖方停答开放问题，制作中。7 日未交付可退回。</span>';
+          '<span class="action-hint">' +
+          escapeHtml(
+            o.settlementAgreed
+              ? "需求已锁定 · 站外结算已约定 · 制作中。"
+              : tt("settle.hint_buyer")
+          ) +
+          "</span>";
+      } else if (o.status === STATUS.making && role === "seller") {
+        normalizeSettlement(o);
+        if (!o.settlementAgreed) {
+          html +=
+            '<span class="action-hint">' +
+            escapeHtml(tt("settle.gate_deliver")) +
+            "</span>";
+        }
       } else if (o.status === STATUS.accept && role === "seller") {
         html +=
           '<span class="action-hint">结果摘要包已交 · 待买方验收。请切换到买方。</span>';
@@ -1530,10 +1738,9 @@
     var list = getOrders();
     var roleEl = document.getElementById("orders-role-hint");
     if (roleEl) {
-      roleEl.textContent =
-        "当前身份：" +
-        roleLabel(getRole()) +
-        "。买方：答复澄清清单 / 验收结果包；卖方：一轮澄清锁定 / 提交结果摘要包。";
+      roleEl.textContent = tt("orders.role_hint", {
+        role: roleLabel(getRole()),
+      });
     }
     if (!list.length) {
       root.innerHTML =
@@ -1584,6 +1791,7 @@
         "</span>" +
         "</div>" +
         renderClarifyBlock(o) +
+        renderSettlementBlock(o) +
         renderResultPackageBlock(o) +
         renderDeliverForm(o) +
         renderOrderActions(o) +
@@ -1685,7 +1893,76 @@
     var root = document.getElementById("orders-list");
     if (!root || root._pjWired) return;
     root._pjWired = true;
+    root.addEventListener("change", function (e) {
+      var methodEl = e.target.closest("[data-settle-method]");
+      if (methodEl) {
+        var oid = methodEl.getAttribute("data-settle-method");
+        var listM = getOrders();
+        for (var mi = 0; mi < listM.length; mi++) {
+          if (listM[mi].id === oid) {
+            normalizeSettlement(listM[mi]);
+            if (listM[mi].settlementAgreed) return;
+            listM[mi].settlementMethod = methodEl.value || "";
+            listM[mi].updatedAt = Date.now();
+            writeJson(ORDERS_KEY, listM);
+            break;
+          }
+        }
+        renderOrdersList();
+        return;
+      }
+      var buyerCb = e.target.closest("[data-settle-buyer]");
+      if (buyerCb) {
+        if (getRole() !== "buyer") return;
+        var bid = buyerCb.getAttribute("data-settle-buyer");
+        var listB = getOrders();
+        for (var bi = 0; bi < listB.length; bi++) {
+          if (listB[bi].id === bid) {
+            normalizeSettlement(listB[bi]);
+            if (listB[bi].settlementAgreed) return;
+            listB[bi].settlementBuyerOk = !!buyerCb.checked;
+            listB[bi].updatedAt = Date.now();
+            writeJson(ORDERS_KEY, listB);
+            break;
+          }
+        }
+        renderOrdersList();
+        return;
+      }
+      var sellerCb = e.target.closest("[data-settle-seller]");
+      if (sellerCb) {
+        if (getRole() !== "seller") return;
+        var sid2 = sellerCb.getAttribute("data-settle-seller");
+        var listS = getOrders();
+        for (var si = 0; si < listS.length; si++) {
+          if (listS[si].id === sid2) {
+            normalizeSettlement(listS[si]);
+            if (listS[si].settlementAgreed) return;
+            listS[si].settlementSellerOk = !!sellerCb.checked;
+            listS[si].updatedAt = Date.now();
+            writeJson(ORDERS_KEY, listS);
+            break;
+          }
+        }
+        renderOrdersList();
+        return;
+      }
+    });
     root.addEventListener("click", function (e) {
+
+      var methodSel = e.target.closest("[data-settle-method]");
+      if (methodSel) return; /* change handled separately */
+      var markBtn = e.target.closest("[data-settle-mark]");
+      if (markBtn) {
+        var mid = markBtn.getAttribute("data-settle-mark");
+        if (mid && transitionOrder(mid, "settle_mark")) {
+          renderOrdersList();
+          renderPendingPool();
+          renderTourBanner();
+        }
+        return;
+      }
+
       var saveBtn = e.target.closest("[data-save-answers]");
       if (saveBtn) {
         var sid = saveBtn.getAttribute("data-save-answers");
@@ -1699,7 +1976,7 @@
         for (var i = 0; i < list.length; i++) {
           if (list[i].id === sid) {
             if (isClarifyLocked(list[i]) || list[i].status !== STATUS.clarify) {
-              alert("需求已锁定，不能再改答复或追问知识库。");
+              alert("需求已锁定，不能再改答复或开放追问。");
               return;
             }
             list[i].buyerAnswers = (ta.value || "").trim();
@@ -2000,7 +2277,7 @@
       renderPreregList();
       var note = document.getElementById("prereg-ok");
       if (note) {
-        note.textContent = "已写入本机 localStorage（预登记 · 非真下单 · 积分阶段 · 不碰真钱）。";
+        note.textContent = "已写入本机 localStorage（预登记 · 非真下单 · 免费撮合 · 站外自结）。";
         note.classList.remove("hidden");
       }
     });
@@ -2194,6 +2471,10 @@
       resident: "",
       escrow: "frozen",
       reworkCount: 0,
+      settlementMethod: "",
+      settlementBuyerOk: false,
+      settlementSellerOk: false,
+      settlementAgreed: false,
       createdAt: now,
       updatedAt: now,
     };
@@ -2318,7 +2599,7 @@
         escapeHtml(hitLine) +
         "（" +
         matched.score +
-        "）。澄清仅订单双方可见，且<strong>限一轮</strong>——不开放知识库追问。订单记录已写入本机；平台不托管资金，结算站外自结。<br>演示下一步：到订单答复问题清单，再切<strong>卖方</strong>点「回应澄清」锁定。</div>",
+        "）。澄清仅订单双方可见，且<strong>限一轮</strong>——不做开放闲聊追问。订单记录已写入本机；平台不托管资金，结算站外自结。卖步骤/通道/切片，不是倒知识库。<br>演示下一步：到订单答复问题清单，再切<strong>卖方</strong>点「回应澄清」锁定。</div>",
     });
     steps.push({
       delay: 1600,
@@ -2343,7 +2624,7 @@
       status: "澄清预览结束 · 请到订单页由卖方锁定",
       locked: false,
       html:
-        '<div class="msg system">以上为澄清预览（买方答复区示意）。订单仍为「待澄清」。买方只答问题清单，<strong>不可继续追问知识库</strong>。请切<strong>卖方</strong>在 <a href="orders.html">订单</a> 点「回应澄清」——一轮后锁定：「需求已锁定 · 卖方停答开放问题，制作中」。交付须交<strong>结果摘要包</strong>。<br>演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</div>',
+        '<div class="msg system">以上为澄清预览（买方答复区示意）。订单仍为「待澄清」。买方只答问题清单，<strong>只答清单</strong>。请切<strong>卖方</strong>在 <a href="orders.html">订单</a> 点「回应澄清」——一轮后锁定：「需求已锁定 · 卖方停答开放问题，制作中」。交付须交<strong>结果摘要包</strong>。<br>演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</div>',
     });
     return steps;
   }

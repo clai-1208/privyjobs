@@ -1238,3 +1238,56 @@ textarea { min-height: 8rem; resize: vertical; }
   .lang-toggle { margin-left: 0; }
   .site-header .inner { flex-wrap: wrap; }
 }
+
+
+/* —— Off-platform settlement (P0.3) —— */
+.settle-block {
+  margin-top: 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  background: var(--accent-soft);
+  border-radius: var(--radius);
+}
+.settle-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0 0 0.35rem;
+}
+.settle-disclaimer,
+.settle-sell {
+  font-size: 0.82rem;
+  color: var(--ink-muted);
+  margin: 0.25rem 0;
+  max-width: 40em;
+}
+.settle-marked {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: var(--ok);
+}
+.settle-method-label {
+  display: block;
+  margin: 0.55rem 0 0.25rem;
+  font-size: 0.85rem;
+}
+.settle-method {
+  width: 100%;
+  max-width: 16rem;
+  font: inherit;
+  font-size: 0.88rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid var(--line-strong);
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+}
+.settle-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.45rem;
+  margin: 0.45rem 0;
+  font-size: 0.86rem;
+  cursor: pointer;
+}
+.settle-check input {
+  margin-top: 0.2rem;
+}

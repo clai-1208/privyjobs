@@ -192,7 +192,7 @@ async function handleClarify(id, request, store) {
   const body = (await readBody(request)) || {};
 
   if (job.clarify_locked) {
-    return err(409, "clarify_locked", "澄清已锁定，不可再追问知识库", {
+    return err(409, "clarify_locked", "澄清已锁定，不做开放闲聊追问", {
       clarify_cap: {
         max_rounds: MAX_CLARIFY_ROUNDS,
         rounds_used: job.clarify_round || MAX_CLARIFY_ROUNDS,
@@ -251,7 +251,7 @@ async function handleClarify(id, request, store) {
         clarify_locked_at: job.clarify_locked_at,
       },
       next: {
-        hint: "澄清已用满一轮；其后仅 deliver（结果摘要包），不可再追问知识库。",
+        hint: "澄清已用满一轮；其后仅 deliver（结果摘要包），不做开放闲聊追问。",
         related: ["deliver", "get_job"],
       },
     });

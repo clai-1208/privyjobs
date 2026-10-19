@@ -31,7 +31,7 @@
     <h1 data-i18n="prereg.h1">卖方预登记</h1>
     <p class="lede" data-i18n="prereg.lede" data-i18n-html>
       收集可售工作流 / 通道 / 数据的<strong>意向</strong>，不是真下单撮合。
-      资料仅存本机浏览器；当前为<strong>免费撮合 · 站外自结 · 平台不托管资金</strong>；知识库<strong>不全量上传</strong>到平台。
+      资料仅存本机浏览器；当前为<strong>免费撮合 · 站外自结 · 平台不托管资金</strong>；卖可重复步骤、私有通道与按单数据切片——不全库倒进平台。
     </p>
     <div class="demo-rules">
       标签一律「预登记 · 非真下单」。等后端后再做跨设备订单记录 / 私有交付状态机。合格标准：自己跑通 ≥3 次的可售物，边界与验收写清。结算始终站外自结。
@@ -54,7 +54,7 @@
 
         <label for="prereg-boundary">边界 <span class="hint">接什么、不接什么</span></label>
         <textarea id="prereg-boundary" name="boundary" required maxlength="600"
-          placeholder="例如：接 CSV/JSON；拒接无样例验收、要求全库上传的单。"></textarea>
+          placeholder="例如：接 CSV/JSON；拒接无样例验收、要求全库倒进平台的单。"></textarea>
 
         <label for="prereg-accept">验收标准 <span class="hint">最多 3 条，一行一条</span></label>
         <textarea id="prereg-accept" name="accept" required maxlength="400" rows="3"
@@ -78,7 +78,7 @@
 
         <label for="prereg-sample">脱敏样例 <span class="hint">文本即可，演示用</span></label>
         <textarea id="prereg-sample" name="sample" maxlength="2000"
-          placeholder="粘贴一小段脱敏输入/输出，或说明样例放在哪里。全库不要上传。"></textarea>
+          placeholder="粘贴一小段脱敏输入/输出，或说明样例放在哪里。全库不要倒进平台；按单授权切片即可。"></textarea>
 
         <div class="btn-row" style="margin-top:1.25rem">
           <button type="submit" class="btn btn-primary" data-i18n="prereg.submit">写入本机预登记</button>
@@ -86,7 +86,7 @@
         </div>
         <p id="prereg-ok" class="note hidden" style="margin-top:1rem"></p>
         <p style="font-size:0.8rem;color:var(--ink-faint);margin-top:0.85rem">
-          提交后可在下方列表「复制 JSON」。免费撮合 · 站外自结 · 知识库不全量上传。
+          提交后可在下方列表「复制 JSON」。免费撮合 · 站外自结 · 按单授权切片。
         </p>
       </form>
     </section>

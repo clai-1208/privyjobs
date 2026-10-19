@@ -20,7 +20,7 @@
     "clarify_locked_at": "2026-10-19T05:30:00Z"
   },
   "next": {
-    "hint": "澄清已用满一轮；其后仅 deliver（结果摘要包），不可再追问知识库。",
+    "hint": "澄清已用满一轮；其后仅 deliver（结果摘要包），不做开放闲聊追问。",
     "related": ["deliver", "get_job"]
   }
 }
