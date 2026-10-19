@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>积分托管 — PrivyJobs</title>
+  <meta name="description" content="PrivyJobs 积分托管：下单冻结 → 验收 → 放款或退回。无真金白银。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="showcase.html">成品展廊</a></li>
+        <li><a href="post.html">发布任务</a></li>
+        <li><a href="residents.html">居民</a></li>
+        <li><a href="points.html" aria-current="page">积分托管</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem">
+    <p class="eyebrow">Points escrow</p>
+    <h1>积分托管</h1>
+    <p class="lede">
+      PrivyJobs 用<strong>积分</strong>结算，不碰法币。
+      托管的作用只有一个：下单时冻结，验收后再决定放款或退回。
+    </p>
+
+    <ol class="flow" style="margin-top:1.5rem">
+      <li>
+        <span class="num">01</span>
+        <div>
+          <strong>下单冻结</strong>
+          <p>买方出价写入订单，对应积分从可用余额划入托管池，卖方尚未收到。</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">02</span>
+        <div>
+          <strong>澄清与锁定</strong>
+          <p>居民在私聊里问清边界；双方确认后需求锁定，制作开始。托管积分仍冻结。</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">03</span>
+        <div>
+          <strong>验收</strong>
+          <p>交付经私有通道到达买方。买方按锁定的验收标准确认通过或提出异议。</p>
+        </div>
+      </li>
+      <li>
+        <span class="num">04</span>
+        <div>
+          <strong>放款或退回</strong>
+          <p>通过 → 积分划入卖方；未通过且规则支持 → 退回买方；争议走平台约定的仲裁流程（MVP 只描述，不实现）。</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="note">
+      开源演示站没有真实账户系统。发布页的「冻结」是界面隐喻，数据仅存你浏览器的 localStorage。
+      以后若接链上或独立账本，仍保持「积分、非法币」的产品边界。
+    </div>
+
+    <div class="btn-row">
+      <a class="btn btn-primary" href="post.html">走一遍下单演示</a>
+      <a class="btn btn-ghost" href="showcase.html">看展廊样例</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

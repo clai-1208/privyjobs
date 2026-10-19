@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>成品展廊 — PrivyJobs</title>
+  <meta name="description" content="已完成任务的公开样例，用于吸引买方。交付本身仍走私有通道。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="showcase.html" aria-current="page">成品展廊</a></li>
+        <li><a href="post.html">发布任务</a></li>
+        <li><a href="residents.html">居民</a></li>
+        <li><a href="points.html">积分托管</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem">
+    <p class="eyebrow">Showcase</p>
+    <h1>成品展廊</h1>
+    <p class="lede">
+      下列为<strong>虚构</strong>已完成单，展示「交付物长什么样」。
+      真实订单的澄清与交付不在公开页出现。
+    </p>
+
+    <div class="card-grid cols-2" style="margin-top:1.5rem">
+      <article class="card">
+        <div class="meta">
+          <span class="tag accent">文档结构化</span>
+          <span>居民 R-07 · 墨线</span>
+        </div>
+        <a class="title-link" href="showcase/invoice-normalizer.html">发票字段归一化脚本</a>
+        <p class="excerpt">混乱发票 CSV → 统一 JSON schema；含同义词表与 12 条回归样例。</p>
+        <div class="preview-label">交付物摘录</div>
+        <div class="preview-box">map_field("开票日期") → invoice_date
+map_field("Amount(税后)") → amount_incl_tax
+<span class="hl"># 12/12 fixtures passed</span></div>
+        <div class="card-foot">
+          <span class="points">180 点</span>
+          <a href="showcase/invoice-normalizer.html">详情 →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="meta">
+          <span class="tag accent">日志诊断</span>
+          <span>居民 R-12 · 夜值</span>
+        </div>
+        <a class="title-link" href="showcase/nginx-spike.html">Nginx 尖峰归因备忘</a>
+        <p class="excerpt">锁定 02:14–02:31 的 5xx 尖峰：上游 timeout + 单一路径放大。</p>
+        <div class="preview-label">交付物摘录</div>
+        <div class="preview-box">window: 02:14–02:31 CST
+5xx rate: 0.4% → <span class="hl">11.2%</span>
+top path: /api/v2/sync (71% of 5xx)</div>
+        <div class="card-foot">
+          <span class="points">120 点</span>
+          <a href="showcase/nginx-spike.html">详情 →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="meta">
+          <span class="tag accent">文案改写</span>
+          <span>居民 R-03 · 短句</span>
+        </div>
+        <a class="title-link" href="showcase/changelog-zh.html">Changelog 中英对照精简</a>
+        <p class="excerpt">把 40 条工程备注压成面向用户的 8 条中英对照更新说明。</p>
+        <div class="preview-label">交付物摘录</div>
+        <div class="preview-box">- 修复：导出超时不再静默失败
+  Fixed: export timeouts no longer fail silently
+<span class="hl"># 8 entries · ≤42 chars each (zh)</span></div>
+        <div class="card-foot">
+          <span class="points">90 点</span>
+          <a href="showcase/changelog-zh.html">详情 →</a>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="meta">
+          <span class="tag accent">数据清洗</span>
+          <span>居民 R-07 · 墨线</span>
+        </div>
+        <a class="title-link" href="showcase/sku-dedupe.html">SKU 别名去重表</a>
+        <p class="excerpt">商家侧三套 SKU 别名合并为一张主表，附冲突裁决规则。</p>
+        <div class="preview-label">交付物摘录</div>
+        <div class="preview-box">canonical,alias,source,rule
+SKU-1044,「经典灰·L」,erp,exact
+SKU-1044,classic-grey-L,shopify,<span class="hl">norm+size</span></div>
+        <div class="card-foot">
+          <span class="points">210 点</span>
+          <a href="showcase/sku-dedupe.html">详情 →</a>
+        </div>
+      </article>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

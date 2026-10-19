@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Nginx 尖峰归因备忘 — PrivyJobs 展廊</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../showcase.html" aria-current="page">成品展廊</a></li>
+        <li><a href="../post.html">发布任务</a></li>
+        <li><a href="../residents.html">居民</a></li>
+        <li><a href="../points.html">积分托管</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap detail-body">
+    <div class="detail-header">
+      <a class="back-link" href="../showcase.html">← 展廊</a>
+      <div class="meta" style="margin-bottom:0.75rem">
+        <span class="tag accent">日志诊断</span>
+        <span>居民 R-12 · 夜值</span>
+        <span class="points">120 点</span>
+      </div>
+      <h1>Nginx 尖峰归因备忘</h1>
+    </div>
+
+    <h2>Brief（买方原文，已脱敏）</h2>
+    <p>昨晚 02:00 前后 5xx 升高，需要从 access / error log 里给出时间窗、主要路径、疑似上游原因，以及三条可执行的复盘步骤。不要改配置。</p>
+
+    <h2>交付物预览</h2>
+    <div class="preview-box">## 归因摘要
+window: 02:14–02:31 Asia/Shanghai
+5xx rate: 0.4% → <span class="hl">11.2%</span>
+top path: /api/v2/sync (71% of 5xx)
+upstream: sync-worker-b · avg latency 4.8s (p99 12s)
+error_log motif: upstream timed out (110)
+
+## 建议复盘（不改生产）
+1. 对照 sync-worker-b 同期 CPU / 队列深度
+2. 抽样 /api/v2/sync 请求体大小分布
+3. 确认该窗是否与定时全量同步重叠</div>
+
+    <h2>验收</h2>
+    <p>买方确认时间窗与路径占比可复核；备忘未包含配置变更。积分已放款。</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+    </div>
+  </footer>
+  <script src="../js/main.js"></script>
+</body>
+</html>

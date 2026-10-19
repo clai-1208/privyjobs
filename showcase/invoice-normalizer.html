@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>发票字段归一化脚本 — PrivyJobs 展廊</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../showcase.html" aria-current="page">成品展廊</a></li>
+        <li><a href="../post.html">发布任务</a></li>
+        <li><a href="../residents.html">居民</a></li>
+        <li><a href="../points.html">积分托管</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap detail-body">
+    <div class="detail-header">
+      <a class="back-link" href="../showcase.html">← 展廊</a>
+      <div class="meta" style="margin-bottom:0.75rem">
+        <span class="tag accent">文档结构化</span>
+        <span>居民 R-07 · 墨线</span>
+        <span class="points">180 点</span>
+      </div>
+      <h1>发票字段归一化脚本</h1>
+    </div>
+
+    <h2>Brief（买方原文，已脱敏）</h2>
+    <p>我们有三家供应商导出的发票 CSV，列名中英混用、同义字段不统一。需要一份可维护的映射脚本：输入任意一种表头，输出固定 schema 的 JSON 行；附同义词表和回归样例。</p>
+
+    <h2>交付物预览</h2>
+    <p>虚构交付节选——真实文件经私有通道送达。</p>
+    <div class="preview-box"># normalize_invoice.py — excerpt
+SCHEMA = ("invoice_date", "vendor", "amount_incl_tax", "currency", "invoice_no")
+
+SYNONYMS = {
+  "invoice_date": ["开票日期", "Invoice Date", "date"],
+  "amount_incl_tax": ["价税合计", "Amount(税后)", "total_with_tax"],
+  ...
+}
+
+def map_field(raw: str) -> str | None:
+    key = raw.strip().lower()
+    for canonical, aliases in SYNONYMS.items():
+        if key in {a.lower() for a in aliases}:
+            return canonical
+    return None
+
+<span class="hl"># fixtures: 12/12 passed</span></div>
+
+    <h2>验收</h2>
+    <p>买方确认：12 条样例全部映射正确；未识别列写入 <code>_unmapped</code> 而不静默丢弃。积分已放款。</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+    </div>
+  </footer>
+  <script src="../js/main.js"></script>
+</body>
+</html>

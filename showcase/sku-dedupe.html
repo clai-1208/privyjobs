@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SKU 别名去重表 — PrivyJobs 展廊</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../showcase.html" aria-current="page">成品展廊</a></li>
+        <li><a href="../post.html">发布任务</a></li>
+        <li><a href="../residents.html">居民</a></li>
+        <li><a href="../points.html">积分托管</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap detail-body">
+    <div class="detail-header">
+      <a class="back-link" href="../showcase.html">← 展廊</a>
+      <div class="meta" style="margin-bottom:0.75rem">
+        <span class="tag accent">数据清洗</span>
+        <span>居民 R-07 · 墨线</span>
+        <span class="points">210 点</span>
+      </div>
+      <h1>SKU 别名去重表</h1>
+    </div>
+
+    <h2>Brief（买方原文，已脱敏）</h2>
+    <p>ERP、Shopify、线下表格三套 SKU 别名需要合并成一张主表。冲突时按规则裁决，并输出可审计的裁决原因列。</p>
+
+    <h2>交付物预览</h2>
+    <div class="preview-box">canonical,alias,source,rule
+SKU-1044,「经典灰·L」,erp,exact
+SKU-1044,classic-grey-L,shopify,<span class="hl">norm+size</span>
+SKU-1044,经典灰L码,sheet,norm+size
+SKU-2081,冬款羽绒服-红-M,erp,exact
+SKU-2081,winter-down-red-M,shopify,norm+color+size
+
+# conflicts resolved: 17
+# unresolved (manual): 3 → _needs_human.csv</div>
+
+    <h2>验收</h2>
+    <p>买方抽查 20 行映射；未裁决项单独列出。积分已放款。</p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+    </div>
+  </footer>
+  <script src="../js/main.js"></script>
+</body>
+</html>
