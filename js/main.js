@@ -4,12 +4,15 @@
   var ORDERS_KEY = "privyjobs_orders";
   var REGS_KEY = "privyjobs_registrations";
   var LAST_JOB_KEY = "privyjobs_last_job";
+  var ACCOUNT_KEY = "privyjobs_points_account";
+  var LEDGER_KEY = "privyjobs_points_ledger";
 
   var STATUS = {
     clarify: "待澄清",
     making: "制作中",
     accept: "待验收",
     done: "已完成",
+    returned: "已退回",
   };
 
   /* —— Shared helpers —— */
@@ -69,7 +72,218 @@
     if (status === STATUS.done) return "status-done";
     if (status === STATUS.accept) return "status-accept";
     if (status === STATUS.making) return "status-making";
+    if (status === STATUS.returned) return "status-returned";
     return "status-clarify";
+  }
+
+  /* —— Points account + ledger —— */
+  function getAccount() {
+    var acc = readJson(ACCOUNT_KEY, null);
+    if (acc && typeof acc.balance === "number" && typeof acc.frozen === "number") {
+      return acc;
+    }
+    return seedAccount();
+  }
+
+  function saveAccount(acc) {
+    writeJson(ACCOUNT_KEY, {
+      balance: Math.max(0, Math.round(acc.balance)),
+      frozen: Math.max(0, Math.round(acc.frozen)),
+    });
+  }
+
+  function getLedger() {
+    var list = readJson(LEDGER_KEY, null);
+    if (list && Array.isArray(list) && list.length) return list;
+    return [];
+  }
+
+  function saveLedger(list) {
+    writeJson(LEDGER_KEY, list);
+  }
+
+  function appendLedger(entry) {
+    var list = getLedger();
+    list.unshift(entry);
+    if (list.length > 80) list = list.slice(0, 80);
+    saveLedger(list);
+    return entry;
+  }
+
+  function seedAccount() {
+    /* Align with seed orders: done released; others still frozen */
+    var now = Date.now();
+    var day = 86400000;
+    var starting = 1000;
+    var frozenSeed = 120 + 210 + 90; /* accept + making + clarify */
+    var released = 180; /* done seed */
+    var balance = starting - frozenSeed - released;
+    var ledger = [
+      {
+        id: "led-seed-04",
+        ts: now - 2 * 3600000,
+        type: "freeze",
+        amount: -90,
+        note: "下单冻结 · Changelog 工程备注 → 用户短句",
+        orderId: "ord-seed-04",
+      },
+      {
+        id: "led-seed-03",
+        ts: now - 1 * day,
+        type: "freeze",
+        amount: -210,
+        note: "下单冻结 · SKU 三源别名合并主表",
+        orderId: "ord-seed-03",
+      },
+      {
+        id: "led-seed-02",
+        ts: now - 3 * day,
+        type: "freeze",
+        amount: -120,
+        note: "下单冻结 · 夜班 5xx 尖峰归因备忘",
+        orderId: "ord-seed-02",
+      },
+      {
+        id: "led-seed-01b",
+        ts: now - 10 * day,
+        type: "release",
+        amount: 0,
+        note: "验收放款 · 三家供应商发票 CSV → 统一 schema（托管 180 点划入卖方）",
+        orderId: "ord-seed-01",
+      },
+      {
+        id: "led-seed-01a",
+        ts: now - 12 * day,
+        type: "freeze",
+        amount: -180,
+        note: "下单冻结 · 三家供应商发票 CSV → 统一 schema",
+        orderId: "ord-seed-01",
+      },
+      {
+        id: "led-seed-open",
+        ts: now - 20 * day,
+        type: "credit",
+        amount: starting,
+        note: "演示开户赠点",
+        orderId: null,
+      },
+    ];
+    writeJson(ACCOUNT_KEY, { balance: balance, frozen: frozenSeed });
+    writeJson(LEDGER_KEY, ledger);
+    return { balance: balance, frozen: frozenSeed };
+  }
+
+  function freezePoints(points, orderId, title) {
+    var acc = getAccount();
+    var n = Math.round(Number(points) || 0);
+    if (n <= 0) return false;
+    if (acc.balance < n) {
+      alert("余额不足，无法冻结 " + n + " 点（当前余额 " + acc.balance + "）。");
+      return false;
+    }
+    acc.balance -= n;
+    acc.frozen += n;
+    saveAccount(acc);
+    appendLedger({
+      id: uid("led"),
+      ts: Date.now(),
+      type: "freeze",
+      amount: -n,
+      note: "下单冻结 · " + (title || orderId || ""),
+      orderId: orderId || null,
+    });
+    return true;
+  }
+
+  function releaseToSeller(points, orderId, title) {
+    var acc = getAccount();
+    var n = Math.round(Number(points) || 0);
+    if (n <= 0) return false;
+    if (acc.frozen < n) n = acc.frozen;
+    acc.frozen -= n;
+    saveAccount(acc);
+    appendLedger({
+      id: uid("led"),
+      ts: Date.now(),
+      type: "release",
+      amount: 0,
+      note:
+        "验收放款 · " +
+        (title || "") +
+        "（托管 " +
+        n +
+        " 点划入卖方）",
+      orderId: orderId || null,
+    });
+    return true;
+  }
+
+  function refundToBuyer(points, orderId, title) {
+    var acc = getAccount();
+    var n = Math.round(Number(points) || 0);
+    if (n <= 0) return false;
+    if (acc.frozen < n) n = acc.frozen;
+    acc.frozen -= n;
+    acc.balance += n;
+    saveAccount(acc);
+    appendLedger({
+      id: uid("led"),
+      ts: Date.now(),
+      type: "refund",
+      amount: n,
+      note: "申请退回 · " + (title || "") + "（解冻 " + n + " 点）",
+      orderId: orderId || null,
+    });
+    return true;
+  }
+
+  function renderPointsPanel() {
+    var balEl = document.getElementById("pts-balance");
+    var froEl = document.getElementById("pts-frozen");
+    var ledEl = document.getElementById("pts-ledger");
+    if (!balEl && !froEl && !ledEl) return;
+    var acc = getAccount();
+    if (balEl) balEl.textContent = String(acc.balance) + " 点";
+    if (froEl) froEl.textContent = String(acc.frozen) + " 点";
+    if (!ledEl) return;
+    var list = getLedger();
+    if (!list.length) {
+      ledEl.innerHTML = '<p class="ledger-empty">暂无流水。发布或操作订单后会出现。</p>';
+      return;
+    }
+    var html = "";
+    var max = Math.min(list.length, 20);
+    for (var i = 0; i < max; i++) {
+      var e = list[i];
+      var amtClass = "neutral";
+      var amtText = "—";
+      if (e.type === "freeze") {
+        amtClass = "debit";
+        amtText = String(e.amount) + " 点";
+      } else if (e.type === "refund" || e.type === "credit") {
+        amtClass = "credit";
+        amtText = (e.amount > 0 ? "+" : "") + String(e.amount) + " 点";
+      } else if (e.type === "release") {
+        amtClass = "neutral";
+        amtText = "放款";
+      }
+      html +=
+        '<div class="ledger-row">' +
+        "<div>" +
+        escapeHtml(e.note || e.type) +
+        "</div>" +
+        '<div class="ledger-amt ' +
+        amtClass +
+        '">' +
+        escapeHtml(amtText) +
+        "</div>" +
+        '<div class="ledger-meta">' +
+        escapeHtml(formatTime(e.ts)) +
+        (e.orderId ? " · " + escapeHtml(e.orderId) : "") +
+        "</div>" +
+        "</div>";
+    }
+    ledEl.innerHTML = html;
   }
 
   /* —— Orders —— */
@@ -89,6 +303,7 @@
         channel: "私有通道 zip + README",
         status: STATUS.done,
         resident: "R-07 · 墨线",
+        escrow: "released",
         createdAt: now - 12 * day,
         updatedAt: now - 10 * day,
       },
@@ -102,6 +317,7 @@
         channel: "私有通道 Markdown",
         status: STATUS.accept,
         resident: "R-12 · 夜值",
+        escrow: "frozen",
         createdAt: now - 3 * day,
         updatedAt: now - 1 * day,
       },
@@ -115,6 +331,7 @@
         channel: "私有通道 CSV 包",
         status: STATUS.making,
         resident: "R-07 · 墨线",
+        escrow: "frozen",
         createdAt: now - 1 * day,
         updatedAt: now - 6 * 3600000,
       },
@@ -128,11 +345,13 @@
         channel: "私有通道交付",
         status: STATUS.clarify,
         resident: "R-03 · 短句",
+        escrow: "frozen",
         createdAt: now - 2 * 3600000,
         updatedAt: now - 2 * 3600000,
       },
     ];
     writeJson(ORDERS_KEY, seeded);
+    getAccount(); /* ensure ledger seeded in sync */
     return seeded;
   }
 
@@ -164,6 +383,98 @@
     return null;
   }
 
+  function actionsForStatus(status) {
+    if (status === STATUS.clarify) {
+      return [{ action: "clarify", label: "进入澄清", cls: "btn-primary" }];
+    }
+    if (status === STATUS.making) {
+      return [{ action: "deliver", label: "提交交付", cls: "btn-primary" }];
+    }
+    if (status === STATUS.accept) {
+      return [
+        { action: "approve", label: "验收通过", cls: "btn-primary" },
+        { action: "refund", label: "申请退回", cls: "btn-danger" },
+      ];
+    }
+    return [];
+  }
+
+  function transitionOrder(id, action) {
+    var list = getOrders();
+    var order = null;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id === id) {
+        order = list[i];
+        break;
+      }
+    }
+    if (!order) return false;
+
+    if (action === "clarify" && order.status === STATUS.clarify) {
+      if (order.escrow !== "frozen" && order.escrow !== "released") {
+        if (!freezePoints(order.points, order.id, order.title)) return false;
+        order.escrow = "frozen";
+      }
+      if (!order.resident) order.resident = "R-07 · 墨线";
+      order.status = STATUS.making;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      return true;
+    }
+
+    if (action === "deliver" && order.status === STATUS.making) {
+      order.status = STATUS.accept;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      return true;
+    }
+
+    if (action === "approve" && order.status === STATUS.accept) {
+      if (order.escrow === "frozen") {
+        releaseToSeller(order.points, order.id, order.title);
+        order.escrow = "released";
+      }
+      order.status = STATUS.done;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      return true;
+    }
+
+    if (action === "refund" && order.status === STATUS.accept) {
+      if (order.escrow === "frozen") {
+        refundToBuyer(order.points, order.id, order.title);
+        order.escrow = "refunded";
+      }
+      order.status = STATUS.returned;
+      order.updatedAt = Date.now();
+      writeJson(ORDERS_KEY, list);
+      return true;
+    }
+
+    return false;
+  }
+
+  function renderOrderActions(o) {
+    var acts = actionsForStatus(o.status);
+    if (!acts.length) return "";
+    var html = '<div class="order-actions">';
+    for (var i = 0; i < acts.length; i++) {
+      var a = acts[i];
+      html +=
+        '<button type="button" class="btn ' +
+        a.cls +
+        '" data-order-action="' +
+        a.action +
+        '" data-order-id="' +
+        escapeHtml(o.id) +
+        '">' +
+        escapeHtml(a.label) +
+        "</button>";
+    }
+    html += "</div>";
+    return html;
+  }
+
   function renderOrdersList() {
     var root = document.getElementById("orders-list");
     if (!root) return;
@@ -177,7 +488,9 @@
     for (var i = 0; i < list.length; i++) {
       var o = list[i];
       html +=
-        '<article class="card order-card">' +
+        '<article class="card order-card" data-order-id="' +
+        escapeHtml(o.id) +
+        '">' +
         '<div class="meta">' +
         '<span class="status-pill ' +
         statusClass(o.status) +
@@ -205,9 +518,27 @@
         escapeHtml(o.skill || "") +
         "</span>" +
         "</div>" +
+        renderOrderActions(o) +
         "</article>";
     }
     root.innerHTML = html;
+  }
+
+  function wireOrderActions() {
+    var root = document.getElementById("orders-list");
+    if (!root || root._pjWired) return;
+    root._pjWired = true;
+    root.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-order-action]");
+      if (!btn) return;
+      var id = btn.getAttribute("data-order-id");
+      var action = btn.getAttribute("data-order-action");
+      if (!id || !action) return;
+      if (transitionOrder(id, action)) {
+        renderOrdersList();
+        renderPointsPanel();
+      }
+    });
   }
 
   /* —— Registrations (residents) —— */
@@ -306,13 +637,17 @@
     toggle.addEventListener("click", function () {
       var open = nav.classList.toggle("open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.textContent = open ? "关闭" : "菜单";
     });
   }
 
   /* —— Page boot —— */
+  getAccount();
   renderOrdersList();
+  wireOrderActions();
   renderRegs();
   wireRegForm();
+  renderPointsPanel();
 
   /* —— Post-job clarification flow —— */
   var form = document.getElementById("job-form");
@@ -361,17 +696,27 @@
       return;
     }
 
+    var pts = Number(points);
+    if (!pts || pts <= 0) {
+      alert("请填写有效的积分数。");
+      return;
+    }
+
     var now = Date.now();
+    var orderId = uid("ord");
+    if (!freezePoints(pts, orderId, title)) return;
+
     var order = {
-      id: uid("ord"),
+      id: orderId,
       title: title,
       skill: skill,
       brief: brief,
-      points: Number(points),
+      points: pts,
       accept: accept,
       channel: channel,
       status: STATUS.clarify,
       resident: "",
+      escrow: "frozen",
       createdAt: now,
       updatedAt: now,
     };
@@ -432,7 +777,7 @@
           });
         },
         html:
-          '<div class="msg system">平台按声明技能匹配到居民 <strong>R-07「墨线」</strong>（文档结构化 / 数据清洗流水线）。对话仅订单双方可见。订单已写入本机。</div>',
+          '<div class="msg system">平台按声明技能匹配到居民 <strong>R-07「墨线」</strong>（文档结构化 / 数据清洗流水线）。对话仅订单双方可见。订单已写入本机；积分已冻结。</div>',
       },
       {
         delay: 1600,

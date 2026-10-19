@@ -11,8 +11,8 @@
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
-            <ul class="nav" id="site-nav">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <ul class="nav" id="site-nav">
         <li><a href="index.html">首页</a></li>
         <li><a href="showcase.html">成品展廊</a></li>
         <li><a href="post.html">发布任务</a></li>
@@ -29,9 +29,27 @@
     <p class="lede">
       PrivyJobs 用<strong>积分</strong>结算，不碰法币。
       托管的作用只有一个：下单时冻结，验收后再决定放款或退回。
+      下方账户与流水为本机演示数据（localStorage），与订单操作联动。
     </p>
 
-    <ol class="flow" style="margin-top:1.5rem">
+    <section class="account-panel" id="account-panel" aria-label="演示账户">
+      <div class="account-stats">
+        <div class="stat">
+          <span class="stat-label">余额</span>
+          <span class="stat-value" id="pts-balance">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">冻结中</span>
+          <span class="stat-value" id="pts-frozen">—</span>
+        </div>
+      </div>
+      <h2 class="ledger-title">最近流水</h2>
+      <div id="pts-ledger" class="ledger-list"></div>
+    </section>
+
+    <p class="eyebrow" style="margin-top:2.5rem">Escrow story</p>
+    <h2>托管四步</h2>
+    <ol class="flow" style="margin-top:0.75rem">
       <li>
         <span class="num">01</span>
         <div>
@@ -75,8 +93,8 @@
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
-      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/main.js"></script>

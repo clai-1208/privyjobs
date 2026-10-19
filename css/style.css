@@ -664,3 +664,105 @@ textarea { min-height: 8rem; resize: vertical; }
   gap: 0.45rem 0.65rem;
   margin-bottom: 0.15rem;
 }
+
+/* —— Order actions —— */
+.order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+.order-actions .btn {
+  font-size: 0.82rem;
+  padding: 0.4rem 0.75rem;
+}
+.btn-danger {
+  background: transparent;
+  color: var(--accent);
+  border-color: #d4b0a4;
+}
+.btn-danger:hover {
+  background: var(--accent-soft);
+  color: var(--accent-hover);
+}
+.status-returned {
+  background: #f0e8e8;
+  color: #7a4545;
+  border-color: #dcc0c0;
+}
+
+/* —— Points account panel —— */
+.account-panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--line);
+  padding: 1.25rem 1.3rem 1.4rem;
+  margin: 1.5rem 0 0;
+}
+.account-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem;
+}
+.account-stats .stat {
+  background: var(--bg-inset);
+  border: 1px solid var(--line);
+  padding: 0.9rem 1rem;
+}
+.stat-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 0.35rem;
+}
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 1.45rem;
+  font-weight: 560;
+  color: var(--olive);
+  letter-spacing: -0.02em;
+}
+.ledger-title {
+  font-size: 1rem;
+  margin: 1.35rem 0 0.65rem;
+}
+.ledger-list {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.ledger-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.35rem 1rem;
+  padding: 0.7rem 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.9rem;
+}
+.ledger-row .ledger-meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-faint);
+  grid-column: 1 / -1;
+}
+.ledger-amt {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.ledger-amt.debit { color: var(--accent); }
+.ledger-amt.credit { color: var(--ok); }
+.ledger-amt.neutral { color: var(--ink-muted); }
+.ledger-empty {
+  padding: 0.85rem 0;
+  font-size: 0.9rem;
+  color: var(--ink-muted);
+}
+
+/* Ensure absolute mobile nav anchors to header */
+.site-header { position: sticky; }
+.site-header .inner { position: relative; }

@@ -11,8 +11,8 @@
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
-            <ul class="nav" id="site-nav">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <ul class="nav" id="site-nav">
         <li><a href="index.html">首页</a></li>
         <li><a href="showcase.html">成品展廊</a></li>
         <li><a href="post.html">发布任务</a></li>
@@ -27,9 +27,9 @@
     <p class="eyebrow">Orders · local</p>
     <h1>订单</h1>
     <p class="lede">
-      本页列出你在本机浏览器里的演示订单（状态：待澄清 / 制作中 / 待验收 / 已完成）。
-      首次打开会写入几条样例，避免空白；在 <a href="post.html">发布任务</a> 提交后也会追加真实演示单。
-      数据仅存 localStorage，不上传。
+      本页列出你在本机浏览器里的演示订单（状态：待澄清 / 制作中 / 待验收 / 已完成 / 已退回）。
+      每张卡片按当前状态显示可用操作：进入澄清、提交交付、验收通过、申请退回。
+      状态变更会同步写入 <a href="points.html">积分托管</a> 流水。数据仅存 localStorage，不上传。
     </p>
 
     <div class="btn-row" style="margin-top:0;margin-bottom:1.5rem">
@@ -42,8 +42,8 @@
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
-      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/main.js"></script>
