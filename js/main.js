@@ -12,6 +12,31 @@
   var PREREG_KEY = "privyjobs_prereg";
   var FAKE_SELLER_KEY = "privyjobs_fake_seller";
 
+  /* —— API_BASE seam (js/api.js): empty → localStorage only —— */
+  function apiReady() {
+    return (
+      typeof window !== "undefined" &&
+      window.PrivyJobsAPI &&
+      typeof window.PrivyJobsAPI.hasApi === "function" &&
+      window.PrivyJobsAPI.hasApi()
+    );
+  }
+
+  function apiNotify(op, id, body) {
+    if (!apiReady()) return;
+    var A = window.PrivyJobsAPI;
+    var p = null;
+    if (op === "clarify") p = A.clarify(id, body);
+    else if (op === "deliver") p = A.deliver(id, body);
+    else if (op === "accept") p = A.accept(id, body);
+    else if (op === "return") p = A.returnJob(id, body);
+    else if (op === "create") p = A.createJob(body);
+    if (p && typeof p.then === "function") {
+      p.then(function () { /* best-effort; local already applied */ });
+    }
+  }
+
+
   var STATUS = {
     clarify: "待澄清",
     making: "制作中",
@@ -1274,6 +1299,11 @@
       order._uiDeliver = false;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
+      apiNotify("clarify", order.id, {
+        role: "seller",
+        action: "lock",
+        buyer_answers: order.buyerAnswers || "",
+      });
       var t = getTour();
       if (t.active && t.step <= 2) advanceTour(3);
       return true;
@@ -1320,6 +1350,7 @@
       order.status = STATUS.accept;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
+      apiNotify("deliver", order.id, { result_package: order.resultPackage });
       var t2 = getTour();
       if (t2.active && t2.step <= 3) advanceTour(4);
       return true;
@@ -1337,6 +1368,7 @@
       order.status = STATUS.done;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
+      apiNotify("accept", order.id, { confirm: true });
       var t3 = getTour();
       if (t3.active) completeTour();
       return true;
@@ -1383,6 +1415,9 @@
       order.status = STATUS.returned;
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
+      apiNotify("return", order.id, {
+        reason: action === "refund_late" ? "锁定超 7 日未交付" : "二次失败 · 申请退回",
+      });
       var t4 = getTour();
       if (t4.active) completeTour();
       return true;
@@ -1982,6 +2017,15 @@
   wireTourStart();
   renderOrdersList();
   renderPendingPool();
+  if (apiReady() && window.PrivyJobsAPI.listJobs) {
+    window.PrivyJobsAPI.listJobs().then(function (res) {
+      /* Remote list is advisory this slice; keep localStorage as UI source.
+         Success proves the seam; null already toasted + fell back. */
+      if (res && res.ok) {
+        /* no-op merge: demo remains local-first until Worker ships */
+      }
+    });
+  }
   wireOrderActions();
   wireClaimActions();
   renderRegs();
@@ -2073,6 +2117,14 @@
     };
     saveOrder(order);
     currentOrderId = order.id;
+    apiNotify("create", order.id, {
+      title: order.title,
+      skill: order.skill,
+      brief: order.brief,
+      points: order.points,
+      accept: order.accept,
+      channel: order.channel,
+    });
     try {
       localStorage.setItem(LAST_JOB_KEY, JSON.stringify(order));
     } catch (err) { /* ignore */ }

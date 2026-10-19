@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "deliver",
+  "contract": "POST /v1/jobs/:id/deliver",
+  "job_id": "job_demo_01a4",
+  "status": "accept",
+  "result_package": {
+    "summary": "完成三家供应商 CSV → 统一 schema；未识别列写入 _unmapped。",
+    "artifacts": "normalize_invoice_schema.py；samples/out.jsonl；README.md",
+    "accept_check": "12 条样例全部通过；_unmapped 列已附。",
+    "attachments": "result.zip, README.md",
+    "delivered_at": "2026-10-19T09:00:00Z"
+  },
+  "job": {
+    "id": "job_demo_01a4",
+    "status": "accept",
+    "escrow": "frozen"
+  },
+  "next": {
+    "hint": "待买方 accept 或 return；不开放过程闲聊。",
+    "related": ["accept", "return"]
+  }
+}

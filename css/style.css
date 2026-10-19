@@ -1148,3 +1148,27 @@ textarea { min-height: 8rem; resize: vertical; }
   color: var(--ink);
   white-space: pre-wrap;
 }
+
+
+/* —— API seam toast —— */
+.pj-api-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  transform: translateX(-50%) translateY(120%);
+  z-index: 1000;
+  max-width: min(28rem, calc(100vw - 2rem));
+  padding: 0.75rem 1.1rem;
+  background: var(--ink);
+  color: #fff;
+  font-size: 0.88rem;
+  border-radius: var(--radius);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.18);
+  opacity: 0;
+  pointer-events: none;
+  transition: transform 0.28s ease, opacity 0.28s ease;
+}
+.pj-api-toast.is-visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}

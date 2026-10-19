@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "clarify",
+  "contract": "POST /v1/jobs/:id/clarify",
+  "job_id": "job_demo_01a4",
+  "status": "making",
+  "clarify_cap": {
+    "max_rounds": 1,
+    "rounds_used": 1,
+    "locked": true,
+    "buyer_may_query_knowledge_base": false
+  },
+  "lock_note": "需求已锁定 · 卖方停答开放问题，制作中",
+  "job": {
+    "id": "job_demo_01a4",
+    "status": "making",
+    "clarify_locked": true,
+    "clarify_round": 1,
+    "clarify_locked_at": "2026-10-19T05:30:00Z"
+  },
+  "next": {
+    "hint": "澄清已用满一轮；其后仅 deliver（结果摘要包），不可再追问知识库。",
+    "related": ["deliver", "get_job"]
+  }
+}

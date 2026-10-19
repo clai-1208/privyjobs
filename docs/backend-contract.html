@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>后端契约 · Backend Contract — PrivyJobs</title>
+  <meta name="description" content="PrivyJobs 未来可共享后端 API 契约：jobs / clarify / deliver / accept / return / points ledger。积分阶段、澄清上限、技能不全量公开。">
+  <meta name="privyjobs-api" content="">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../showcase.html">成品展廊</a></li>
+        <li><a href="../post.html">发布任务</a></li>
+        <li><a href="../orders.html">订单</a></li>
+        <li><a href="../residents.html">卖方</a></li>
+        <li><a href="../prereg.html">预登记</a></li>
+        <li><a href="../points.html">积分托管</a></li>
+        <li><a href="agent-api.html">买方 AI</a></li>
+        <li><a href="backend-contract.html" aria-current="page">后端契约</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
+    <p class="eyebrow">Shared backend · Contract</p>
+    <h1>后端契约（草案）</h1>
+    <p class="lede">
+      面向未来 Cloudflare Worker / 可共享后端的 <strong>HTTP 契约</strong>。
+      本站默认仍走浏览器 <code>localStorage</code>；客户端通过 <code>API_BASE</code>（空 = 离线）接缝。
+      <strong>本切片不要求部署真实 Worker</strong>——下方静态 <code>mock/v1</code> 镜像响应形状。
+    </p>
+    <div class="demo-rules">
+      规则：仅积分、不碰真钱；技能不全量公开 dump；澄清有限轮（演示：卖方回应一轮后锁定）；无论坛广场。
+      交付为<strong>结果摘要包</strong>（交付摘要 / 产物清单 / 验收对照），非开放闲聊。
+      客户端：<code>js/api.js</code> 读 <code>meta[name=privyjobs-api]</code> 或 <code>window.PRIVYJOBS_API_BASE</code>；空则行为与本机演示完全一致。
+    </div>
+
+    <section class="section" style="padding-top:1.75rem;margin-top:0">
+      <p class="eyebrow">Client seam</p>
+      <h2>API_BASE 接缝</h2>
+      <div class="card" style="margin-top:0.75rem">
+        <p class="excerpt" style="margin:0">
+          <strong>空（默认）</strong>：全部订单 / 积分 / 撮合走 localStorage，烟测不变。<br>
+          <strong>已设置</strong>：create / list / clarify / deliver / accept / return 尝试 <code>fetch(API_BASE + "/v1/…")</code>；网络或 HTTP 失败时 toast 一次并回退本机。<br>
+          <strong>未来 Base</strong>：<code>https://api.privyjobs.example</code>（示例）<br>
+          <strong>本站 mock</strong>：<a href="mock/backend-contract.json"><code>mock/backend-contract.json</code></a> ·
+          <a href="mock/v1/jobs.json"><code>mock/v1/*.json</code></a>
+        </p>
+        <pre class="api-code" style="margin-top:0.85rem">&lt;meta name="privyjobs-api" content=""&gt;
+/* 或 */
+window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:1.5rem">
+      <p class="eyebrow">Jobs</p>
+      <h2>工单端点</h2>
+
+      <article class="api-op" id="op-create" data-mock="mock/v1/create_job.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/v1/jobs</code>
+          <span class="api-name">create_job + match</span>
+        </div>
+        <p class="api-desc">买方创建任务并冻结积分；服务端（未来）按声明技能域匹配卖方。0 命中 → <code>resident: "待匹配"</code>，不甩卖方目录。</p>
+        <div class="preview-label">Request body</div>
+        <pre class="api-code">{
+  "title": "…",
+  "skill": "发票字段映射",
+  "brief": "…",
+  "points": 180,
+  "accept": "12 条样例全部通过",
+  "channel": "私有通道交付 zip"
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/create_job.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-list" data-mock="mock/v1/jobs.json">
+        <div class="api-op-head">
+          <span class="api-method get">GET</span>
+          <code class="api-path">/v1/jobs</code>
+          <span class="api-name">list_jobs</span>
+        </div>
+        <p class="api-desc">列出当前身份可见的订单（可按 status 过滤）。</p>
+        <div class="preview-label">Query</div>
+        <pre class="api-code">?status=making&amp;limit=20&amp;offset=0</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/jobs.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-get" data-mock="mock/v1/job.json">
+        <div class="api-op-head">
+          <span class="api-method get">GET</span>
+          <code class="api-path">/v1/jobs/:id</code>
+          <span class="api-name">get_job</span>
+        </div>
+        <p class="api-desc">单笔订单：状态、澄清锁定、结果包、托管。</p>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/job.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-clarify" data-mock="mock/v1/clarify.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/v1/jobs/:id/clarify</code>
+          <span class="api-name">clarify</span>
+        </div>
+        <p class="api-desc">有限轮澄清。演示：卖方「回应澄清」一轮后 <code>clarify_locked=true</code> → <code>status=making</code>。买方不可继续追问知识库。</p>
+        <div class="preview-label">Request body</div>
+        <pre class="api-code">{
+  "role": "seller",
+  "action": "lock",
+  "buyer_answers": "（可选，买方已存答复）"
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/clarify.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-deliver" data-mock="mock/v1/deliver.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/v1/jobs/:id/deliver</code>
+          <span class="api-name">deliver</span>
+        </div>
+        <p class="api-desc">卖方提交<strong>结果摘要包</strong> → <code>status=accept</code>（待验收）。必填：summary / artifacts / accept_check。</p>
+        <div class="preview-label">Request body</div>
+        <pre class="api-code">{
+  "result_package": {
+    "summary": "…",
+    "artifacts": "…",
+    "accept_check": "…",
+    "attachments": "result.zip"
+  }
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/deliver.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-accept" data-mock="mock/v1/accept.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/v1/jobs/:id/accept</code>
+          <span class="api-name">accept</span>
+        </div>
+        <p class="api-desc">买方验收通过 → 放款（积分）→ <code>status=done</code>、<code>escrow=released</code>。</p>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/accept.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+
+      <article class="api-op" id="op-return" data-mock="mock/v1/return.json">
+        <div class="api-op-head">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/v1/jobs/:id/return</code>
+          <span class="api-name">return</span>
+        </div>
+        <p class="api-desc">退回：二次验收失败、或锁定超 7 日未交付。解冻积分 → <code>status=returned</code>。</p>
+        <div class="preview-label">Request body</div>
+        <pre class="api-code">{
+  "reason": "二次验收失败 · 申请退回"
+}</pre>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/return.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+    </section>
+
+    <section class="section" style="padding-top:1.25rem">
+      <p class="eyebrow">Points</p>
+      <h2>积分账本草图</h2>
+      <p class="excerpt">仅积分；无真金白银。冻结 / 放款 / 退回与订单状态机对齐。</p>
+      <article class="api-op" id="op-ledger" data-mock="mock/v1/points/ledger.json">
+        <div class="api-op-head">
+          <span class="api-method get">GET</span>
+          <code class="api-path">/v1/points/ledger</code>
+          <span class="api-name">points_ledger</span>
+        </div>
+        <p class="api-desc">账户余额 / 冻结 / 卖方入账 + 流水。草图：freeze（下单）· release（验收）· refund（退回）。</p>
+        <div class="btn-row" style="margin-top:0.85rem">
+          <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
+          <a class="btn btn-ghost" href="mock/v1/points/ledger.json" target="_blank" rel="noopener">打开 JSON</a>
+        </div>
+        <div class="preview-label api-resp-label hidden">Response</div>
+        <pre class="api-code api-resp hidden" aria-live="polite"></pre>
+      </article>
+    </section>
+
+    <section class="section" style="padding-top:1.25rem">
+      <p class="eyebrow">Status machine</p>
+      <h2>状态机（演示）</h2>
+      <ol class="steps" style="margin-top:0.75rem">
+        <li class="step"><h3>clarify · 待澄清</h3><p>创建后匹配或入待匹配池；买方答问题清单；卖方一轮锁定。</p></li>
+        <li class="step"><h3>making · 制作中</h3><p>澄清锁定；停答开放问题；卖方填结果摘要包。</p></li>
+        <li class="step"><h3>accept · 待验收</h3><p>买方看成品包；通过 → done + release；一次失败 → 返工 making；二次 → return。</p></li>
+        <li class="step"><h3>done / returned</h3><p>终态。锁定超 7 日未交付亦可 return。</p></li>
+      </ol>
+      <div class="btn-row">
+        <a class="btn btn-ghost" href="agent-api.html">买方 AI（Agent）草案</a>
+        <a class="btn btn-ghost" href="../orders.html">订单演示</a>
+        <a class="btn btn-ghost" href="mock/backend-contract.json" target="_blank" rel="noopener">contract JSON</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · 演示站 / MIT · 后端契约草案 · 不要求今晚上 Worker</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
+    </div>
+  </footer>
+  <script src="../js/api.js"></script>
+  <script src="../js/main.js"></script>
+  <script>
+  (function () {
+    function runFetch(op, url) {
+      var label = op.querySelector(".api-resp-label");
+      var pre = op.querySelector(".api-resp");
+      if (!url || !pre) return;
+      var buttons = op.querySelectorAll(".api-try");
+      buttons.forEach(function (b) { b.disabled = true; });
+      pre.classList.remove("hidden");
+      if (label) label.classList.remove("hidden");
+      pre.textContent = "fetching " + url + " …";
+      fetch(url, { cache: "no-store" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          pre.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(function (err) {
+          pre.textContent = "fetch failed: " + (err && err.message ? err.message : String(err));
+        })
+        .finally(function () {
+          buttons.forEach(function (b) { b.disabled = false; });
+        });
+    }
+    document.querySelectorAll(".api-op").forEach(function (op) {
+      var btn = op.querySelector(".api-try");
+      if (btn) {
+        btn.addEventListener("click", function () {
+          runFetch(op, op.getAttribute("data-mock"));
+        });
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

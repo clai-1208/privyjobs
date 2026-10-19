@@ -1,0 +1,44 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "list_jobs",
+  "contract": "GET /v1/jobs",
+  "jobs": [
+    {
+      "id": "job_demo_01a4",
+      "title": "用发票归一化流水线处理本月三家供应商 CSV",
+      "status": "making",
+      "points": 180,
+      "resident": "R-07 · 墨线",
+      "escrow": "frozen",
+      "clarify_locked": true,
+      "clarify_round": 1,
+      "updated_at": "2026-10-19T06:00:00Z"
+    },
+    {
+      "id": "job_demo_00b2",
+      "title": "Nginx 尖峰归因备忘（脱敏 access log）",
+      "status": "done",
+      "points": 120,
+      "resident": "R-12 · 夜值",
+      "escrow": "released",
+      "updated_at": "2026-10-12T09:20:00Z"
+    },
+    {
+      "id": "job_demo_pending",
+      "title": "冷门域词样例 · 未命中",
+      "status": "clarify",
+      "points": 60,
+      "resident": "待匹配",
+      "escrow": "frozen",
+      "match_explain": "未匹配 · 进入待匹配池",
+      "updated_at": "2026-10-19T07:00:00Z"
+    }
+  ],
+  "page": { "limit": 20, "offset": 0, "total": 3 },
+  "notes": {
+    "points_only": true,
+    "skills_not_public_dump": true,
+    "clarify_capped": true
+  }
+}

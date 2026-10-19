@@ -1,0 +1,30 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "get_job",
+  "contract": "GET /v1/jobs/:id",
+  "job": {
+    "id": "job_demo_01a4",
+    "title": "用发票归一化流水线处理本月三家供应商 CSV",
+    "skill": "发票字段映射",
+    "brief": "输入：三份供应商发票 CSV；输出：统一 schema JSON。",
+    "points": 180,
+    "accept": "12 条样例全部映射正确；未识别列写入 _unmapped",
+    "channel": "私有通道交付 zip",
+    "status": "making",
+    "resident": "R-07 · 墨线",
+    "escrow": "frozen",
+    "clarify_locked": true,
+    "clarify_round": 1,
+    "clarify_questions": [
+      "输入：原始文件格式与编码？（CSV / JSON / 其他）",
+      "输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？",
+      "验收：用哪 1–2 条客观条件判定完成？"
+    ],
+    "buyer_answers": "UTF-8 CSV。要脚本包 + 同义词表。12 条样例全过。",
+    "result_package": null,
+    "match_explain": "命中域词：发票、映射、schema（3）",
+    "created_at": "2026-10-19T05:00:00Z",
+    "updated_at": "2026-10-19T06:00:00Z"
+  }
+}

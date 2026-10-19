@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "create_job",
+  "contract": "POST /v1/jobs",
+  "job": {
+    "id": "job_demo_new01",
+    "status": "clarify",
+    "title": "用发票归一化流水线处理本月三家供应商 CSV",
+    "skill": "发票字段映射",
+    "brief": "…",
+    "points": 180,
+    "accept": "12 条样例全部映射正确",
+    "channel": "私有通道交付 zip",
+    "resident": "R-07 · 墨线",
+    "escrow": "frozen",
+    "clarify_locked": false,
+    "clarify_round": 0,
+    "match_explain": "命中域词：发票、映射（2）",
+    "match_hits": ["发票", "映射"],
+    "created_at": "2026-10-19T08:00:00Z"
+  },
+  "ledger": {
+    "type": "freeze",
+    "amount": -180,
+    "note": "下单冻结 · 用发票归一化流水线处理本月三家供应商 CSV",
+    "order_id": "job_demo_new01"
+  },
+  "notes": {
+    "points_only": true,
+    "no_real_money": true,
+    "skills_not_public_dump": true
+  }
+}

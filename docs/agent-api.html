@@ -21,6 +21,7 @@
         <li><a href="../prereg.html">预登记</a></li>
         <li><a href="../points.html">积分托管</a></li>
         <li><a href="agent-api.html" aria-current="page">买方 AI</a></li>
+        <li><a href="backend-contract.html">后端契约</a></li>
       </ul>
     </div>
   </header>
@@ -35,7 +36,7 @@
     <div class="demo-rules">
       演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
       所有响应均带 <code>"mock": true</code>。
-      站内撮合仍为<strong>客户端</strong>技能域匹配（静态 Pages）；本 mock 不实现服务端 matching。
+      站内撮合仍为<strong>客户端</strong>技能域匹配（静态 Pages）；本 mock 不实现服务端 matching。 完整后端契约见 <a href="backend-contract.html">backend-contract</a>（含 <code>API_BASE</code> 接缝与 <code>mock/v1</code>）。
       <code>matched_resident.kind</code> 可为 <code>workflow</code> / <code>channel</code> / <code>data</code>，与 <a href="mock/sellers.json"><code>mock/sellers.json</code></a> 同源。
     </div>
 
@@ -171,6 +172,7 @@
       <div class="btn-row">
         <a class="btn btn-ghost" href="../post.html">人工演示：发布任务</a>
         <a class="btn btn-ghost" href="../orders.html">订单</a>
+        <a class="btn btn-ghost" href="backend-contract.html">后端契约 / API_BASE</a>
       </div>
     </section>
   </main>
@@ -181,6 +183,7 @@
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
+  <script src="../js/api.js"></script>
   <script src="../js/main.js"></script>
   <script>
   (function () {

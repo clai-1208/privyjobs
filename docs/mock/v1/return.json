@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "return",
+  "contract": "POST /v1/jobs/:id/return",
+  "job_id": "job_demo_01a4",
+  "status": "returned",
+  "escrow": "refunded",
+  "ledger": {
+    "type": "refund",
+    "amount": 180,
+    "note": "申请退回 · 解冻 180 点",
+    "order_id": "job_demo_01a4"
+  },
+  "reason": "二次验收失败 · 申请退回",
+  "job": {
+    "id": "job_demo_01a4",
+    "status": "returned",
+    "escrow": "refunded"
+  },
+  "notes": {
+    "points_only": true,
+    "rework_quota": 1,
+    "late_unlock_days": 7
+  }
+}

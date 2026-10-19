@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "accept",
+  "contract": "POST /v1/jobs/:id/accept",
+  "job_id": "job_demo_01a4",
+  "status": "done",
+  "escrow": "released",
+  "ledger": {
+    "type": "release",
+    "amount": 180,
+    "note": "验收放款 · 卖方入账 180 点",
+    "order_id": "job_demo_01a4"
+  },
+  "job": {
+    "id": "job_demo_01a4",
+    "status": "done",
+    "escrow": "released"
+  },
+  "notes": {
+    "points_only": true,
+    "no_real_money": true
+  }
+}

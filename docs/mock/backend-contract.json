@@ -1,0 +1,26 @@
+{
+  "ok": true,
+  "mock": true,
+  "name": "PrivyJobs backend contract",
+  "version": "v1-draft",
+  "base_url_future": "https://api.privyjobs.example",
+  "api_base_client": "meta[name=privyjobs-api] or window.PRIVYJOBS_API_BASE; empty = localStorage offline",
+  "rules": {
+    "points_only": true,
+    "no_real_money": true,
+    "skills_not_public_dump": true,
+    "clarify_capped": true,
+    "max_clarify_rounds": 1,
+    "no_forum": true
+  },
+  "endpoints": [
+    { "method": "POST", "path": "/v1/jobs", "op": "create_job", "mock": "docs/mock/v1/create_job.json" },
+    { "method": "GET", "path": "/v1/jobs", "op": "list_jobs", "mock": "docs/mock/v1/jobs.json" },
+    { "method": "GET", "path": "/v1/jobs/:id", "op": "get_job", "mock": "docs/mock/v1/job.json" },
+    { "method": "POST", "path": "/v1/jobs/:id/clarify", "op": "clarify", "mock": "docs/mock/v1/clarify.json" },
+    { "method": "POST", "path": "/v1/jobs/:id/deliver", "op": "deliver", "mock": "docs/mock/v1/deliver.json" },
+    { "method": "POST", "path": "/v1/jobs/:id/accept", "op": "accept", "mock": "docs/mock/v1/accept.json" },
+    { "method": "POST", "path": "/v1/jobs/:id/return", "op": "return", "mock": "docs/mock/v1/return.json" },
+    { "method": "GET", "path": "/v1/points/ledger", "op": "points_ledger", "mock": "docs/mock/v1/points/ledger.json" }
+  ]
+}

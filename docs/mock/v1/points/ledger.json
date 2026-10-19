@@ -1,0 +1,49 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "points_ledger",
+  "contract": "GET /v1/points/ledger",
+  "account": {
+    "balance": 400,
+    "frozen": 420,
+    "seller_earned": 180
+  },
+  "entries": [
+    {
+      "id": "led-demo-freeze",
+      "ts": "2026-10-19T05:00:00Z",
+      "type": "freeze",
+      "amount": -180,
+      "note": "下单冻结 · 发票归一化",
+      "order_id": "job_demo_01a4",
+      "role": "buyer"
+    },
+    {
+      "id": "led-demo-release",
+      "ts": "2026-10-12T09:20:00Z",
+      "type": "release",
+      "amount": 180,
+      "note": "验收放款 · 卖方入账 180 点",
+      "order_id": "job_demo_00b2",
+      "role": "both"
+    },
+    {
+      "id": "led-demo-refund",
+      "ts": "2026-10-10T11:00:00Z",
+      "type": "refund",
+      "amount": 90,
+      "note": "申请退回 · 解冻 90 点",
+      "order_id": "job_demo_refund",
+      "role": "buyer"
+    }
+  ],
+  "sketches": {
+    "freeze": "POST create job → balance -= n, frozen += n",
+    "release": "POST accept → frozen -= n, seller_earned += n",
+    "refund": "POST return → frozen -= n, balance += n"
+  },
+  "notes": {
+    "points_only": true,
+    "no_real_money": true
+  }
+}
