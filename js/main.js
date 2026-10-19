@@ -421,7 +421,8 @@
 
   function pageDepth() {
     var path = (location.pathname || "").replace(/\\/g, "/");
-    return path.indexOf("/showcase/") >= 0 ? ".." : ".";
+    if (path.indexOf("/showcase/") >= 0 || path.indexOf("/docs/") >= 0) return "..";
+    return ".";
   }
 
   function hrefFor(file) {
@@ -438,6 +439,7 @@
   function setRole(role) {
     localStorage.setItem(ROLE_KEY, role === "seller" ? "seller" : "buyer");
     renderIdentityBar();
+    renderHonestyStrip();
     renderTourBanner();
     renderOrdersList();
     renderPendingPool();
@@ -483,6 +485,34 @@
       if (!btn) return;
       setRole(btn.getAttribute("data-set-role"));
     });
+  }
+
+  /* —— Site-wide honesty strip —— */
+  function renderHonestyStrip() {
+    var existing = document.getElementById("honesty-strip");
+    var bar = existing;
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "honesty-strip";
+      bar.className = "honesty-strip";
+      bar.setAttribute("role", "status");
+      var header = document.querySelector(".site-header");
+      if (header && header.nextSibling) {
+        header.parentNode.insertBefore(bar, header.nextSibling);
+      } else if (header) {
+        header.parentNode.appendChild(bar);
+      } else {
+        document.body.insertBefore(bar, document.body.firstChild);
+      }
+    }
+    var blockers = hrefFor("docs/BLOCKERS.md");
+    bar.innerHTML =
+      '<div class="honesty-inner">' +
+      "<span>演示站 · 积分本机托管 · 非真下单撮合 · Worker 源码在仓库 / 未部署</span>" +
+      '<a class="honesty-link" href="' +
+      blockers +
+      '">阻塞说明</a>' +
+      "</div>";
   }
 
   /* —— Tour —— */
@@ -2013,6 +2043,7 @@
   getAccount();
   renderIdentityBar();
   wireIdentityBar();
+  renderHonestyStrip();
   renderTourBanner();
   wireTourStart();
   renderOrdersList();

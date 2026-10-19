@@ -6,6 +6,8 @@
 
 静态演示站（GitHub Pages）。顶栏可切换买方 / 卖方身份；首页「演示走一遍」引导 下单 → 澄清 → 交付 → 验收。
 
+**现状口径（诚实）**：演示站 · 积分本机托管 · 非真下单撮合 · Worker 源码在仓库 / 未部署。未齐阻塞前不宣称生产撮合——见 [docs/BLOCKERS.md](docs/BLOCKERS.md)。
+
 演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
 
 ## 本地预览
@@ -14,6 +16,14 @@
 python3 -m http.server 8080
 # 打开 http://127.0.0.1:8080/
 ```
+
+## 文档与阻塞
+
+- [docs/BLOCKERS.md](docs/BLOCKERS.md) — 生产前阻塞（CF 凭证、真卖方候选、口径）
+- [docs/seed-outreach.md](docs/seed-outreach.md) — 种子卖方私信模板（私聊用，不发广场）
+- [worker/README.md](worker/README.md) — Cloudflare Worker 源码；`npx wrangler dev`；**未部署**生产
+- [docs/backend-contract.html](docs/backend-contract.html) — 可共享后端契约
+- [docs/agent-api.html](docs/agent-api.html) — 买方 AI 接口草案
 
 ## 买方 AI API（mock）
 
@@ -39,6 +49,7 @@ python3 -m http.server 8080
 - `prereg.html` — 意向收集（一句话能力 / kind / 边界 / 验收≤3 / 交付 / 周转 / 联系窗 / 积分区间 / 脱敏样例）
 - 提交写入本机 localStorage；可复制 JSON；列表标 **预登记 · 非真下单**
 - 积分阶段、不碰真钱、知识库不全量上传
+- 私信话术：[docs/seed-outreach.md](docs/seed-outreach.md)
 
 ## License
 
