@@ -602,3 +602,65 @@ textarea { min-height: 8rem; resize: vertical; }
   color: var(--ink-faint);
   margin: 2rem 0 1rem;
 }
+
+/* —— Orders / status —— */
+.status-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--bg-inset);
+  color: var(--ink-muted);
+}
+.status-clarify {
+  background: #f3ebe0;
+  color: var(--warn);
+  border-color: #e0d0b0;
+}
+.status-making {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: #dcc8c0;
+}
+.status-accept {
+  background: #e8e4f0;
+  color: #5a4a7a;
+  border-color: #cfc6de;
+}
+.status-done {
+  background: #e4ebe0;
+  color: var(--ok);
+  border-color: #c5d4be;
+}
+.order-card h3 {
+  font-size: 1.05rem;
+  margin: 0.15rem 0;
+}
+
+/* —— Fiction sample mark —— */
+.fiction-mark {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+  border: 1px dashed var(--line-strong);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius);
+  background: var(--bg);
+  vertical-align: middle;
+}
+.card .fiction-mark,
+.detail-header .fiction-mark {
+  margin-right: 0.25rem;
+}
+.card-head-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.65rem;
+  margin-bottom: 0.15rem;
+}

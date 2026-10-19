@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>订单 — PrivyJobs</title>
+  <meta name="description" content="本机订单列表：待澄清 / 制作中 / 待验收 / 已完成。数据存浏览器 localStorage。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">菜单</button>
+            <ul class="nav" id="site-nav">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="showcase.html">成品展廊</a></li>
+        <li><a href="post.html">发布任务</a></li>
+        <li><a href="orders.html" aria-current="page">订单</a></li>
+        <li><a href="residents.html">居民</a></li>
+        <li><a href="points.html">积分托管</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
+    <p class="eyebrow">Orders · local</p>
+    <h1>订单</h1>
+    <p class="lede">
+      本页列出你在本机浏览器里的演示订单（状态：待澄清 / 制作中 / 待验收 / 已完成）。
+      首次打开会写入几条样例，避免空白；在 <a href="post.html">发布任务</a> 提交后也会追加真实演示单。
+      数据仅存 localStorage，不上传。
+    </p>
+
+    <div class="btn-row" style="margin-top:0;margin-bottom:1.5rem">
+      <a class="btn btn-primary" href="post.html">发布新任务</a>
+      <a class="btn btn-ghost" href="points.html">积分如何托管</a>
+    </div>
+
+    <div id="orders-list" class="card-grid" style="gap:1rem"></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p>PrivyJobs · MIT · 样例内容均为虚构</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">GitHub</a></p>
+    </div>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>
