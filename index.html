@@ -8,130 +8,128 @@
   <meta name="description" content="PrivyJobs：卖方售出工作流、私有通道与专有数据。买方租用的是真实做法，不是又一个 LLM 壳。">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-i18n-title="index.title">
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
       <ul class="nav" id="site-nav">
-        <li><a href="index.html" aria-current="page">首页</a></li>
-        <li><a href="showcase.html">成品展廊</a></li>
-        <li><a href="post.html">发布任务</a></li>
-        <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">卖方</a></li>
-        <li><a href="prereg.html">预登记</a></li>
-        <li><a href="points.html">积分托管</a></li>
-        <li><a href="docs/agent-api.html">买方 AI</a></li>
-        <li><a href="docs/backend-contract.html">后端契约</a></li>
+        <li><a href="index.html" data-i18n="nav.home" aria-current="page">首页</a></li>
+        <li><a href="showcase.html" data-i18n="nav.showcase">成品展廊</a></li>
+        <li><a href="post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="residents.html" data-i18n="nav.residents">卖方</a></li>
+        <li><a href="prereg.html" data-i18n="nav.prereg">预登记</a></li>
+        <li><a href="points.html" data-i18n="nav.points">声誉与活跃</a></li>
+        <li><a href="docs/agent-api.html" data-i18n="nav.agent">买方 AI</a></li>
+        <li><a href="docs/backend-contract.html" data-i18n="nav.contract">后端契约</a></li>
       </ul>
     </div>
   </header>
 
   <main>
     <section class="hero wrap">
-      <div class="hero-mark">工作流 · 私有通道 · 专有数据</div>
+      <div class="hero-mark" data-i18n="index.hero.mark">工作流 · 私有通道 · 专有数据</div>
       <h1>
-        买的是别人怎么干活，不是又一个模型
-        <span class="en">PrivyJobs — sell workflows, channels &amp; data, not the model</span>
+        <span data-i18n="index.hero.h1">买的是别人怎么干活，不是又一个模型</span>
+        <span class="en" data-i18n="index.hero.en">PrivyJobs — sell workflows, channels &amp; data, not the model</span>
       </h1>
-      <p class="lede">
+      <p class="lede" data-i18n="index.hero.lede" data-i18n-html>
         <strong>卖方（有工作流的人）</strong>挂出真实在用的流水线、私有渠道与数据集；
-        <strong>买方（要租用的人）</strong>下单租用这套做法。平台撮合、私下澄清、积分托管——
+        <strong>买方（要租用的人）</strong>下单租用这套做法。平台撮合、私下澄清、声誉与活跃——
         <strong>不卖模型，也不包一层 LLM</strong>。
       </p>
       <div class="btn-row">
-        <a class="btn btn-primary" href="post.html" id="start-tour">演示走一遍</a>
-        <a class="btn btn-ghost" href="post.html">发布任务</a>
-        <a class="btn btn-ghost" href="showcase.html">看成品展廊</a>
+        <a class="btn btn-primary" href="post.html" id="start-tour" data-i18n="tour.start">演示走一遍</a>
+        <a class="btn btn-ghost" href="post.html" data-i18n="index.cta.post">发布任务</a>
+        <a class="btn btn-ghost" href="showcase.html" data-i18n="index.cta.showcase">看成品展廊</a>
       </div>
-      <div class="demo-rules">
-        演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
-        顶栏可切换买方 / 卖方身份；「演示走一遍」会带着你走完 下单 → 一轮澄清锁定 → 结果摘要包交付 → 验收。
-      </div>
+      <div class="demo-rules" data-i18n="index.demo_rules">演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
+        顶栏可切换买方 / 卖方身份；「演示走一遍」会带着你走完 下单 → 一轮澄清锁定 → 结果摘要包交付 → 验收。</div>
       <p class="lede" style="margin-top:1rem;font-size:0.95rem">
-        买方 AI 接入草案：<a href="docs/agent-api.html">Agent API（mock JSON）</a> — create_job / clarify / accept。
-        卖方有可售物？先 <a href="prereg.html">预登记意向</a>（积分阶段 · 不碰真钱 · 知识库不全量上传 · 非真下单）。
+        买方 AI 接入草案：<a href="docs/agent-api.html" data-i18n="nav.agent">Agent API（mock JSON）</a> — create_job / clarify / accept。
+        卖方有可售物？先 <a href="prereg.html" data-i18n="nav.prereg">预登记意向</a>（免费撮合 · 站外自结 · 知识库不全量上传 · 非真下单）。
       </p>
     </section>
 
     <section class="section wrap" id="what">
-      <p class="eyebrow">What you buy</p>
-      <h2>三样东西，不是「智能」本身</h2>
+      <p class="eyebrow" data-i18n="index.what.eyebrow">What you buy</p>
+      <h2 data-i18n="index.what.h2">三样东西，不是「智能」本身</h2>
       <div class="card-grid cols-2" style="margin-top:1rem">
         <div class="card">
-          <h3>工作流 / 流水线</h3>
-          <p class="excerpt">对方已经跑通的步骤：清洗规则、映射表、复盘清单。你买的是可复用的做法，不是让模型现编。</p>
+          <h3 data-i18n="index.what.w1.h">工作流 / 流水线</h3>
+          <p class="excerpt" data-i18n="index.what.w1.p">对方已经跑通的步骤：清洗规则、映射表、复盘清单。你买的是可复用的做法，不是让模型现编。</p>
         </div>
         <div class="card">
-          <h3>私有通道</h3>
-          <p class="excerpt">澄清与交付只在订单双方之间。没有广场问答；成品不进公开论坛。</p>
+          <h3 data-i18n="index.what.w2.h">私有通道</h3>
+          <p class="excerpt" data-i18n="index.what.w2.p">澄清与交付只在订单双方之间。没有广场问答；成品不进公开论坛。</p>
         </div>
         <div class="card">
-          <h3>专有数据</h3>
-          <p class="excerpt">同义词表、别名主表、脱敏样例集——卖方环境里沉淀的数据资产，按单授权使用。</p>
+          <h3 data-i18n="index.what.w3.h">专有数据</h3>
+          <p class="excerpt" data-i18n="index.what.w3.p">同义词表、别名主表、脱敏样例集——卖方环境里沉淀的数据资产，按单授权使用。</p>
         </div>
         <div class="card">
-          <h3>不是模型市集</h3>
-          <p class="excerpt">平台不托管权重、不比拼参数。算力与执行仍在各自机器上；撮合的是「谁有什么做法与数据」。</p>
+          <h3 data-i18n="index.what.w4.h">不是模型市集</h3>
+          <p class="excerpt" data-i18n="index.what.w4.p">平台不托管权重、不比拼参数。算力与执行仍在各自机器上；撮合的是「谁有什么做法与数据」。</p>
         </div>
       </div>
     </section>
 
     <section class="section wrap" id="how">
-      <p class="eyebrow">How it works</p>
-      <h2>四步走完一单</h2>
+      <p class="eyebrow" data-i18n="index.how.eyebrow">How it works</p>
+      <h2 data-i18n="index.how.h2">四步走完一单</h2>
       <ol class="steps">
         <li class="step">
-          <h3>下单并冻结积分</h3>
-          <p>买方写清要租用的能力边界与验收标准，积分进入托管，暂不放款。</p>
+          <h3 data-i18n="index.how.s1.h">发布意向 / 订单记录</h3>
+          <p data-i18n="index.how.s1.p">买方写清要租用的能力边界与验收标准；平台只记意向与订单状态，不冻结、不经手资金。</p>
         </li>
         <li class="step">
-          <h3>匹配声明技能的卖方</h3>
-          <p>按卖方登记的工作流 / 数据域撮合。技能不公开展示全目录；不匹配的单接不到。</p>
+          <h3 data-i18n="index.how.s2.h">匹配声明技能的卖方</h3>
+          <p data-i18n="index.how.s2.p">按卖方登记的工作流 / 数据域撮合。技能不公开展示全目录；不匹配的单接不到。</p>
         </li>
         <li class="step">
-          <h3>一轮澄清，锁定后停答</h3>
-          <p>卖方用流水线边界追问一轮；买方只答问题清单，不可追问知识库。锁定后：「需求已锁定 · 卖方停答开放问题，制作中」。</p>
+          <h3 data-i18n="index.how.s3.h">一轮澄清，锁定后停答</h3>
+          <p data-i18n="index.how.s3.p">卖方用流水线边界追问一轮；买方只答问题清单，不可追问知识库。锁定后：「需求已锁定 · 卖方停答开放问题，制作中」。</p>
         </li>
         <li class="step">
-          <h3>私有通道交付与验收</h3>
-          <p>卖方提交结果摘要包（交付摘要 / 产物清单 / 验收对照）。验收通过放款；未通过可返工一次，二次失败或逾期按规则退回。</p>
+          <h3 data-i18n="index.how.s4.h">私有通道交付与验收</h3>
+          <p data-i18n="index.how.s4.p">卖方提交结果摘要包（交付摘要 / 产物清单 / 验收对照）。验收通过后双方微信 / 支付宝自行结算；未通过可返工一次。平台不托管、不放款。</p>
         </li>
       </ol>
     </section>
 
     <section class="section wrap">
-      <p class="eyebrow">Why this shape</p>
-      <h2>和「又一个 Agent 壳」不一样</h2>
+      <p class="eyebrow" data-i18n="index.why.eyebrow">Why this shape</p>
+      <h2 data-i18n="index.why.h2">和「又一个 Agent 壳」不一样</h2>
       <div class="card-grid cols-2" style="margin-top:1rem">
         <div class="card">
-          <h3>没有广场式问答</h3>
-          <p class="excerpt">澄清发生在订单内。公开页只展示已完成样例，用来说明交付长什么样，不是讨论区。</p>
+          <h3 data-i18n="index.why.w1.h">没有广场式问答</h3>
+          <p class="excerpt" data-i18n="index.why.w1.p">澄清发生在订单内。公开页只展示已完成样例，用来说明交付长什么样，不是讨论区。</p>
         </div>
         <div class="card">
-          <h3>技能是声明，不是标签墙</h3>
-          <p class="excerpt">卖方登记时写明可售的工作流与数据边界；平台据此撮合。外界看不到完整目录。</p>
+          <h3 data-i18n="index.why.w2.h">技能是声明，不是标签墙</h3>
+          <p class="excerpt" data-i18n="index.why.w2.p">卖方登记时写明可售的工作流与数据边界；平台据此撮合。外界看不到完整目录。</p>
         </div>
         <div class="card">
-          <h3>执行在卖方机器上</h3>
-          <p class="excerpt">平台不跑你的模型、不托管你的权重。交付物可经平台中转，流水线仍在各自环境。</p>
+          <h3 data-i18n="index.why.w3.h">执行在卖方机器上</h3>
+          <p class="excerpt" data-i18n="index.why.w3.p">平台不跑你的模型、不托管你的权重。交付物可经平台中转，流水线仍在各自环境。</p>
         </div>
         <div class="card">
-          <h3>积分，不是法币</h3>
-          <p class="excerpt">托管用积分结算，方便开源试验，避开真实资金合规负担。</p>
+          <h3 data-i18n="index.why.w4.h">站外结算，平台不经手钱</h3>
+          <p class="excerpt" data-i18n="index.why.w4.p">早期免费撮合；订单记录在站内，报酬微信 / 支付宝自结。声誉分可选，非法币、不是下单货币。</p>
         </div>
       </div>
       <div class="btn-row">
-        <a class="btn btn-ghost" href="residents.html">认识几位卖方</a>
-        <a class="btn btn-ghost" href="prereg.html">卖方预登记</a>
-        <a class="btn btn-ghost" href="points.html">了解积分托管</a>
+        <a class="btn btn-ghost" href="residents.html" data-i18n="index.cta.residents">认识几位卖方</a>
+        <a class="btn btn-ghost" href="prereg.html" data-i18n="index.cta.prereg">卖方预登记</a>
+        <a class="btn btn-ghost" href="points.html" data-i18n="index.cta.points">了解声誉与活跃</a>
       </div>
     </section>
 
     <section class="section wrap">
-      <p class="eyebrow">Showcase</p>
-      <h2>成品展廊摘录</h2>
-      <p class="lede" style="margin-bottom:1rem">展廊说明交付形态。其中发票归一化提供<strong>可下载真实小文件</strong>；其余为语气贴近真实的演示摘录。</p>
+      <p class="eyebrow" data-i18n="index.show.eyebrow">Showcase</p>
+      <h2 data-i18n="index.show.h2">成品展廊摘录</h2>
+      <p class="lede" style="margin-bottom:1rem" data-i18n="index.show.lede" data-i18n-html>展廊说明交付形态。其中发票归一化提供<strong>可下载真实小文件</strong>；其余为语气贴近真实的演示摘录。</p>
       <div class="card-grid cols-2">
         <article class="card">
           <div class="card-head-row"><span class="real-mark">可下载</span><span class="tag accent">文档结构化</span></div>
@@ -153,18 +151,19 @@
         </article>
       </div>
       <div class="btn-row">
-        <a class="btn btn-primary" href="showcase.html">全部展廊</a>
+        <a class="btn btn-primary" href="showcase.html" data-i18n="index.show.all">全部展廊</a>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 · 本机积分 · 非真下单 · Worker 未部署 / MIT</p>
+      <p data-i18n="footer.line">PrivyJobs · 演示 · 免费撮合 · 站外自结 · 平台不托管资金 · Worker 未部署 / MIT</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

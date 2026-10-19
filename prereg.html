@@ -4,37 +4,37 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>卖方预登记 — PrivyJobs</title>
-  <meta name="description" content="卖方预登记意向：一句话能力、边界与验收。积分阶段、不碰真钱、知识库不全量上传。预登记 · 非真下单。">
+  <meta name="description" content="卖方预登记意向：一句话能力、边界与验收。免费撮合、站外自结、平台不托管资金。预登记 · 非真下单。">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-i18n-title="prereg.title">
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
       <ul class="nav" id="site-nav">
-        <li><a href="index.html">首页</a></li>
-        <li><a href="showcase.html">成品展廊</a></li>
-        <li><a href="post.html">发布任务</a></li>
-        <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">卖方</a></li>
-        <li><a href="prereg.html" aria-current="page">预登记</a></li>
-        <li><a href="points.html">积分托管</a></li>
-        <li><a href="docs/agent-api.html">买方 AI</a></li>
-        <li><a href="docs/backend-contract.html">后端契约</a></li>
+        <li><a href="index.html" data-i18n="nav.home">首页</a></li>
+        <li><a href="showcase.html" data-i18n="nav.showcase">成品展廊</a></li>
+        <li><a href="post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="residents.html" data-i18n="nav.residents">卖方</a></li>
+        <li><a href="prereg.html" data-i18n="nav.prereg" aria-current="page">预登记</a></li>
+        <li><a href="points.html" data-i18n="nav.points">声誉与活跃</a></li>
+        <li><a href="docs/agent-api.html" data-i18n="nav.agent">买方 AI</a></li>
+        <li><a href="docs/backend-contract.html" data-i18n="nav.contract">后端契约</a></li>
       </ul>
     </div>
   </header>
 
   <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
-    <p class="eyebrow">Seller · pre-register</p>
-    <h1>卖方预登记</h1>
-    <p class="lede">
+    <p class="eyebrow" data-i18n="prereg.eyebrow">Seller · pre-register</p>
+    <h1 data-i18n="prereg.h1">卖方预登记</h1>
+    <p class="lede" data-i18n="prereg.lede" data-i18n-html>
       收集可售工作流 / 通道 / 数据的<strong>意向</strong>，不是真下单撮合。
-      资料仅存本机浏览器；当前为<strong>积分阶段、不碰真钱</strong>；知识库<strong>不全量上传</strong>到平台。
+      资料仅存本机浏览器；当前为<strong>免费撮合 · 站外自结 · 平台不托管资金</strong>；知识库<strong>不全量上传</strong>到平台。
     </p>
     <div class="demo-rules">
-      标签一律「预登记 · 非真下单」。等后端后再冻积分 / 私有交付状态机。合格标准：自己跑通 ≥3 次的可售物，边界与验收写清。
+      标签一律「预登记 · 非真下单」。等后端后再做跨设备订单记录 / 私有交付状态机。合格标准：自己跑通 ≥3 次的可售物，边界与验收写清。结算始终站外自结。
     </div>
 
     <section style="margin-top:2rem">
@@ -72,39 +72,40 @@
         <input type="text" id="prereg-contact" name="contact" maxlength="120"
           placeholder="例如：邮箱 / Telegram（演示本地）">
 
-        <label for="prereg-points">可选积分区间</label>
+        <label for="prereg-points">可选参考分区间 <span class="hint">声誉装饰 · 非法币</span></label>
         <input type="text" id="prereg-points" name="points" maxlength="40"
-          placeholder="例如：80–200 点">
+          placeholder="例如：80–200（演示参考）">
 
         <label for="prereg-sample">脱敏样例 <span class="hint">文本即可，演示用</span></label>
         <textarea id="prereg-sample" name="sample" maxlength="2000"
           placeholder="粘贴一小段脱敏输入/输出，或说明样例放在哪里。全库不要上传。"></textarea>
 
         <div class="btn-row" style="margin-top:1.25rem">
-          <button type="submit" class="btn btn-primary">写入本机预登记</button>
+          <button type="submit" class="btn btn-primary" data-i18n="prereg.submit">写入本机预登记</button>
           <a class="btn btn-ghost" href="residents.html">回卖方页</a>
         </div>
         <p id="prereg-ok" class="note hidden" style="margin-top:1rem"></p>
         <p style="font-size:0.8rem;color:var(--ink-faint);margin-top:0.85rem">
-          提交后可在下方列表「复制 JSON」。积分阶段 · 不碰真钱 · 知识库不全量上传。
+          提交后可在下方列表「复制 JSON」。免费撮合 · 站外自结 · 知识库不全量上传。
         </p>
       </form>
     </section>
 
     <section style="margin-top:2.5rem">
       <p class="eyebrow">Local list</p>
-      <h2>本机预登记</h2>
+      <h2 data-i18n="prereg.list.h2">本机预登记</h2>
       <div id="prereg-list" class="card-grid" style="margin-top:1rem;gap:1.15rem"></div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 / MIT · 预登记 · 非真下单 · 积分阶段</p>
+      <p data-i18n="prereg.footer">PrivyJobs · 演示 · 免费撮合 · 站外自结 · 平台不托管资金 · 预登记 · 非真下单 / MIT</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@
       "ts": "2026-10-19T05:00:00Z",
       "type": "freeze",
       "amount": -180,
-      "note": "下单冻结 · 发票归一化",
+      "note": "意向记录 · 发票归一化",
       "order_id": "job_demo_01a4",
       "role": "buyer"
     },
@@ -23,7 +23,7 @@
       "ts": "2026-10-12T09:20:00Z",
       "type": "release",
       "amount": 180,
-      "note": "验收放款 · 卖方入账 180 点",
+      "note": "验收确认 · 声誉计入 180 点",
       "order_id": "job_demo_00b2",
       "role": "both"
     },

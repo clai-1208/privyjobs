@@ -126,7 +126,7 @@ export function createStore(env) {
         ts: new Date().toISOString(),
         type: "freeze",
         amount: -n,
-        note: note || "下单冻结",
+        note: note || "意向记录",
         order_id: orderId,
         role: "buyer",
       };
@@ -145,7 +145,7 @@ export function createStore(env) {
         ts: new Date().toISOString(),
         type: "release",
         amount: n,
-        note: note || "验收放款",
+        note: note || "验收确认",
         order_id: orderId,
         role: "both",
       };

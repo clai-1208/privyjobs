@@ -7,29 +7,29 @@
   <meta name="description" content="已完成订单的公开样例：展示租用工作流 / 专有数据后的交付形态。真实澄清与交付仍走私有通道。">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-i18n-title="showcase.title">
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
       <ul class="nav" id="site-nav">
-        <li><a href="index.html">首页</a></li>
-        <li><a href="showcase.html" aria-current="page">成品展廊</a></li>
-        <li><a href="post.html">发布任务</a></li>
-        <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">卖方</a></li>
-        <li><a href="prereg.html">预登记</a></li>
-        <li><a href="points.html">积分托管</a></li>
-        <li><a href="docs/agent-api.html">买方 AI</a></li>
-        <li><a href="docs/backend-contract.html">后端契约</a></li>
+        <li><a href="index.html" data-i18n="nav.home">首页</a></li>
+        <li><a href="showcase.html" data-i18n="nav.showcase" aria-current="page">成品展廊</a></li>
+        <li><a href="post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="residents.html" data-i18n="nav.residents">卖方</a></li>
+        <li><a href="prereg.html" data-i18n="nav.prereg">预登记</a></li>
+        <li><a href="points.html" data-i18n="nav.points">声誉与活跃</a></li>
+        <li><a href="docs/agent-api.html" data-i18n="nav.agent">买方 AI</a></li>
+        <li><a href="docs/backend-contract.html" data-i18n="nav.contract">后端契约</a></li>
       </ul>
     </div>
   </header>
 
   <main class="wrap" style="padding-top:2.5rem">
     <p class="eyebrow">Showcase</p>
-    <h1>成品展廊</h1>
-    <p class="lede">
+    <h1 data-i18n="showcase.h1">成品展廊</h1>
+    <p class="lede" data-i18n="showcase.lede" data-i18n-html>
       说明「租用某套工作流 / 通道 / 数据后，交付物长什么样」。
       发票归一化提供<strong>可下载的真实小文件</strong>；其余条目为演示摘录（非模型能力秀）。真实订单的澄清与交付不在公开页出现。
     </p>
@@ -116,7 +116,7 @@ SKU-1044,classic-grey-L,shopify,<span class="hl">norm+size</span></div>
 <span class="hl"># kind: channel · 试匹配见卖方页</span></div>
         <div class="card-foot">
           <span class="points">通道</span>
-          <a href="residents.html">卖方 / 试匹配 →</a>
+          <a href="residents.html" data-i18n="nav.residents">卖方 / 试匹配 →</a>
         </div>
       </article>
 
@@ -132,7 +132,7 @@ SKU-1044,classic-grey-L,shopify,<span class="hl">norm+size</span></div>
 <span class="hl"># kind: data · 试匹配见卖方页</span></div>
         <div class="card-foot">
           <span class="points">数据</span>
-          <a href="residents.html">卖方 / 试匹配 →</a>
+          <a href="residents.html" data-i18n="nav.residents">卖方 / 试匹配 →</a>
         </div>
       </article>
     </div>
@@ -140,11 +140,12 @@ SKU-1044,classic-grey-L,shopify,<span class="hl">norm+size</span></div>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 · 本机积分 · 非真下单 · Worker 未部署 / MIT</p>
+      <p data-i18n="footer.line">PrivyJobs · 演示 · 免费撮合 · 站外自结 · 平台不托管资金 · Worker 未部署 / MIT</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

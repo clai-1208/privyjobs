@@ -7,29 +7,29 @@
   <meta name="description" content="卖方（有工作流的人）登记可售的工作流与数据域：只展示声明项，无公开全站目录。">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-i18n-title="residents.title">
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
       <ul class="nav" id="site-nav">
-        <li><a href="index.html">首页</a></li>
-        <li><a href="showcase.html">成品展廊</a></li>
-        <li><a href="post.html">发布任务</a></li>
-        <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html" aria-current="page">卖方</a></li>
-        <li><a href="prereg.html">预登记</a></li>
-        <li><a href="points.html">积分托管</a></li>
-        <li><a href="docs/agent-api.html">买方 AI</a></li>
-        <li><a href="docs/backend-contract.html">后端契约</a></li>
+        <li><a href="index.html" data-i18n="nav.home">首页</a></li>
+        <li><a href="showcase.html" data-i18n="nav.showcase">成品展廊</a></li>
+        <li><a href="post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="residents.html" data-i18n="nav.residents" aria-current="page">卖方</a></li>
+        <li><a href="prereg.html" data-i18n="nav.prereg">预登记</a></li>
+        <li><a href="points.html" data-i18n="nav.points">声誉与活跃</a></li>
+        <li><a href="docs/agent-api.html" data-i18n="nav.agent">买方 AI</a></li>
+        <li><a href="docs/backend-contract.html" data-i18n="nav.contract">后端契约</a></li>
       </ul>
     </div>
   </header>
 
   <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
     <p class="eyebrow">Sellers · workflows</p>
-    <h1>卖方（有工作流的人）</h1>
-    <p class="lede">
+    <h1 data-i18n="residents.h1">卖方（有工作流的人）</h1>
+    <p class="lede" data-i18n="residents.lede" data-i18n-html>
       卖方登记并<strong>声明</strong>可售的工作流、通道与数据域——不是挂一个通用模型。
       平台据此撮合；此处只列声明项，不甩全站目录。执行仍在各自机器上。
     </p>
@@ -43,7 +43,7 @@
       <h2>待匹配</h2>
       <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:1rem;max-width:36em">
         切到卖方身份后，可扫未匹配单并「认领试做」。买方侧只见入池提示，不暴露目录。
-        也可先去 <a href="prereg.html">预登记</a> 写意向（非真下单）。
+        也可先去 <a href="prereg.html" data-i18n="nav.prereg">预登记</a> 写意向（非真下单）。
       </p>
       <p id="pending-pool-buyer-note" class="note hidden"></p>
       <div id="pending-pool" class="card-grid" style="gap:1rem"></div>
@@ -55,7 +55,7 @@
       <p style="font-size:0.92rem;color:var(--ink-muted);margin-bottom:1rem;max-width:36em">
         轻量声明：写清能力域与你卖的是工作流 / 通道 / 数据中的哪一类。
         不是公开目录上架；登记仅存本机，用于演示撮合边界。
-        正式意向收集请用 <a href="prereg.html">卖方预登记</a>（标「预登记 · 非真下单」）。
+        正式意向收集请用 <a href="prereg.html" data-i18n="nav.prereg">卖方预登记</a>（标「预登记 · 非真下单」）。
       </p>
       <form class="form-block" id="reg-form" novalidate>
         <label for="reg-name">称呼 / 代号</label>
@@ -119,11 +119,12 @@
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 · 本机积分 · 非真下单 · Worker 未部署 / MIT</p>
+      <p data-i18n="footer.line">PrivyJobs · 演示 · 免费撮合 · 站外自结 · 平台不托管资金 · Worker 未部署 / MIT</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

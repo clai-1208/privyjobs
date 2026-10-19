@@ -1,4 +1,12 @@
 (function () {
+
+  function tt(key, vars) {
+    if (window.PJ_I18N && typeof window.PJ_I18N.t === "function") {
+      return window.PJ_I18N.t(key, vars);
+    }
+    return key;
+  }
+
   "use strict";
 
   var ORDERS_KEY = "privyjobs_orders";
@@ -328,36 +336,39 @@
   }
 
 
-  var TOUR_STEPS = [
-    {
-      id: 1,
-      title: "下单",
-      hint: "以买方身份发布任务，积分进入托管冻结。",
-      href: "post.html",
-      page: "post",
-    },
-    {
-      id: 2,
-      title: "订单澄清",
-      hint: "切换到卖方，在订单里「回应澄清」锁定需求。",
-      href: "orders.html",
-      page: "orders",
-    },
-    {
-      id: 3,
-      title: "提交交付",
-      hint: "卖方在「制作中」填写结果摘要包（交付摘要 / 产物清单 / 验收对照）并提交。",
-      href: "orders.html",
-      page: "orders",
-    },
-    {
-      id: 4,
-      title: "验收 / 退回",
-      hint: "切回买方：验收通过，或未通过（一次返工 / 二次退回）。",
-      href: "orders.html",
-      page: "orders",
-    },
-  ];
+  function getTourSteps() {
+    return [
+      {
+        id: 1,
+        title: tt("tour.step1.title"),
+        hint: tt("tour.step1.hint"),
+        href: "post.html",
+        page: "post",
+      },
+      {
+        id: 2,
+        title: tt("tour.step2.title"),
+        hint: tt("tour.step2.hint"),
+        href: "orders.html",
+        page: "orders",
+      },
+      {
+        id: 3,
+        title: tt("tour.step3.title"),
+        hint: tt("tour.step3.hint"),
+        href: "orders.html",
+        page: "orders",
+      },
+      {
+        id: 4,
+        title: tt("tour.step4.title"),
+        hint: tt("tour.step4.hint"),
+        href: "orders.html",
+        page: "orders",
+      },
+    ];
+  }
+  var TOUR_STEPS = getTourSteps();
 
   function escapeHtml(s) {
     return String(s)
@@ -449,8 +460,8 @@
 
   function roleLabel(role) {
     return role === "seller"
-      ? "卖方（有工作流的人）"
-      : "买方（要租用的人）";
+      ? tt("identity.seller_full")
+      : tt("identity.buyer_full");
   }
 
   function renderIdentityBar() {
@@ -465,14 +476,22 @@
     }
     var role = getRole();
     host.innerHTML =
-      '<span class="identity-label">本机身份</span>' +
-      '<div class="identity-toggle" role="group" aria-label="切换买方或卖方">' +
+      '<span class="identity-label">' +
+      escapeHtml(tt("identity.label")) +
+      "</span>" +
+      '<div class="identity-toggle" role="group" aria-label="' +
+      escapeHtml(tt("identity.toggle_aria")) +
+      '">' +
       '<button type="button" class="id-btn' +
       (role === "buyer" ? " is-active" : "") +
-      '" data-set-role="buyer">买方</button>' +
+      '" data-set-role="buyer">' +
+      escapeHtml(tt("identity.buyer")) +
+      "</button>" +
       '<button type="button" class="id-btn' +
       (role === "seller" ? " is-active" : "") +
-      '" data-set-role="seller">卖方</button>' +
+      '" data-set-role="seller">' +
+      escapeHtml(tt("identity.seller")) +
+      "</button>" +
       "</div>" +
       '<span class="identity-hint">' +
       escapeHtml(roleLabel(role)) +
@@ -508,10 +527,12 @@
     var blockers = hrefFor("docs/BLOCKERS.md");
     bar.innerHTML =
       '<div class="honesty-inner">' +
-      "<span>演示站 · 积分本机托管 · 非真下单撮合 · Worker 源码在仓库 / 未部署</span>" +
+      "<span>" + escapeHtml(tt("honesty.strip")) + "</span>" +
       '<a class="honesty-link" href="' +
       blockers +
-      '">阻塞说明</a>' +
+      '">' +
+      escapeHtml(tt("honesty.blockers")) +
+      "</a>" +
       "</div>";
   }
 
@@ -596,10 +617,10 @@
     var role = getRole();
     var roleTip =
       t.step === 1
-        ? "请保持买方身份发布。"
+        ? tt("tour.keep_buyer")
         : t.step === 2 || t.step === 3
-          ? "此步请切换到卖方。"
-          : "此步请切换到买方。";
+          ? tt("tour.need_seller")
+          : tt("tour.need_buyer");
     bar.innerHTML =
       '<div class="tour-inner">' +
       '<div class="tour-progress">' +
@@ -617,27 +638,31 @@
         );
       }).join("") +
       "</div>" +
-      "<div class=\"tour-copy\">" +
-      "<strong>演示走一遍 · 第 " +
-      t.step +
-      "/4 步 · " +
-      escapeHtml(step.title) +
+      '<div class="tour-copy">' +
+      "<strong>" +
+      escapeHtml(
+        tt("tour.banner", { n: String(t.step) + "/4", title: step.title })
+      ) +
       "</strong>" +
       "<p>" +
       escapeHtml(step.hint) +
       " " +
       escapeHtml(roleTip) +
       (next
-        ? " 下一步：" + escapeHtml(next.title) + "。"
-        : " 完成后可结束演示。") +
+        ? " " + escapeHtml(tt("tour.next", { title: next.title }))
+        : " " + escapeHtml(tt("tour.can_end"))) +
       "</p>" +
-      '<p class="tour-rules">演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。</p>' +
+      '<p class="tour-rules">' +
+      escapeHtml(tt("demo.rules_short")) +
+      "</p>" +
       "</div>" +
       '<div class="tour-actions">' +
       '<a class="btn btn-primary btn-sm" href="' +
       hrefFor(step.href) +
-      '">去这一步</a>' +
-      '<button type="button" class="btn btn-ghost btn-sm" id="tour-dismiss">结束演示</button>' +
+      '">' +
+      escapeHtml(tt("tour.go")) +
+      "</a>" +
+      '<button type="button" class="btn btn-ghost btn-sm" id="tour-dismiss">' + escapeHtml(tt("tour.dismiss")) + '</button>' +
       "</div></div>";
     var dismiss = document.getElementById("tour-dismiss");
     if (dismiss) {
@@ -714,7 +739,7 @@
         ts: now - 2 * 3600000,
         type: "freeze",
         amount: -90,
-        note: "下单冻结 · Changelog 工程备注 → 用户短句",
+        note: "意向记录 · Changelog 工程备注 → 用户短句",
         orderId: "ord-seed-04",
         role: "buyer",
       },
@@ -723,7 +748,7 @@
         ts: now - 1 * day,
         type: "freeze",
         amount: -210,
-        note: "下单冻结 · SKU 三源别名合并主表",
+        note: "意向记录 · SKU 三源别名合并主表",
         orderId: "ord-seed-03",
         role: "buyer",
       },
@@ -732,7 +757,7 @@
         ts: now - 3 * day,
         type: "freeze",
         amount: -120,
-        note: "下单冻结 · 夜班 5xx 尖峰归因备忘",
+        note: "意向记录 · 夜班 5xx 尖峰归因备忘",
         orderId: "ord-seed-02",
         role: "buyer",
       },
@@ -741,7 +766,7 @@
         ts: now - 10 * day,
         type: "release",
         amount: 180,
-        note: "验收放款 · 三家供应商发票 CSV → 统一 schema（卖方入账 180 点）",
+        note: "验收确认 · 三家供应商发票 CSV → 统一 schema（声誉计入 180 · 站外自结）",
         orderId: "ord-seed-01",
         role: "both",
       },
@@ -750,7 +775,7 @@
         ts: now - 12 * day,
         type: "freeze",
         amount: -180,
-        note: "下单冻结 · 三家供应商发票 CSV → 统一 schema",
+        note: "意向记录 · 三家供应商发票 CSV → 统一 schema",
         orderId: "ord-seed-01",
         role: "buyer",
       },
@@ -777,7 +802,7 @@
     var n = Math.round(Number(points) || 0);
     if (n <= 0) return false;
     if (acc.balance < n) {
-      alert("余额不足，无法冻结 " + n + " 点（当前余额 " + acc.balance + "）。");
+      alert("演示参考分不足，无法记入意向 " + n + " 点（当前 " + acc.balance + "）。点仅作声誉装饰，非法币。");
       return false;
     }
     acc.balance -= n;
@@ -788,7 +813,7 @@
       ts: Date.now(),
       type: "freeze",
       amount: -n,
-      note: "下单冻结 · " + (title || orderId || ""),
+      note: "意向记录 · " + (title || orderId || ""),
       orderId: orderId || null,
       role: "buyer",
     });
@@ -809,7 +834,7 @@
       type: "release",
       amount: n,
       note:
-        "验收放款 · " +
+        "验收确认 · " +
         (title || "") +
         "（卖方入账 " +
         n +
@@ -855,8 +880,8 @@
     if (roleHint) {
       roleHint.textContent =
         role === "seller"
-          ? "当前身份：卖方（有工作流的人）— 关注放款入账。"
-          : "当前身份：买方（要租用的人）— 关注余额与冻结。";
+          ? tt("points.role.seller")
+          : tt("points.role.buyer");
     }
     var buyerBlock = document.getElementById("pts-buyer-stats");
     var sellerBlock = document.getElementById("pts-seller-stats");
@@ -872,7 +897,7 @@
     });
     if (!filtered.length) {
       ledEl.innerHTML =
-        '<p class="ledger-empty">暂无流水。发布或操作订单后会出现。</p>';
+        '<p class="ledger-empty">' + escapeHtml(tt("points.ledger_empty")) + "</p>";
       return;
     }
     var html = "";
@@ -892,7 +917,7 @@
         amtText =
           role === "seller"
             ? "+" + String(e.amount || 0) + " 点"
-            : "放款 " + String(e.amount || 0);
+            : tt("points.release_label", { n: String(e.amount || 0) });
       }
       html +=
         '<div class="ledger-row">' +
@@ -1260,18 +1285,18 @@
   function actionsForStatus(status, role, order) {
     var acts = [];
     if (status === STATUS.clarify && role === "seller") {
-      acts.push({ action: "clarify", label: "回应澄清", cls: "btn-primary" });
+      acts.push({ action: "clarify", label: tt("act.clarify"), cls: "btn-primary" });
     }
     if (status === STATUS.making && role === "seller") {
-      acts.push({ action: "deliver", label: "提交交付 · 结果摘要包", cls: "btn-primary" });
+      acts.push({ action: "deliver", label: tt("act.deliver"), cls: "btn-primary" });
     }
     if (status === STATUS.accept && role === "buyer") {
-      acts.push({ action: "approve", label: "验收通过", cls: "btn-primary" });
+      acts.push({ action: "approve", label: tt("act.approve"), cls: "btn-primary" });
       var reworks = order && order.reworkCount ? Number(order.reworkCount) : 0;
       if (reworks < 1) {
-        acts.push({ action: "rework", label: "验收未通过 · 要求返工", cls: "btn-ghost" });
+        acts.push({ action: "rework", label: tt("act.rework"), cls: "btn-ghost" });
       } else {
-        acts.push({ action: "refund", label: "二次失败 · 申请退回", cls: "btn-danger" });
+        acts.push({ action: "refund", label: tt("act.refund"), cls: "btn-danger" });
       }
     }
     if (
@@ -1284,7 +1309,7 @@
       if (age >= seven || (order && order.demoOverdue)) {
         acts.push({
           action: "refund_late",
-          label: "锁定超 7 日未交付 · 退回",
+          label: tt("act.refund_late"),
           cls: "btn-danger",
         });
       }
@@ -2035,11 +2060,27 @@
     toggle.addEventListener("click", function () {
       var open = nav.classList.toggle("open");
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      toggle.textContent = open ? "关闭" : "菜单";
+      toggle.textContent = open ? tt("nav.close") : tt("nav.menu");
     });
   }
 
   /* —— Boot —— */
+  function refreshI18nDynamic() {
+    TOUR_STEPS = getTourSteps();
+    renderIdentityBar();
+    renderHonestyStrip();
+    renderTourBanner();
+    renderOrdersList();
+    renderPendingPool();
+    renderPointsPanel();
+    updatePostGate();
+    var mt = document.querySelector(".menu-toggle");
+    if (mt && !document.querySelector(".nav.open")) {
+      mt.textContent = tt("nav.menu");
+    }
+  }
+
+  function bootCore() {
   getAccount();
   renderIdentityBar();
   wireIdentityBar();
@@ -2068,6 +2109,16 @@
   renderPreregList();
   renderPointsPanel();
   updatePostGate();
+  } /* end bootCore */
+
+  if (window.PJ_I18N && window.PJ_I18N.whenReady) {
+    window.PJ_I18N.whenReady(bootCore);
+  } else {
+    bootCore();
+  }
+  document.addEventListener("pj-i18n-change", function () {
+    refreshI18nDynamic();
+  });
 
   /* —— Post-job flow —— */
   var form = document.getElementById("job-form");
@@ -2219,7 +2270,7 @@
           });
         },
         html:
-          '<div class="msg system"><strong>未匹配 · 进入待匹配池</strong>。订单保持「待澄清」。买方侧只见这一条说明——<strong>不展示卖方目录</strong>。可细化能力域后重发，或等待卖方身份在待匹配池「认领试做」。积分已冻结，可稍后在订单中申请退回。</div>',
+          '<div class="msg system"><strong>未匹配 · 进入待匹配池</strong>。订单保持「待澄清」。买方侧只见这一条说明——<strong>不展示卖方目录</strong>。可细化能力域后重发，或等待卖方身份在待匹配池「认领试做」。意向已写入订单记录；可稍后关闭。报酬始终站外自结。</div>',
       });
       steps.push({
         delay: 1400,
@@ -2267,7 +2318,7 @@
         escapeHtml(hitLine) +
         "（" +
         matched.score +
-        "）。澄清仅订单双方可见，且<strong>限一轮</strong>——不开放知识库追问。订单已写入本机；积分已冻结。<br>演示下一步：到订单答复问题清单，再切<strong>卖方</strong>点「回应澄清」锁定。</div>",
+        "）。澄清仅订单双方可见，且<strong>限一轮</strong>——不开放知识库追问。订单记录已写入本机；平台不托管资金，结算站外自结。<br>演示下一步：到订单答复问题清单，再切<strong>卖方</strong>点「回应澄清」锁定。</div>",
     });
     steps.push({
       delay: 1600,

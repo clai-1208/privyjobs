@@ -1198,3 +1198,43 @@ textarea { min-height: 8rem; resize: vertical; }
   transform: translateX(-50%) translateY(0);
   opacity: 1;
 }
+
+
+/* —— Language toggle —— */
+.lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.lang-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--ink-muted);
+  font: inherit;
+  font-size: 0.75rem;
+  padding: 0.28rem 0.55rem;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.lang-btn.is-active {
+  background: var(--ink);
+  color: #fff;
+}
+.lang-btn:hover:not(.is-active) {
+  background: var(--bg-inset);
+  color: var(--ink);
+}
+.docs-en-lead {
+  margin: 1rem 0 0.5rem;
+  max-width: 42em;
+}
+@media (max-width: 720px) {
+  .lang-toggle { margin-left: 0; }
+  .site-header .inner { flex-wrap: wrap; }
+}

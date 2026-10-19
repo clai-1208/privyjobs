@@ -3,117 +3,117 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>积分托管 — PrivyJobs</title>
-  <meta name="description" content="PrivyJobs 积分托管：下单冻结 → 验收 → 放款或退回。无真金白银。">
+  <title>声誉与活跃 — PrivyJobs</title>
+  <meta name="description" content="PrivyJobs 早期声誉与活跃分：非法币、不是下单货币。免费撮合，站外自行结算，平台不托管资金。">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-i18n-title="points.title">
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
       <ul class="nav" id="site-nav">
-        <li><a href="index.html">首页</a></li>
-        <li><a href="showcase.html">成品展廊</a></li>
-        <li><a href="post.html">发布任务</a></li>
-        <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">卖方</a></li>
-        <li><a href="prereg.html">预登记</a></li>
-        <li><a href="points.html" aria-current="page">积分托管</a></li>
-        <li><a href="docs/agent-api.html">买方 AI</a></li>
-        <li><a href="docs/backend-contract.html">后端契约</a></li>
+        <li><a href="index.html" data-i18n="nav.home">首页</a></li>
+        <li><a href="showcase.html" data-i18n="nav.showcase">成品展廊</a></li>
+        <li><a href="post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="residents.html" data-i18n="nav.residents">卖方</a></li>
+        <li><a href="prereg.html" data-i18n="nav.prereg">预登记</a></li>
+        <li><a href="points.html" data-i18n="nav.points" aria-current="page">声誉与活跃</a></li>
+        <li><a href="docs/agent-api.html" data-i18n="nav.agent">买方 AI</a></li>
+        <li><a href="docs/backend-contract.html" data-i18n="nav.contract">后端契约</a></li>
       </ul>
     </div>
   </header>
 
   <main class="wrap" style="padding-top:2.5rem">
-    <p class="eyebrow">Points escrow</p>
-    <h1>积分托管</h1>
-    <p class="lede">
-      PrivyJobs 用<strong>积分</strong>结算，不碰法币。
-      下单时冻结，验收后再放款或退回。账户与流水挂在当前身份（买方 / 卖方）上，存本机 localStorage。
+    <p class="eyebrow" data-i18n="points.eyebrow">Reputation · activity</p>
+    <h1 data-i18n="points.h1">声誉与活跃</h1>
+    <p class="lede" data-i18n="points.lede" data-i18n-html>
+      早期阶段的「点」只是<strong>演示用的声誉 / 活跃装饰</strong>——<strong>非法币</strong>，也<strong>不是下单货币</strong>。
+      平台做<strong>免费撮合</strong>与订单记录；报酬由双方<strong>微信 / 支付宝站外自行结算</strong>；
+      <strong>平台不托管资金</strong>。
     </p>
     <p id="pts-role-hint" class="note" style="margin-top:0"></p>
-    <div class="demo-rules">
-      演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
-    </div>
+    <div class="demo-rules" data-i18n="points.rules">演示规则：锁定后 7 日未交付可关闭意向；验收失败一次可要求返工，二次失败关闭。
+      验收按钮只更新订单状态，不代表平台控款或放款。</div>
 
-    <section class="account-panel" id="account-panel" aria-label="演示账户">
+    <section class="account-panel" id="account-panel" aria-label="演示声誉账本">
       <div id="pts-buyer-stats" class="account-stats">
         <div class="stat">
-          <span class="stat-label">买方余额</span>
+          <span class="stat-label" data-i18n="points.bal">买方演示余额</span>
           <span class="stat-value" id="pts-balance">—</span>
         </div>
         <div class="stat">
-          <span class="stat-label">冻结中</span>
+          <span class="stat-label" data-i18n="points.intent">意向记录中</span>
           <span class="stat-value" id="pts-frozen">—</span>
         </div>
       </div>
       <div id="pts-seller-stats" class="account-stats hidden" style="margin-top:0.85rem">
         <div class="stat">
-          <span class="stat-label">卖方累计入账</span>
+          <span class="stat-label" data-i18n="points.earned">卖方累计声誉计入</span>
           <span class="stat-value" id="pts-earned">—</span>
         </div>
         <div class="stat">
           <span class="stat-label">说明</span>
-          <span class="stat-value" style="font-size:0.95rem;font-weight:500;color:var(--ink-muted)">验收放款计入</span>
+          <span class="stat-value" style="font-size:0.95rem;font-weight:500;color:var(--ink-muted)" data-i18n="points.earned_note">验收确认后计入（非放款）</span>
         </div>
       </div>
-      <h2 class="ledger-title">最近流水</h2>
+      <h2 class="ledger-title" data-i18n="points.ledger">最近演示流水</h2>
       <div id="pts-ledger" class="ledger-list"></div>
     </section>
 
-    <p class="eyebrow" style="margin-top:2.5rem">Escrow story</p>
-    <h2>托管四步</h2>
+    <p class="eyebrow" style="margin-top:2.5rem" data-i18n="points.settle.eyebrow">How settlement works</p>
+    <h2 data-i18n="points.settle.h2">撮合与结算（B+A）</h2>
     <ol class="flow" style="margin-top:0.75rem">
       <li>
         <span class="num">01</span>
         <div>
-          <strong>下单冻结</strong>
-          <p>买方出价写入订单，对应积分从可用余额划入托管池，卖方尚未收到。</p>
+          <strong data-i18n="points.settle.1.h">发布意向</strong>
+          <p data-i18n="points.settle.1.p">买方写出能力边界与验收标准；站内留下订单记录。可选参考分仅作演示声誉，不锁定资金。</p>
         </div>
       </li>
       <li>
         <span class="num">02</span>
         <div>
-          <strong>澄清与锁定</strong>
-          <p>卖方在私聊里问清边界；双方确认后需求锁定，制作开始。托管积分仍冻结。</p>
+          <strong data-i18n="points.settle.2.h">澄清与锁定</strong>
+          <p data-i18n="points.settle.2.p">卖方在私聊里问清边界；双方确认后需求锁定，制作开始。平台仍不经手钱。</p>
         </div>
       </li>
       <li>
         <span class="num">03</span>
         <div>
-          <strong>验收</strong>
-          <p>交付经私有通道到达买方。买方确认通过、要求返工（一次），或二次失败后退回。</p>
+          <strong data-i18n="points.settle.3.h">交付与验收</strong>
+          <p data-i18n="points.settle.3.p">交付经私有通道到达买方。买方可点验收通过 / 返工——只改订单状态，不控款。</p>
         </div>
       </li>
       <li>
         <span class="num">04</span>
         <div>
-          <strong>放款或退回</strong>
-          <p>通过 → 积分划入卖方；退回 → 解冻还买方。逾期未交付亦可按规则退回。</p>
+          <strong data-i18n="points.settle.4.h">站外自行结算</strong>
+          <p>验收合意后，双方用微信 / 支付宝自行转账。平台<strong>不托管资金</strong>。声誉分可选点亮。</p>
         </div>
       </li>
     </ol>
 
-    <div class="note">
-      本静态站没有真实账户系统。数据仅存你浏览器的 localStorage。
-      以后若接链上或独立账本，仍保持「积分、非法币」的产品边界。
-    </div>
+    <div class="note" data-i18n="points.note">本静态站没有真实账户系统。演示流水仅存你浏览器的 localStorage，方便走通状态机。
+      产品边界：免费撮合 + 站外自结；点 ≠ 货币。</div>
 
     <div class="btn-row">
-      <a class="btn btn-primary" href="post.html">发布一单看看流程</a>
-      <a class="btn btn-ghost" href="index.html" id="start-tour">演示走一遍</a>
+      <a class="btn btn-primary" href="showcase.html" data-i18n="points.cta.show">看成品展廊</a>
+      <a class="btn btn-primary" href="post.html" data-i18n="points.cta.post">发布一单意向</a>
+      <a class="btn btn-ghost" href="index.html" id="start-tour" data-i18n="tour.start">演示走一遍</a>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 · 本机积分 · 非真下单 · Worker 未部署 / MIT</p>
+      <p data-i18n="footer.line">PrivyJobs · 演示 · 免费撮合 · 站外自结 · 平台不托管资金 · Worker 未部署 / MIT</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="js/api.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

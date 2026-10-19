@@ -104,11 +104,11 @@ async function handleCreateJob(request, store) {
 
   let ledgerEntry = null;
   try {
-    const fr = await store.freeze(points, id, "下单冻结 · " + title);
+    const fr = await store.freeze(points, id, "意向记录 · " + title);
     ledgerEntry = fr.entry;
   } catch (e) {
     if (e && e.code === "insufficient_balance") {
-      return err(402, "insufficient_balance", "积分余额不足，无法冻结");
+      return err(402, "insufficient_balance", "演示参考分不足，无法记入意向");
     }
     throw e;
   }
@@ -337,7 +337,7 @@ async function handleAccept(id, request, store) {
   const { entry } = await store.release(
     points,
     id,
-    "验收放款 · 卖方入账 " + points + " 点"
+    "验收确认 · 声誉计入 " + points + " 点（站外自结）"
   );
   job.status = "done";
   job.escrow = "released";

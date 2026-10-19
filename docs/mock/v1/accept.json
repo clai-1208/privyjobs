@@ -9,7 +9,7 @@
   "ledger": {
     "type": "release",
     "amount": 180,
-    "note": "验收放款 · 卖方入账 180 点",
+    "note": "验收确认 · 声誉计入 180 点",
     "order_id": "job_demo_01a4"
   },
   "job": {

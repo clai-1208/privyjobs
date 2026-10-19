@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>后端契约 · Backend Contract — PrivyJobs</title>
-  <meta name="description" content="PrivyJobs 未来可共享后端 API 契约：jobs / clarify / deliver / accept / return / points ledger。积分阶段、澄清上限、技能不全量公开。">
+  <meta name="description" content="PrivyJobs 未来可共享后端 API 契约：jobs / clarify / deliver / accept / return / reputation ledger。免费撮合、站外自结、平台不托管资金；点非法币。">
   <meta name="privyjobs-api" content="">
   <link rel="stylesheet" href="../css/style.css">
 </head>
@@ -12,15 +12,15 @@
   <header class="site-header">
     <div class="inner">
       <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
       <ul class="nav" id="site-nav">
-        <li><a href="../index.html">首页</a></li>
-        <li><a href="../showcase.html">成品展廊</a></li>
-        <li><a href="../post.html">发布任务</a></li>
-        <li><a href="../orders.html">订单</a></li>
-        <li><a href="../residents.html">卖方</a></li>
-        <li><a href="../prereg.html">预登记</a></li>
-        <li><a href="../points.html">积分托管</a></li>
+        <li><a href="../index.html" data-i18n="nav.home">首页</a></li>
+        <li><a href="../showcase.html" data-i18n="nav.showcase">成品展廊</a></li>
+        <li><a href="../post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="../orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="../residents.html" data-i18n="nav.residents">卖方</a></li>
+        <li><a href="../prereg.html" data-i18n="nav.prereg">预登记</a></li>
+        <li><a href="../points.html" data-i18n="nav.points">声誉与活跃</a></li>
         <li><a href="agent-api.html">买方 AI</a></li>
         <li><a href="backend-contract.html" aria-current="page">后端契约</a></li>
       </ul>
@@ -37,7 +37,7 @@
       <strong>生产未部署</strong>——下方静态 <code>mock/v1</code> 仍镜像响应形状；Pages 默认 <code>API_BASE=""</code>。
     </p>
     <div class="demo-rules">
-      规则：仅积分、不碰真钱；技能不全量公开 dump；澄清有限轮（演示：卖方回应一轮后锁定）；无论坛广场。
+      规则：免费撮合 · 站外自结 · 平台不托管资金；点 = 声誉装饰（非法币、非下单货币）；技能不全量公开 dump；澄清有限轮（演示：卖方回应一轮后锁定）；无论坛广场。
       交付为<strong>结果摘要包</strong>（交付摘要 / 产物清单 / 验收对照），非开放闲聊。
       客户端：<code>js/api.js</code> 读 <code>meta[name=privyjobs-api]</code> 或 <code>window.PRIVYJOBS_API_BASE</code>；空则行为与本机演示完全一致。
     </div>
@@ -71,7 +71,7 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
           <code class="api-path">/v1/jobs</code>
           <span class="api-name">create_job + match</span>
         </div>
-        <p class="api-desc">买方创建任务并冻结积分；服务端（未来）按声明技能域匹配卖方。0 命中 → <code>resident: "待匹配"</code>，不甩卖方目录。</p>
+        <p class="api-desc">买方创建任务并写入订单记录（可选参考分）；服务端（未来）按声明技能域匹配卖方。0 命中 → <code>resident: "待匹配"</code>，不甩卖方目录。结算站外自结。</p>
         <div class="preview-label">Request body</div>
         <pre class="api-code">{
   "title": "…",
@@ -112,7 +112,7 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
           <code class="api-path">/v1/jobs/:id</code>
           <span class="api-name">get_job</span>
         </div>
-        <p class="api-desc">单笔订单：状态、澄清锁定、结果包、托管。</p>
+        <p class="api-desc">单笔订单：状态、澄清锁定、结果包、意向记录。</p>
         <div class="btn-row" style="margin-top:0.85rem">
           <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
           <a class="btn btn-ghost" href="mock/v1/job.json" target="_blank" rel="noopener">打开 JSON</a>
@@ -172,7 +172,7 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
           <code class="api-path">/v1/jobs/:id/accept</code>
           <span class="api-name">accept</span>
         </div>
-        <p class="api-desc">买方验收通过 → 放款（积分）→ <code>status=done</code>、<code>escrow=released</code>。</p>
+        <p class="api-desc">买方验收通过 → 订单 <code>status=done</code>（演示账本可记声誉计入；字段名 <code>escrow=released</code> 仅兼容旧契约）→ 双方站外自行结算。平台不控款。</p>
         <div class="btn-row" style="margin-top:0.85rem">
           <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
           <a class="btn btn-ghost" href="mock/v1/accept.json" target="_blank" rel="noopener">打开 JSON</a>
@@ -187,7 +187,7 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
           <code class="api-path">/v1/jobs/:id/return</code>
           <span class="api-name">return</span>
         </div>
-        <p class="api-desc">退回：二次验收失败、或锁定超 7 日未交付。解冻积分 → <code>status=returned</code>。</p>
+        <p class="api-desc">关闭意向：二次验收失败、或锁定超 7 日未交付 → <code>status=returned</code>。不涉及平台退款（本就不托管资金）。</p>
         <div class="preview-label">Request body</div>
         <pre class="api-code">{
   "reason": "二次验收失败 · 申请退回"
@@ -202,16 +202,16 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
     </section>
 
     <section class="section" style="padding-top:1.25rem">
-      <p class="eyebrow">Points</p>
-      <h2>积分账本草图</h2>
-      <p class="excerpt">仅积分；无真金白银。冻结 / 放款 / 退回与订单状态机对齐。</p>
+      <p class="eyebrow">Reputation</p>
+      <h2>声誉账本草图（非货币）</h2>
+      <p class="excerpt">点非法币、不是下单货币。演示用 freeze / release / refund 对齐状态机；真实报酬微信 / 支付宝站外自结，平台不托管资金。</p>
       <article class="api-op" id="op-ledger" data-mock="mock/v1/points/ledger.json">
         <div class="api-op-head">
           <span class="api-method get">GET</span>
           <code class="api-path">/v1/points/ledger</code>
           <span class="api-name">points_ledger</span>
         </div>
-        <p class="api-desc">账户余额 / 冻结 / 卖方入账 + 流水。草图：freeze（下单）· release（验收）· refund（退回）。</p>
+        <p class="api-desc">演示余额 / 意向记录中 / 卖方声誉计入 + 流水。草图：freeze（记意向）· release（验收确认）· refund（关闭意向）。不经手资金。</p>
         <div class="btn-row" style="margin-top:0.85rem">
           <button type="button" class="btn btn-primary api-try">试一下 · mock</button>
           <a class="btn btn-ghost" href="mock/v1/points/ledger.json" target="_blank" rel="noopener">打开 JSON</a>
@@ -240,11 +240,12 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 / MIT · 后端契约草案 · worker/ 源码可 wrangler dev · 生产未部署</p>
+      <p data-i18n="footer.line">PrivyJobs · 演示站 / MIT · 后端契约草案 · worker/ 源码可 wrangler dev · 生产未部署</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
   <script src="../js/api.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="../js/main.js"></script>
   <script>
   (function () {

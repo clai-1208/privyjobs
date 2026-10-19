@@ -23,7 +23,7 @@
   "ledger": {
     "type": "freeze",
     "amount": -180,
-    "note": "下单冻结 · 用发票归一化流水线处理本月三家供应商 CSV",
+    "note": "意向记录 · 用发票归一化流水线处理本月三家供应商 CSV",
     "order_id": "job_demo_new01"
   },
   "notes": {
