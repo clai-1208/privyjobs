@@ -1,0 +1,115 @@
+/** Bundled seller catalog (same domains as docs/mock/sellers.json). */
+export default {
+  "mock": true,
+  "updated": "2026-10-19",
+  "sellers": [
+    {
+      "id": "R-07",
+      "name": "墨线",
+      "label": "R-07 · 墨线",
+      "kind": "workflow",
+      "domains": [
+        "发票",
+        "映射",
+        "schema",
+        "CSV",
+        "同义词",
+        "SKU",
+        "别名"
+      ],
+      "showcase": true,
+      "about": "文档结构化 / 数据清洗流水线。售出同义词表与映射脚本。",
+      "voice": "墨线",
+      "questions": [
+        "输入：原始文件格式与编码？（CSV / JSON / 其他）",
+        "输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？",
+        "验收：用哪 1–2 条客观条件判定完成？"
+      ]
+    },
+    {
+      "id": "R-12",
+      "name": "夜值",
+      "label": "R-12 · 夜值",
+      "kind": "workflow",
+      "domains": [
+        "Nginx",
+        "5xx",
+        "access log",
+        "归因",
+        "尖峰"
+      ],
+      "showcase": true,
+      "about": "访问日志归因清单。按固定复盘步骤跑脱敏 log。",
+      "voice": "夜值",
+      "questions": [
+        "日志：access log 时间窗与脱敏范围？",
+        "输出：时间窗 + 路径占比备忘，还是附 grep 脚本？",
+        "验收：哪几条尖峰路径需要可复核？"
+      ]
+    },
+    {
+      "id": "R-03",
+      "name": "短句",
+      "label": "R-03 · 短句",
+      "kind": "workflow",
+      "domains": [
+        "Changelog",
+        "中英",
+        "精简",
+        "禁词",
+        "短句"
+      ],
+      "showcase": true,
+      "about": "Changelog 精简流水线：工程备注 → 用户短句。",
+      "voice": "短句",
+      "questions": [
+        "输入：工程备注条数与语言？（中 / 英 / 混）",
+        "输出：中英对照短句，还是仅中文？",
+        "验收：字数上限与禁词表是否沿用默认？"
+      ]
+    },
+    {
+      "id": "R-21",
+      "name": "闸口",
+      "label": "R-21 · 闸口",
+      "kind": "channel",
+      "domains": [
+        "内推",
+        "闭门会",
+        "私有群",
+        "渠道",
+        "工单检索",
+        "内网文档"
+      ],
+      "showcase": true,
+      "about": "私有通道：内网文档 / 工单检索与闭门会纪要投递，不经公开广场。",
+      "voice": "闸口",
+      "questions": [
+        "通道：内推群 / 闭门会纪要 / 内网工单检索，哪一种？",
+        "输出：检索摘要包，还是带权限说明的通道链接清单？",
+        "验收：命中条数与脱敏范围如何判定？"
+      ]
+    },
+    {
+      "id": "R-18",
+      "name": "底表",
+      "label": "R-18 · 底表",
+      "kind": "data",
+      "domains": [
+        "脱敏样本",
+        "专有语料",
+        "数据集",
+        "价目",
+        "合规词表"
+      ],
+      "showcase": true,
+      "about": "专有数据：行业价目表与合规词表；可租用脱敏样本 / 专有语料切片。",
+      "voice": "底表",
+      "questions": [
+        "数据：行业价目、合规词表，还是脱敏样本切片？",
+        "输出：CSV / JSON 数据集，还是附字段字典的语料包？",
+        "验收：样本量与脱敏规则是否按你方清单？"
+      ]
+    }
+  ]
+};

@@ -21,6 +21,7 @@ python3 -m http.server 8080
 - `docs/backend-contract.html` — 可共享后端契约（`/v1/jobs` · clarify · deliver · accept/return · points ledger）
 - `docs/mock/*.json` · `docs/mock/v1/*.json` — 静态 mock；`API_BASE` 空则本机 localStorage，设置后客户端可 fetch
 - `js/api.js` — `API_BASE` 接缝（`meta[name=privyjobs-api]` / `PRIVYJOBS_API_BASE`）；失败 toast 一次并回退本机
+- `worker/` — Cloudflare Worker 源码（契约实现）；`cd worker && npx wrangler dev` 本地烟测；**未部署**生产，Pages 默认 `API_BASE=""` 不变
 - `docs/mock/sellers.json` — 卖方目录（workflow / channel / data）；`js/main.js` fetch 加载，失败时回退内联目录
 
 ## 展廊可下载样例

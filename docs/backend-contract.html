@@ -33,7 +33,8 @@
     <p class="lede">
       面向未来 Cloudflare Worker / 可共享后端的 <strong>HTTP 契约</strong>。
       本站默认仍走浏览器 <code>localStorage</code>；客户端通过 <code>API_BASE</code>（空 = 离线）接缝。
-      <strong>本切片不要求部署真实 Worker</strong>——下方静态 <code>mock/v1</code> 镜像响应形状。
+      仓内已有可 <code>wrangler dev</code> 的源码：<a href="https://github.com/clai-1208/privyjobs/tree/main/worker"><code>worker/</code></a>（见 <a href="https://github.com/clai-1208/privyjobs/blob/main/worker/README.md">worker/README.md</a>）。
+      <strong>生产未部署</strong>——下方静态 <code>mock/v1</code> 仍镜像响应形状；Pages 默认 <code>API_BASE=""</code>。
     </p>
     <div class="demo-rules">
       规则：仅积分、不碰真钱；技能不全量公开 dump；澄清有限轮（演示：卖方回应一轮后锁定）；无论坛广场。
@@ -53,6 +54,8 @@
           <a href="mock/v1/jobs.json"><code>mock/v1/*.json</code></a>
         </p>
         <pre class="api-code" style="margin-top:0.85rem">&lt;meta name="privyjobs-api" content=""&gt;
+/* 本地 Worker：cd worker &amp;&amp; npx wrangler dev */
+/* &lt;meta name="privyjobs-api" content="http://127.0.0.1:8787"&gt; */
 /* 或 */
 window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
       </div>
@@ -237,7 +240,7 @@ window.PRIVYJOBS_API_BASE = "https://api.privyjobs.example";</pre>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 演示站 / MIT · 后端契约草案 · 不要求今晚上 Worker</p>
+      <p>PrivyJobs · 演示站 / MIT · 后端契约草案 · worker/ 源码可 wrangler dev · 生产未部署</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>

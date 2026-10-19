@@ -1,0 +1,14 @@
+{
+  "name": "privyjobs-worker",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PrivyJobs Cloudflare Worker \u2014 contract impl (source only; no deploy required)",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.40.0"
+  }
+}

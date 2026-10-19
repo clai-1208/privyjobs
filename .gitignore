@@ -10,3 +10,6 @@ Thumbs.db
 node_modules/
 dist/
 .cache/
+.wrangler/
+worker/node_modules/
+.dev.vars

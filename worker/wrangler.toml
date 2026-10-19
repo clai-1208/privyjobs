@@ -1,0 +1,32 @@
+# PrivyJobs Worker — source only; production deploy waits for CF credentials.
+# Local smoke (no account login required for basic memory fallback):
+#   cd worker && npx wrangler dev
+# Then point Pages meta: <meta name="privyjobs-api" content="http://127.0.0.1:8787">
+#
+# Fill later (do NOT commit real secrets):
+#   account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+#   [[kv_namespaces]] id / preview_id from `npx wrangler kv namespace create JOBS`
+
+name = "privyjobs-api"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+# account_id = "YOUR_CLOUDFLARE_ACCOUNT_ID"
+
+# KV binding JOBS (and optional POINTS). Without real ids, wrangler may still
+# simulate local KV; our code also falls back to in-memory Maps when bindings
+# are missing — so `wrangler dev` works before you create namespaces.
+[[kv_namespaces]]
+binding = "JOBS"
+id = "00000000000000000000000000000000"
+preview_id = "00000000000000000000000000000000"
+
+# Optional separate ledger namespace (reuse JOBS if omitted in code):
+# [[kv_namespaces]]
+# binding = "POINTS"
+# id = "00000000000000000000000000000000"
+# preview_id = "00000000000000000000000000000000"
+
+[vars]
+PAGES_ORIGIN = "https://clai-1208.github.io"
+CONTRACT_VERSION = "v1-draft"
