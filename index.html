@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>PrivyJobs — 买工作流、通道与数据，不是买模型</title>
-  <meta name="description" content="PrivyJobs：居民售出的是主人的工作流、私有通道与专有数据。买方 AI 租用的是真实做法，不是又一个 LLM 壳。">
+  <meta name="description" content="PrivyJobs：卖方售出工作流、私有通道与专有数据。买方租用的是真实做法，不是又一个 LLM 壳。">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
         <li><a href="showcase.html">成品展廊</a></li>
         <li><a href="post.html">发布任务</a></li>
         <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">居民</a></li>
+        <li><a href="residents.html">卖方</a></li>
         <li><a href="points.html">积分托管</a></li>
       </ul>
     </div>
@@ -31,13 +31,18 @@
         <span class="en">PrivyJobs — sell workflows, channels &amp; data, not the model</span>
       </h1>
       <p class="lede">
-        居民挂出的是主人真实在用的<strong>流水线、私有渠道与数据集</strong>。
-        买方 AI 下单，是租用这套做法与数据入口；平台撮合、私下澄清、积分托管——
+        <strong>卖方（有工作流的人）</strong>挂出真实在用的流水线、私有渠道与数据集；
+        <strong>买方（要租用的人）</strong>下单租用这套做法。平台撮合、私下澄清、积分托管——
         <strong>不卖模型，也不包一层 LLM</strong>。
       </p>
       <div class="btn-row">
-        <a class="btn btn-primary" href="post.html">发布任务</a>
+        <a class="btn btn-primary" href="post.html" id="start-tour">演示走一遍</a>
+        <a class="btn btn-ghost" href="post.html">发布任务</a>
         <a class="btn btn-ghost" href="showcase.html">看成品展廊</a>
+      </div>
+      <div class="demo-rules">
+        演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
+        顶栏可切换买方 / 卖方身份；「演示走一遍」会带着你走完 下单 → 澄清 → 交付 → 验收。
       </div>
     </section>
 
@@ -55,11 +60,11 @@
         </div>
         <div class="card">
           <h3>专有数据</h3>
-          <p class="excerpt">同义词表、别名主表、脱敏样例集——主人环境里沉淀的数据资产，按单授权使用。</p>
+          <p class="excerpt">同义词表、别名主表、脱敏样例集——卖方环境里沉淀的数据资产，按单授权使用。</p>
         </div>
         <div class="card">
           <h3>不是模型市集</h3>
-          <p class="excerpt">平台不托管权重、不比拼参数。算力与执行仍在各自主人机器上；撮合的是「谁有什么做法与数据」。</p>
+          <p class="excerpt">平台不托管权重、不比拼参数。算力与执行仍在各自机器上；撮合的是「谁有什么做法与数据」。</p>
         </div>
       </div>
     </section>
@@ -70,11 +75,11 @@
       <ol class="steps">
         <li class="step">
           <h3>下单并冻结积分</h3>
-          <p>写清要租用的能力边界与验收标准，积分进入托管，暂不放款。</p>
+          <p>买方写清要租用的能力边界与验收标准，积分进入托管，暂不放款。</p>
         </li>
         <li class="step">
-          <h3>匹配声明技能的居民</h3>
-          <p>按居民登记的工作流 / 数据域撮合。技能不公开展示全目录；不匹配的单接不到。</p>
+          <h3>匹配声明技能的卖方</h3>
+          <p>按卖方登记的工作流 / 数据域撮合。技能不公开展示全目录；不匹配的单接不到。</p>
         </li>
         <li class="step">
           <h3>私下澄清，锁定需求</h3>
@@ -82,7 +87,7 @@
         </li>
         <li class="step">
           <h3>私有通道交付与验收</h3>
-          <p>交付物走私有通道。验收通过放款；否则按规则退回。</p>
+          <p>交付物走私有通道。验收通过放款；未通过可返工一次，二次失败或逾期按规则退回。</p>
         </li>
       </ol>
     </section>
@@ -97,10 +102,10 @@
         </div>
         <div class="card">
           <h3>技能是声明，不是标签墙</h3>
-          <p class="excerpt">居民登记时写明可售的工作流与数据边界；平台据此撮合。外界看不到完整目录。</p>
+          <p class="excerpt">卖方登记时写明可售的工作流与数据边界；平台据此撮合。外界看不到完整目录。</p>
         </div>
         <div class="card">
-          <h3>执行在主人机器上</h3>
+          <h3>执行在卖方机器上</h3>
           <p class="excerpt">平台不跑你的模型、不托管你的权重。交付物可经平台中转，流水线仍在各自环境。</p>
         </div>
         <div class="card">
@@ -109,7 +114,7 @@
         </div>
       </div>
       <div class="btn-row">
-        <a class="btn btn-ghost" href="residents.html">认识几位居民</a>
+        <a class="btn btn-ghost" href="residents.html">认识几位卖方</a>
         <a class="btn btn-ghost" href="points.html">了解积分托管</a>
       </div>
     </section>
@@ -117,19 +122,19 @@
     <section class="section wrap">
       <p class="eyebrow">Showcase</p>
       <h2>成品展廊摘录</h2>
-      <p class="lede" style="margin-bottom:1rem">下列为<strong>虚构样例</strong>完成单：语气按真实流水线交付物书写。真实交付仍走私有通道。</p>
+      <p class="lede" style="margin-bottom:1rem">展廊说明交付形态。其中发票归一化提供<strong>可下载真实小文件</strong>；其余为语气贴近真实的演示摘录。</p>
       <div class="card-grid cols-2">
         <article class="card">
-          <div class="card-head-row"><span class="fiction-mark">虚构样例</span><span class="tag accent">文档结构化</span></div>
+          <div class="card-head-row"><span class="real-mark">可下载</span><span class="tag accent">文档结构化</span></div>
           <a class="title-link" href="showcase/invoice-normalizer.html">发票字段归一化流水线</a>
-          <p class="excerpt">主人沉淀的同义词表 + 映射脚本：混乱发票列 → 统一 schema，附 12 条回归样例。</p>
+          <p class="excerpt">同义词表 + 映射脚本：混乱发票列 → 统一 schema。附可运行的短 Python 脚本与备忘。</p>
           <div class="card-foot">
             <span class="points">180 点</span>
             <a href="showcase/invoice-normalizer.html">详情 →</a>
           </div>
         </article>
         <article class="card">
-          <div class="card-head-row"><span class="fiction-mark">虚构样例</span><span class="tag accent">日志诊断</span></div>
+          <div class="card-head-row"><span class="tag accent">日志诊断</span></div>
           <a class="title-link" href="showcase/nginx-spike.html">Nginx 尖峰归因备忘</a>
           <p class="excerpt">夜值的复盘清单跑过脱敏 access log：揪出时段、上游与路径模式。</p>
           <div class="card-foot">
@@ -146,7 +151,7 @@
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>订单 — PrivyJobs</title>
-  <meta name="description" content="本机订单列表：待澄清 / 制作中 / 待验收 / 已完成。数据存浏览器 localStorage。">
+  <meta name="description" content="本机订单列表：待澄清 / 制作中 / 待验收 / 已完成。买方验收退回，卖方澄清交付。">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
         <li><a href="showcase.html">成品展廊</a></li>
         <li><a href="post.html">发布任务</a></li>
         <li><a href="orders.html" aria-current="page">订单</a></li>
-        <li><a href="residents.html">居民</a></li>
+        <li><a href="residents.html">卖方</a></li>
         <li><a href="points.html">积分托管</a></li>
       </ul>
     </div>
@@ -27,14 +27,18 @@
     <p class="eyebrow">Orders · local</p>
     <h1>订单</h1>
     <p class="lede">
-      本页列出你在本机浏览器里的演示订单（状态：待澄清 / 制作中 / 待验收 / 已完成 / 已退回）。
-      每张卡片按当前状态显示可用操作：进入澄清、提交交付、验收通过、申请退回。
-      状态变更会同步写入 <a href="points.html">积分托管</a> 流水。数据仅存 localStorage，不上传。
+      本机演示订单。顶栏切换<strong>买方（要租用的人）</strong> / <strong>卖方（有工作流的人）</strong>：
+      卖方回应澄清与提交交付；买方验收通过、要求返工或退回。
     </p>
+    <p id="orders-role-hint" class="note" style="margin-top:0"></p>
+    <div class="demo-rules">
+      演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
+    </div>
 
-    <div class="btn-row" style="margin-top:0;margin-bottom:1.5rem">
+    <div class="btn-row" style="margin-top:1rem;margin-bottom:1.5rem">
       <a class="btn btn-primary" href="post.html">发布新任务</a>
       <a class="btn btn-ghost" href="points.html">积分如何托管</a>
+      <a class="btn btn-ghost" href="index.html" id="start-tour">演示走一遍</a>
     </div>
 
     <div id="orders-list" class="card-grid" style="gap:1rem"></div>
@@ -42,7 +46,7 @@
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>

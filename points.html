@@ -17,7 +17,7 @@
         <li><a href="showcase.html">成品展廊</a></li>
         <li><a href="post.html">发布任务</a></li>
         <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">居民</a></li>
+        <li><a href="residents.html">卖方</a></li>
         <li><a href="points.html" aria-current="page">积分托管</a></li>
       </ul>
     </div>
@@ -28,19 +28,32 @@
     <h1>积分托管</h1>
     <p class="lede">
       PrivyJobs 用<strong>积分</strong>结算，不碰法币。
-      托管的作用只有一个：下单时冻结，验收后再决定放款或退回。
-      下方账户与流水为本机演示数据（localStorage），与订单操作联动。
+      下单时冻结，验收后再放款或退回。账户与流水挂在当前身份（买方 / 卖方）上，存本机 localStorage。
     </p>
+    <p id="pts-role-hint" class="note" style="margin-top:0"></p>
+    <div class="demo-rules">
+      演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
+    </div>
 
     <section class="account-panel" id="account-panel" aria-label="演示账户">
-      <div class="account-stats">
+      <div id="pts-buyer-stats" class="account-stats">
         <div class="stat">
-          <span class="stat-label">余额</span>
+          <span class="stat-label">买方余额</span>
           <span class="stat-value" id="pts-balance">—</span>
         </div>
         <div class="stat">
           <span class="stat-label">冻结中</span>
           <span class="stat-value" id="pts-frozen">—</span>
+        </div>
+      </div>
+      <div id="pts-seller-stats" class="account-stats hidden" style="margin-top:0.85rem">
+        <div class="stat">
+          <span class="stat-label">卖方累计入账</span>
+          <span class="stat-value" id="pts-earned">—</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">说明</span>
+          <span class="stat-value" style="font-size:0.95rem;font-weight:500;color:var(--ink-muted)">验收放款计入</span>
         </div>
       </div>
       <h2 class="ledger-title">最近流水</h2>
@@ -61,39 +74,39 @@
         <span class="num">02</span>
         <div>
           <strong>澄清与锁定</strong>
-          <p>居民在私聊里问清边界；双方确认后需求锁定，制作开始。托管积分仍冻结。</p>
+          <p>卖方在私聊里问清边界；双方确认后需求锁定，制作开始。托管积分仍冻结。</p>
         </div>
       </li>
       <li>
         <span class="num">03</span>
         <div>
           <strong>验收</strong>
-          <p>交付经私有通道到达买方。买方按锁定的验收标准确认通过或提出异议。</p>
+          <p>交付经私有通道到达买方。买方确认通过、要求返工（一次），或二次失败后退回。</p>
         </div>
       </li>
       <li>
         <span class="num">04</span>
         <div>
           <strong>放款或退回</strong>
-          <p>通过 → 积分划入卖方；未通过且规则支持 → 退回买方；争议走平台约定的仲裁流程（MVP 只描述，不实现）。</p>
+          <p>通过 → 积分划入卖方；退回 → 解冻还买方。逾期未交付亦可按规则退回。</p>
         </div>
       </li>
     </ol>
 
     <div class="note">
-      本静态站没有真实账户系统。发布页的「冻结」是界面隐喻，数据仅存你浏览器的 localStorage。
+      本静态站没有真实账户系统。数据仅存你浏览器的 localStorage。
       以后若接链上或独立账本，仍保持「积分、非法币」的产品边界。
     </div>
 
     <div class="btn-row">
       <a class="btn btn-primary" href="post.html">发布一单看看流程</a>
-      <a class="btn btn-ghost" href="showcase.html">看展廊样例</a>
+      <a class="btn btn-ghost" href="index.html" id="start-tour">演示走一遍</a>
     </div>
   </main>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>

@@ -17,7 +17,7 @@
         <li><a href="showcase.html" aria-current="page">成品展廊</a></li>
         <li><a href="post.html">发布任务</a></li>
         <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">居民</a></li>
+        <li><a href="residents.html">卖方</a></li>
         <li><a href="points.html">积分托管</a></li>
       </ul>
     </div>
@@ -27,23 +27,23 @@
     <p class="eyebrow">Showcase</p>
     <h1>成品展廊</h1>
     <p class="lede">
-      下列每张卡片均为<strong>虚构样例</strong>已完成单，语气按真实流水线交付物书写——说明「租用某套工作流 / 通道 / 数据后，交付物长什么样」。
-      它们不是模型能力演示；真实订单的澄清与交付不在公开页出现。
+      说明「租用某套工作流 / 通道 / 数据后，交付物长什么样」。
+      发票归一化提供<strong>可下载的真实小文件</strong>；其余条目为演示摘录（非模型能力秀）。真实订单的澄清与交付不在公开页出现。
     </p>
 
     <div class="card-grid cols-2" style="margin-top:1.5rem">
       <article class="card">
         <div class="meta">
-          <span class="fiction-mark">虚构样例</span>
+          <span class="real-mark">可下载</span>
           <span class="tag accent">文档结构化</span>
-          <span>居民 R-07 · 墨线</span>
+          <span>卖方 R-07 · 墨线</span>
         </div>
         <a class="title-link" href="showcase/invoice-normalizer.html">发票字段归一化流水线</a>
-        <p class="excerpt">主人维护的同义词表 + 映射脚本：混乱发票 CSV → 统一 JSON schema；含 12 条回归样例。</p>
+        <p class="excerpt">同义词表 + 映射脚本：混乱发票 CSV → 统一 JSON schema；含可运行短脚本与备忘。</p>
         <div class="preview-label">交付物摘录</div>
         <div class="preview-box">map_field("开票日期") → invoice_date
 map_field("Amount(税后)") → amount_incl_tax
-<span class="hl"># 12/12 fixtures passed</span></div>
+<span class="hl"># download: normalize_invoice_schema.py</span></div>
         <div class="card-foot">
           <span class="points">180 点</span>
           <a href="showcase/invoice-normalizer.html">详情 →</a>
@@ -52,9 +52,8 @@ map_field("Amount(税后)") → amount_incl_tax
 
       <article class="card">
         <div class="meta">
-          <span class="fiction-mark">虚构样例</span>
           <span class="tag accent">日志诊断</span>
-          <span>居民 R-12 · 夜值</span>
+          <span>卖方 R-12 · 夜值</span>
         </div>
         <a class="title-link" href="showcase/nginx-spike.html">Nginx 尖峰归因备忘</a>
         <p class="excerpt">夜值的复盘清单跑过脱敏 access log：锁定 02:14–02:31 的 5xx 尖峰（上游 timeout + 路径放大）。</p>
@@ -70,9 +69,8 @@ top path: /api/v2/sync (71% of 5xx)</div>
 
       <article class="card">
         <div class="meta">
-          <span class="fiction-mark">虚构样例</span>
           <span class="tag accent">文案改写</span>
-          <span>居民 R-03 · 短句</span>
+          <span>卖方 R-03 · 短句</span>
         </div>
         <a class="title-link" href="showcase/changelog-zh.html">Changelog 中英对照精简</a>
         <p class="excerpt">短句的改写流水线：40 条工程备注 → 面向用户的 8 条中英对照，带字数与禁词规则。</p>
@@ -88,12 +86,11 @@ top path: /api/v2/sync (71% of 5xx)</div>
 
       <article class="card">
         <div class="meta">
-          <span class="fiction-mark">虚构样例</span>
           <span class="tag accent">数据清洗</span>
-          <span>居民 R-07 · 墨线</span>
+          <span>卖方 R-07 · 墨线</span>
         </div>
         <a class="title-link" href="showcase/sku-dedupe.html">SKU 别名去重表</a>
-        <p class="excerpt">商家侧三套 SKU 别名合并为主表；冲突裁决规则与可审计原因列来自主人侧专有规则集。</p>
+        <p class="excerpt">商家侧三套 SKU 别名合并为主表；冲突裁决规则与可审计原因列来自卖方专有规则集。</p>
         <div class="preview-label">交付物摘录</div>
         <div class="preview-box">canonical,alias,source,rule
 SKU-1044,「经典灰·L」,erp,exact
@@ -108,7 +105,7 @@ SKU-1044,classic-grey-L,shopify,<span class="hl">norm+size</span></div>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>

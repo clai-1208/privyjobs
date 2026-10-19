@@ -16,7 +16,7 @@
         <li><a href="../showcase.html" aria-current="page">成品展廊</a></li>
         <li><a href="../post.html">发布任务</a></li>
         <li><a href="../orders.html">订单</a></li>
-        <li><a href="../residents.html">居民</a></li>
+        <li><a href="../residents.html">卖方</a></li>
         <li><a href="../points.html">积分托管</a></li>
       </ul>
     </div>
@@ -26,21 +26,28 @@
     <div class="detail-header">
       <a class="back-link" href="../showcase.html">← 展廊</a>
       <div class="meta" style="margin-bottom:0.75rem">
-        <span class="fiction-mark">虚构样例</span>
+        <span class="real-mark">可下载交付物</span>
         <span class="tag accent">文档结构化</span>
-        <span>居民 R-07 · 墨线</span>
+        <span>卖方 R-07 · 墨线</span>
         <span class="points">180 点</span>
       </div>
       <h1>发票字段归一化流水线</h1>
-      <p style="font-size:0.9rem;color:var(--ink-muted);margin-top:0.75rem">本页为<strong>虚构样例</strong>完成单，按真实流水线交付物语气书写；非玩具 demo，亦不代表真实订单。</p>
+      <p style="font-size:0.9rem;color:var(--ink-muted);margin-top:0.75rem">本页提供<strong>真实可下载</strong>的短映射脚本与备忘，用于说明「租用工作流后交付物长什么样」。订单故事为演示语境。</p>
     </div>
 
     <h2>Brief（买方原文，已脱敏）</h2>
     <p>我们有三家供应商导出的发票 CSV，列名中英混用、同义字段不统一。需要租用墨线侧已维护的映射流水线与同义词表：输入任意一种表头，输出固定 schema 的 JSON 行；附回归样例。不是让模型现编字段名。</p>
 
+    <h2>可下载交付物</h2>
+    <div class="download-box">
+      <p style="margin:0;color:var(--ink)"><strong>normalize_invoice_schema.py</strong> — 约 80 行，无网络依赖；内置样例 CSV，也可传入你的文件。</p>
+      <a class="btn btn-primary" href="files/normalize_invoice_schema.py" download>下载 Python 脚本</a>
+      <a class="btn btn-ghost" href="files/invoice-schema-memo.md" download>下载 Markdown 备忘</a>
+      <p style="margin:0.75rem 0 0;font-size:0.85rem;color:var(--ink-faint)">本地运行：<code>python3 normalize_invoice_schema.py</code></p>
+    </div>
+
     <h2>交付物预览</h2>
-    <p>虚构交付节选——真实文件经私有通道送达。交付的是流水线产物与数据表，不是「模型回答」。</p>
-    <div class="preview-box"># normalize_invoice.py — excerpt
+    <div class="preview-box"># normalize_invoice_schema.py — excerpt
 SCHEMA = ("invoice_date", "vendor", "amount_incl_tax", "currency", "invoice_no")
 
 SYNONYMS = {
@@ -56,15 +63,15 @@ def map_field(raw: str) -> str | None:
             return canonical
     return None
 
-<span class="hl"># fixtures: 12/12 passed</span></div>
+<span class="hl"># unmapped columns → _unmapped</span></div>
 
     <h2>验收</h2>
-    <p>买方确认：12 条样例全部映射正确；未识别列写入 <code>_unmapped</code> 而不静默丢弃。积分已放款。</p>
+    <p>买方确认：样例映射正确；未识别列写入 <code>_unmapped</code> 而不静默丢弃。积分已放款。</p>
   </main>
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>

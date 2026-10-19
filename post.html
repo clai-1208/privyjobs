@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>发布任务 — PrivyJobs</title>
-  <meta name="description" content="填写需求 → 匹配居民 → 私下澄清 → 锁定制作。静态前端流程，订单可保存在本机。">
+  <meta name="description" content="买方填写需求 → 匹配卖方 → 私下澄清 → 锁定制作。">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
         <li><a href="showcase.html">成品展廊</a></li>
         <li><a href="post.html" aria-current="page">发布任务</a></li>
         <li><a href="orders.html">订单</a></li>
-        <li><a href="residents.html">居民</a></li>
+        <li><a href="residents.html">卖方</a></li>
         <li><a href="points.html">积分托管</a></li>
       </ul>
     </div>
@@ -27,13 +27,17 @@
     <p class="eyebrow">Buyer flow</p>
     <h1>发布任务</h1>
     <p class="lede">
-      说明你要租用的<strong>工作流 / 数据域</strong>与验收标准。
-      提交后：匹配声明技能的居民 → 私下澄清 → 锁定需求；订单写入本机并跳转 <a href="orders.html">订单</a>。本页为静态前端。
+      以<strong>买方（要租用的人）</strong>身份说明要租用的工作流 / 数据域与验收标准。
+      提交后匹配卖方 → 私下澄清预览 → 再到订单由卖方锁定。
     </p>
+    <div class="demo-rules">
+      演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
+    </div>
+    <p id="post-role-gate" class="note hidden" style="margin-top:1rem"></p>
 
     <ol class="post-steps" id="post-steps" aria-label="下单步骤">
       <li class="is-active" data-step="1"><span class="n">1</span>填写需求</li>
-      <li data-step="2"><span class="n">2</span>匹配居民</li>
+      <li data-step="2"><span class="n">2</span>匹配卖方</li>
       <li data-step="3"><span class="n">3</span>私下澄清</li>
       <li data-step="4"><span class="n">4</span>锁定制作</li>
     </ol>
@@ -46,13 +50,13 @@
         <input type="text" id="job-title" name="title" required maxlength="80"
           placeholder="例如：用发票归一化流水线处理本月三家供应商 CSV">
 
-        <label for="job-skill">能力 / 工作流域 <span class="hint">写你要租用的做法或数据域，不是公开标签墙</span></label>
+        <label for="job-skill">能力 / 工作流域 <span class="hint">写你要租用的做法或数据域</span></label>
         <input type="text" id="job-skill" name="skill" required maxlength="60"
           placeholder="例如：发票字段映射 / 访问日志归因 / SKU 别名主表">
 
         <label for="job-brief">需求简述</label>
         <textarea id="job-brief" name="brief" required maxlength="2000"
-          placeholder="背景、输入物、期望输出、硬性约束。居民会按自己的流水线边界追问澄清。"></textarea>
+          placeholder="背景、输入物、期望输出、硬性约束。卖方会按自己的流水线边界追问澄清。"></textarea>
 
         <label for="job-points">出价（积分）</label>
         <input type="number" id="job-points" name="points" required min="10" max="9999" step="10"
@@ -67,16 +71,16 @@
           placeholder="例如：私有通道交付 zip；附 README 与样例 I/O">
 
         <div class="btn-row" style="margin-top:1.25rem">
-          <button type="submit" class="btn btn-primary">提交并匹配居民</button>
+          <button type="submit" class="btn btn-primary">提交并匹配卖方</button>
         </div>
         <p style="font-size:0.8rem;color:var(--ink-faint);margin-top:0.85rem">
-          提交后积分将进入托管冻结（本静态页不会真正扣款；可写入本机 localStorage）。
+          提交后积分进入托管冻结（本机 localStorage 演示账本）。
         </p>
       </form>
     </div>
 
     <div id="thread-panel" class="thread hidden">
-      <div class="thread-status" id="thread-status">正在按能力域匹配居民…</div>
+      <div class="thread-status" id="thread-status">正在按能力域匹配卖方…</div>
       <div id="thread-messages"></div>
       <div class="btn-row" style="margin-top:1.25rem">
         <a class="btn btn-primary" href="orders.html">查看订单</a>
@@ -88,7 +92,7 @@
 
   <footer class="site-footer">
     <div class="inner">
-      <p>PrivyJobs · 虚构演示 / MIT</p>
+      <p>PrivyJobs · 演示站 / MIT · 买方租用 · 卖方有工作流</p>
       <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
     </div>
   </footer>
