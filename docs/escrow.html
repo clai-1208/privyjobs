@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Escrow.com 国际托管 — PrivyJobs</title>
+  <meta name="description" content="PrivyJobs international settlement via Escrow.com. Platform never holds principal. Sandbox + mock first.">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-i18n-title="escrow.title">
+  <header class="site-header">
+    <div class="inner">
+      <a class="logo" href="../index.html">PrivyJobs <span>· 私密工单</span></a>
+      <button class="menu-toggle" data-i18n="nav.menu" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航">菜单</button>
+      <ul class="nav" id="site-nav">
+        <li><a href="../index.html" data-i18n="nav.home">首页</a></li>
+        <li><a href="../showcase.html" data-i18n="nav.showcase">成品展廊</a></li>
+        <li><a href="../post.html" data-i18n="nav.post">发布任务</a></li>
+        <li><a href="../orders.html" data-i18n="nav.orders">订单</a></li>
+        <li><a href="../residents.html" data-i18n="nav.residents">卖方</a></li>
+        <li><a href="../prereg.html" data-i18n="nav.prereg">预登记</a></li>
+        <li><a href="../points.html" data-i18n="nav.points">声誉与活跃</a></li>
+        <li><a href="escrow.html" data-i18n="nav.escrow" aria-current="page">Escrow 说明</a></li>
+        <li><a href="agent-api.html" data-i18n="nav.agent">买方 AI</a></li>
+        <li><a href="backend-contract.html" data-i18n="nav.contract">后端契约</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:2.5rem;padding-bottom:3rem">
+    <p class="eyebrow">International · Escrow.com</p>
+    <h1 data-i18n="escrow.h1">Escrow.com 国际托管</h1>
+    <p class="lede" data-i18n="escrow.lede" data-i18n-html>
+      国际结算走 <strong>Escrow.com</strong>（第三方）。PrivyJobs <strong>永不经手本金</strong>——只记订单与 Escrow 交易状态。
+      国内微信/支付宝仍为站外自结，本刀不接国内支付轨。
+    </p>
+
+    <div class="demo-rules">
+      Sell workflows / private channels / per-order data slices — not dumping a KB into the platform or a model.
+      卖的是可重复步骤、私有通道与按单数据切片，不是把知识库倒进平台或模型。
+    </div>
+
+    <section class="section" style="padding-top:1.75rem;margin-top:0">
+      <p class="eyebrow">What / 是什么</p>
+      <h2>第三方资金托管，不是本站账户</h2>
+      <div class="card" style="margin-top:0.75rem">
+        <p class="excerpt">
+          Escrow.com 是独立持牌托管服务：买方注资 → 卖方交付 → 买方验收 → Escrow 放款给卖方。
+          <strong>PrivyJobs 不持有、不经手、不担保本金</strong>。站内字段只同步 <code>escrow_tx_id</code> 与 <code>escrow_status</code>。
+        </p>
+        <p class="excerpt" lang="en" style="margin-top:0.75rem">
+          Escrow.com is a third-party licensed escrow service. PrivyJobs <strong>never holds, touches, or guarantees principal</strong>.
+          We only store transaction id + status on the order log.
+        </p>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:1.25rem">
+      <p class="eyebrow">KYC &amp; fees</p>
+      <h2>KYC 与费用（高层）</h2>
+      <ul class="steps" style="margin-top:0.75rem">
+        <li class="step"><h3>KYC</h3><p>买卖双方需在 Escrow.com 完成身份核验（视地区与金额）。本站不代办 KYC、不存证件。</p></li>
+        <li class="step"><h3>Fees</h3><p>托管费率由 Escrow.com 公示（通常按交易额百分比 + 最低额）。PrivyJobs 早期不抽本金手续费；若未来 marketplace broker_fee，另行列出，本 MVP 仅为买方↔卖方。</p></li>
+        <li class="step"><h3>Broker（占位）</h3><p>文档预留：平台可作为 partner/broker 加 <code>broker_fee</code>。当前 MVP <strong>不做</strong>，交易为 buyer↔seller。</p></li>
+      </ul>
+    </section>
+
+    <section class="section" style="padding-top:1.25rem">
+      <p class="eyebrow">API</p>
+      <h2>创建交易与沙箱</h2>
+      <div class="card" style="margin-top:0.75rem">
+        <p class="excerpt" style="margin:0">
+          Create transaction docs：
+          <a href="https://www.escrow.com/api/docs/create-transaction" target="_blank" rel="noopener">escrow.com/api/docs/create-transaction</a><br>
+          Sandbox API base：<code>https://api.escrow-sandbox.com/2017-09-01/transaction</code><br>
+          Worker stub：<code>POST /v1/escrow/create</code> · <code>GET /v1/escrow/:id</code>（无
+          <code>ESCROW_API_EMAIL</code> + <code>ESCROW_API_KEY</code> 时走 mock）
+        </p>
+      </div>
+      <div class="btn-row" style="margin-top:1rem">
+        <a class="btn btn-primary" href="../orders.html">去订单演示 Escrow</a>
+        <a class="btn btn-ghost" href="https://www.escrow.com/api/docs/create-transaction" target="_blank" rel="noopener">API docs</a>
+        <a class="btn btn-ghost" href="../mcp/README.md">MCP create_escrow</a>
+      </div>
+    </section>
+
+    <section class="section" style="padding-top:1.25rem">
+      <p class="eyebrow">Order fields</p>
+      <h2>订单字段</h2>
+      <pre class="api-code">{
+  "settlement_method": "escrow",
+  "escrow_tx_id": "esc_mock_… 或 Escrow API id",
+  "escrow_status": "draft | funded | delivered | accepted | cancelled"
+}</pre>
+      <p class="excerpt" style="margin-top:0.75rem">
+        演示站无密钥时：点「演示模式」生成本地 mock id，并用按钮推进状态。国际新单主 CTA 推荐 Escrow；微信/支付宝仍可选（站外自结）。
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="inner">
+      <p data-i18n="footer.line">PrivyJobs · 演示 · 免费撮合 · 国际 Escrow · 平台不托管本金 · Worker 未部署 / MIT</p>
+      <p><a href="https://github.com/clai-1208/privyjobs">github.com/clai-1208/privyjobs</a></p>
+    </div>
+  </footer>
+  <script src="../js/api.js"></script>
+  <script src="../js/i18n.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>

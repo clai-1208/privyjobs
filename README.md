@@ -27,6 +27,7 @@ python3 -m http.server 8080
 
 ## MCP（外部 AI）
 
+- [`docs/escrow.html`](docs/escrow.html) — Escrow.com 国际托管说明（平台不经手本金；无密钥时 mock）
 - [`mcp/`](mcp/) — stdio MCP server：`create_job` / `clarify` / `set_settlement` / `deliver` / `accept` / `return_job` / `list_jobs` / `get_job`
 - 默认本机 `mcp/.data/`；设 `PRIVYJOBS_API_BASE` 可走 Worker
 - 平台不托管资金；卖工作流 / 私有通道 / 按单数据切片，不是把知识库倒进模型

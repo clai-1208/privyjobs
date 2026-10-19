@@ -6,6 +6,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import * as jobs from "../src/jobs.js";
 import * as discover from "../src/discover.js";
+import * as escrowTools from "../src/escrow.js";
 import { resetAll, DATA_DIR } from "../src/store.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -14,6 +15,8 @@ const TOOLS = [
   "find_sellers",
   "match_sellers",
   "get_quote",
+  "create_escrow",
+  "get_escrow_status",
   "create_job",
   "clarify",
   "set_settlement",
@@ -53,6 +56,16 @@ async function main() {
   });
   console.log("--- get_quote sample ---");
   console.log(JSON.stringify(quote, null, 2));
+
+  const esc = await escrowTools.createEscrow({
+    amount: 150,
+    currency: "USD",
+    description: "MCP smoke escrow mock",
+  });
+  console.log("--- create_escrow sample ---");
+  console.log(JSON.stringify(esc, null, 2));
+  const escSt = await escrowTools.getEscrowStatus({ id: esc.escrow_tx_id });
+  console.log("get_escrow_status:", escSt.escrow_status, escSt.mode);
 
   const created = await jobs.createJob({
     title: "MCP smoke · invoice map sample",

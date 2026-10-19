@@ -7,6 +7,7 @@ import * as store from "./store.js";
 import * as api from "./api.js";
 
 export const SETTLE_METHODS = [
+  "escrow",
   "wechat",
   "alipay",
   "other",

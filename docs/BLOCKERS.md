@@ -15,6 +15,12 @@
 - 「总裁自挂 1 条真流水线」按站令：**平台完全做完前不叫总裁，此项暂搁**。
 - 话术模板见 [seed-outreach.md](./seed-outreach.md)（私聊用，不发广场帖）。
 
+## 2b. Escrow.com 国际密钥（可选）
+
+- 代码路径与 mock 已就绪（`docs/escrow.html` · Worker `/v1/escrow/*` · MCP `create_escrow`）。
+- **真沙箱**需 `ESCROW_API_EMAIL` + `ESCROW_API_KEY`——未齐前保持 mock；**不要催总裁要密钥直到路径验完**。
+- 平台永不经手本金；国内支付轨另议。
+
 ## 3. 口径
 
 | 可以这样说 | 不要这样说 |

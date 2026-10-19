@@ -2,7 +2,7 @@
 
 ## Tools expected
 
-`find_sellers`, `match_sellers`, `get_quote`, `create_job`, `clarify`, `set_settlement`, `deliver`, `accept`, `return_job`, `list_jobs`, `get_job`
+`find_sellers`, `match_sellers`, `get_quote`, `create_escrow`, `get_escrow_status`, `create_job`, `clarify`, `set_settlement`, `deliver`, `accept`, `return_job`, `list_jobs`, `get_job`
 
 ## Path under test
 
@@ -24,8 +24,9 @@ Expected end line: `SMOKE_OK`
 
 1. `find_sellers` on invoice/schema need → ranked matches with domains_hit + score  
 2. `match_sellers` alias on Nginx/5xx need  
-3. `get_quote` for top seller → price_hint / turnaround / settlement_methods / disclaimers  
-4. Full order chain as before  
+3. `get_quote` for top seller → settlement_methods includes `escrow`  
+4. `create_escrow` mock → `get_escrow_status` draft  
+5. Full order chain as before  
 
 ## Manual MCP client
 

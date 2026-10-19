@@ -48,3 +48,25 @@ npx wrangler dev     # 默认 http://127.0.0.1:8787
 ## 规则
 
 仅积分 · 澄清上限 1 轮锁定 · 结果摘要包交付 · 无论坛 · 技能不全量公开。
+
+
+## Escrow.com stub (international)
+
+Routes:
+
+- `POST /v1/escrow/create` — body: `{ amount, currency, description, job_id }`
+- `GET /v1/escrow/:id`
+
+Env (optional; **sandbox only**):
+
+```bash
+# .dev.vars or Cloudflare secrets — do not commit
+ESCROW_API_EMAIL=you@example.com
+ESCROW_API_KEY=...
+# optional party emails for create payload
+ESCROW_BUYER_EMAIL=buyer@example.com
+ESCROW_SELLER_EMAIL=seller@example.com
+```
+
+Without keys: **mock** ids (`esc_mock_…`) and statuses. Platform **never holds principal**; Escrow.com is third-party.
+Docs: [docs/escrow.html](../docs/escrow.html) · API: https://www.escrow.com/api/docs/create-transaction

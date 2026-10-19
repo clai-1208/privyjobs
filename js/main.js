@@ -986,11 +986,13 @@
         resident: "R-12 · 夜值",
         escrow: "frozen",
         reworkCount: 0,
-        settlementMethod: "alipay",
+        settlementMethod: "escrow",
         settlementBuyerOk: true,
         settlementSellerOk: true,
         settlementAgreed: true,
         settlementAgreedAt: now - 2 * day,
+        escrow_tx_id: "esc_mock_seed02",
+        escrow_status: "delivered",
         clarifyLocked: true,
         clarifyRound: 1,
         clarifyQuestions: [
@@ -1306,9 +1308,10 @@
   }
 
 
-  var SETTLE_METHODS = ["wechat", "alipay", "other", "intl_tbd"];
+  var SETTLE_METHODS = ["escrow", "wechat", "alipay", "other", "intl_tbd"];
 
   function settleMethodLabel(code) {
+    if (code === "escrow") return tt("settle.method.escrow");
     if (code === "wechat") return tt("settle.method.wechat");
     if (code === "alipay") return tt("settle.method.alipay");
     if (code === "other") return tt("settle.method.other");
@@ -1322,7 +1325,28 @@
     if (typeof o.settlementBuyerOk !== "boolean") o.settlementBuyerOk = false;
     if (typeof o.settlementSellerOk !== "boolean") o.settlementSellerOk = false;
     if (typeof o.settlementAgreed !== "boolean") o.settlementAgreed = false;
+    if (!o.escrow_tx_id) o.escrow_tx_id = o.escrowTxId || "";
+    if (!o.escrow_status) o.escrow_status = o.escrowStatus || "";
     return o;
+  }
+
+  function escrowStatusRank(st) {
+    var order = { draft: 1, funded: 2, delivered: 3, accepted: 4, cancelled: 0 };
+    return order[st] || 0;
+  }
+
+  function createMockEscrow(order) {
+    normalizeSettlement(order);
+    order.settlementMethod = "escrow";
+    order.escrow_tx_id = "esc_mock_" + String(order.id || "x").replace(/[^a-zA-Z0-9]/g, "") + "_" + Date.now().toString(36);
+    order.escrow_status = "draft";
+    order.settlementBuyerOk = true;
+    order.settlementSellerOk = true;
+    order.settlementAgreed = true;
+    order.settlementAgreedAt = Date.now();
+    if (order.status === STATUS.clarify) order.status = STATUS.making;
+    order.updatedAt = Date.now();
+    return order;
   }
 
   function canMarkSettlement(o) {
@@ -1366,6 +1390,7 @@
         ) +
         "</p>";
       html += "</div>";
+      html += renderEscrowPanel(o);
       return html;
     }
     html +=
@@ -1384,6 +1409,7 @@
       escapeHtml(tt("settle.method.placeholder")) +
       "</option>";
     var opts = [
+      ["escrow", "settle.method.escrow"],
       ["wechat", "settle.method.wechat"],
       ["alipay", "settle.method.alipay"],
       ["other", "settle.method.other"],
@@ -1418,10 +1444,24 @@
       "> " +
       escapeHtml(tt("settle.seller_ok")) +
       "</label>";
+    html +=
+      '<p class="settle-sell" style="margin-top:0.45rem">' +
+      escapeHtml(tt("settle.escrow.hint")) +
+      "</p>";
+    html +=
+      '<div class="btn-row" style="margin-top:0.45rem">' +
+      '<button type="button" class="btn btn-primary btn-sm" data-escrow-create="' +
+      escapeHtml(o.id) +
+      '">' +
+      escapeHtml(tt("settle.escrow.cta")) +
+      "</button>" +
+      '<span class="action-hint">' +
+      escapeHtml(tt("settle.escrow.demo")) +
+      "</span></div>";
     var can = canMarkSettlement(o);
     html +=
       '<div class="btn-row" style="margin-top:0.55rem">' +
-      '<button type="button" class="btn btn-primary btn-sm" data-settle-mark="' +
+      '<button type="button" class="btn btn-ghost btn-sm" data-settle-mark="' +
       escapeHtml(o.id) +
       '"' +
       (can ? "" : " disabled") +
@@ -1431,6 +1471,72 @@
       '<span class="action-hint">' +
       escapeHtml(role === "buyer" ? tt("settle.hint_buyer") : tt("settle.hint_seller")) +
       "</span></div>";
+    html += "</div>";
+    return html;
+  }
+
+  function renderEscrowPanel(o) {
+    normalizeSettlement(o);
+    if (!o.settlementAgreed || o.settlementMethod !== "escrow") return "";
+    var html = '<div class="escrow-panel" data-escrow-panel="' + escapeHtml(o.id) + '">';
+    html +=
+      '<p class="settle-title">' + escapeHtml(tt("settle.method.escrow")) + "</p>";
+    html +=
+      '<p class="settle-disclaimer">' + escapeHtml(tt("settle.escrow.steps")) + "</p>";
+    if (!o.escrow_tx_id) {
+      html +=
+        '<div class="btn-row" style="margin-top:0.45rem">' +
+        '<button type="button" class="btn btn-primary btn-sm" data-escrow-create="' +
+        escapeHtml(o.id) +
+        '">' +
+        escapeHtml(tt("settle.escrow.demo")) +
+        "</button></div>";
+      html += "</div>";
+      return html;
+    }
+    html +=
+      '<p><strong>' +
+      escapeHtml(tt("settle.escrow.id")) +
+      ":</strong> <code>" +
+      escapeHtml(o.escrow_tx_id) +
+      "</code></p>";
+    html +=
+      '<p><strong>' +
+      escapeHtml(tt("settle.escrow.status")) +
+      ':</strong> <span class="tag accent">' +
+      escapeHtml(o.escrow_status || "draft") +
+      "</span></p>";
+    var nextMap = {
+      draft: "funded",
+      funded: "delivered",
+      delivered: "accepted",
+    };
+    var nxt = nextMap[o.escrow_status];
+    if (nxt) {
+      html +=
+        '<div class="btn-row" style="margin-top:0.45rem">' +
+        '<button type="button" class="btn btn-ghost btn-sm" data-escrow-advance="' +
+        escapeHtml(o.id) +
+        '" data-escrow-next="' +
+        nxt +
+        '">' +
+        escapeHtml(tt("settle.escrow.advance")) +
+        " → " +
+        nxt +
+        "</button>" +
+        '<a class="btn btn-ghost btn-sm" href="' +
+        hrefFor("docs/escrow.html") +
+        '">' +
+        escapeHtml(tt("nav.escrow")) +
+        "</a></div>";
+    } else {
+      html +=
+        '<div class="btn-row" style="margin-top:0.45rem"><a class="btn btn-ghost btn-sm" href="' +
+        hrefFor("docs/escrow.html") +
+        '">' +
+        escapeHtml(tt("nav.escrow")) +
+        "</a></div>";
+    }
     html += "</div>";
     return html;
   }
@@ -1557,6 +1663,12 @@
         alert(tt("settle.gate_deliver"));
         return false;
       }
+      if (order.settlementMethod === "escrow") {
+        if (!order.escrow_tx_id || escrowStatusRank(order.escrow_status) < escrowStatusRank("funded")) {
+          alert(tt("settle.escrow.need_funded"));
+          return false;
+        }
+      }
       /* open structured result-package form instead of open chat */
       order._uiDeliver = true;
       order.updatedAt = Date.now();
@@ -1581,6 +1693,12 @@
         alert(tt("settle.gate_deliver"));
         return false;
       }
+      if (order.settlementMethod === "escrow") {
+        if (!order.escrow_tx_id || escrowStatusRank(order.escrow_status) < escrowStatusRank("funded")) {
+          alert(tt("settle.escrow.need_funded"));
+          return false;
+        }
+      }
       var pack = order._pendingPackage;
       if (!pack || !pack.summary || !pack.artifacts || !pack.acceptCheck) {
         alert("请填写结果摘要包：交付摘要、产物清单、验收对照（均为必填）。");
@@ -1596,6 +1714,10 @@
       order._pendingPackage = null;
       order._uiDeliver = false;
       order.status = STATUS.accept;
+      normalizeSettlement(order);
+      if (order.settlementMethod === "escrow" && order.escrow_status === "funded") {
+        order.escrow_status = "delivered";
+      }
       order.updatedAt = Date.now();
       writeJson(ORDERS_KEY, list);
       apiNotify("deliver", order.id, { result_package: order.resultPackage });
@@ -1608,6 +1730,14 @@
       if (role !== "buyer") {
         alert("请切换到买方身份后再验收。");
         return false;
+      }
+      normalizeSettlement(order);
+      if (order.settlementMethod === "escrow") {
+        if (escrowStatusRank(order.escrow_status) < escrowStatusRank("delivered")) {
+          alert(tt("settle.escrow.need_delivered"));
+          return false;
+        }
+        order.escrow_status = "accepted";
       }
       if (order.escrow === "frozen") {
         releaseToSeller(order.points, order.id, order.title);
@@ -1952,6 +2082,40 @@
 
       var methodSel = e.target.closest("[data-settle-method]");
       if (methodSel) return; /* change handled separately */
+      var escCreate = e.target.closest("[data-escrow-create]");
+      if (escCreate) {
+        var eid = escCreate.getAttribute("data-escrow-create");
+        var listE = getOrders();
+        for (var ei = 0; ei < listE.length; ei++) {
+          if (listE[ei].id === eid) {
+            createMockEscrow(listE[ei]);
+            writeJson(ORDERS_KEY, listE);
+            break;
+          }
+        }
+        renderOrdersList();
+        renderPendingPool();
+        renderTourBanner();
+        return;
+      }
+      var escAdv = e.target.closest("[data-escrow-advance]");
+      if (escAdv) {
+        var aid = escAdv.getAttribute("data-escrow-advance");
+        var nxtSt = escAdv.getAttribute("data-escrow-next");
+        var listA = getOrders();
+        for (var ai = 0; ai < listA.length; ai++) {
+          if (listA[ai].id === aid) {
+            normalizeSettlement(listA[ai]);
+            if (nxtSt) listA[ai].escrow_status = nxtSt;
+            listA[ai].updatedAt = Date.now();
+            writeJson(ORDERS_KEY, listA);
+            break;
+          }
+        }
+        renderOrdersList();
+        renderPendingPool();
+        return;
+      }
       var markBtn = e.target.closest("[data-settle-mark]");
       if (markBtn) {
         var mid = markBtn.getAttribute("data-settle-mark");
@@ -2475,6 +2639,8 @@
       settlementBuyerOk: false,
       settlementSellerOk: false,
       settlementAgreed: false,
+      escrow_tx_id: "",
+      escrow_status: "",
       createdAt: now,
       updatedAt: now,
     };

@@ -13,6 +13,7 @@ import {
   MAX_CLARIFY_ROUNDS,
 } from "./match.js";
 import { withCors, corsHeaders } from "./cors.js";
+import * as escrow from "./escrow.js";
 
 const NOTES = {
   points_only: true,
@@ -475,6 +476,8 @@ function handleHealth(store) {
       "POST /v1/jobs/:id/accept",
       "POST /v1/jobs/:id/return",
       "GET /v1/points/ledger",
+      "POST /v1/escrow/create",
+      "GET /v1/escrow/:id",
     ],
     notes: NOTES,
   });
@@ -519,7 +522,24 @@ async function route(request, env) {
       return handleReturn(id, request, store);
   }
 
+  if (method === "POST" && path === "/v1/escrow/create") {
+    const body = await readBody(request);
+    if (body === null) return err(400, "bad_json", "Request body must be JSON");
+    const out = await escrow.createEscrow(env || {}, body);
+    return json(out, out.ok ? 200 : 502);
+  }
+  const escGet = path.match(/^\/v1\/escrow\/([^/]+)$/);
+  if (escGet && method === "GET") {
+    const id = decodeURIComponent(escGet[1]);
+    const out = await getEscrowWithEnv(env, id);
+    return json(out, out.ok ? 200 : 404);
+  }
+
   return err(404, "not_found", "No route for " + method + " " + path);
+}
+
+async function getEscrowWithEnv(env, id) {
+  return escrow.getEscrow(env || {}, id);
 }
 
 export default {

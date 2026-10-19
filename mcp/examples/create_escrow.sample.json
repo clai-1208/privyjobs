@@ -1,0 +1,12 @@
+{
+  "ok": true,
+  "mode": "mock",
+  "escrow_tx_id": "esc_mock_mvfb335bf1ak",
+  "escrow_status": "draft",
+  "amount": 100,
+  "currency": "USD",
+  "description": "sample",
+  "job_id": null,
+  "created_at": "2026-10-19T13:44:34.991Z",
+  "disclaimer": "Platform never holds principal. Escrow.com is third-party international escrow. Domestic WeChat/Alipay are off-platform self-settle (not built here). Mock — no Escrow API keys configured."
+}

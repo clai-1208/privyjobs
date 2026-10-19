@@ -2,7 +2,7 @@
 
 stdio MCP tools so external AIs can run the **same** landing chain as the static demo:
 
-`find_sellers` / `match_sellers` → `get_quote` → `create_job` → `clarify` (1 round) → `set_settlement` (off-platform) → `deliver` → `accept` / `return_job` · `list_jobs` · `get_job`
+`find_sellers` / `match_sellers` → `get_quote` → `create_escrow` (intl) → `create_job` → `clarify` (1 round) → `set_settlement` (off-platform) → `deliver` → `accept` / `return_job` · `list_jobs` · `get_job`
 
 **Product rules (encoded in every tool description):**
 
@@ -73,7 +73,9 @@ Optional Worker:
 |---|---|
 | `find_sellers` | Rank catalog sellers by domain-token overlap (id, name, kind, domains hit, score, about) |
 | `match_sellers` | Alias of `find_sellers` (same scorer as `worker/src/match.js`) |
-| `get_quote` | Quote stub: price_hint (points demoted / free early), turnaround, settlement_methods, what_is_sold |
+| `get_quote` | Quote stub: price_hint (points demoted / free early), turnaround, settlement_methods (prefers `escrow` for intl), what_is_sold |
+| `create_escrow` | Create Escrow.com or **mock** tx (`esc_mock_*`); platform never holds principal |
+| `get_escrow_status` | Read `draft\|funded\|delivered\|accepted\|cancelled` |
 | `create_job` | Buyer intent / order log |
 | `clarify` | One-round lock → `making` |
 | `set_settlement` | method (`wechat`/`alipay`/`other`/`international_tbd`) + buyer/seller confirms; mark agreed |

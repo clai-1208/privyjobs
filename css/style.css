@@ -1291,3 +1291,17 @@ textarea { min-height: 8rem; resize: vertical; }
 .settle-check input {
   margin-top: 0.2rem;
 }
+
+/* —— Escrow.com panel —— */
+.escrow-panel {
+  margin-top: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border: 1px dashed var(--line-strong);
+  background: var(--bg-raised);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+}
+.escrow-panel code {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+}

@@ -135,7 +135,8 @@ export function buildQuote(seller, jobSummary) {
     job_summary: summary || null,
     price_hint,
     turnaround,
-    settlement_methods: ["wechat", "alipay", "other"],
+    settlement_methods: ["escrow", "wechat", "alipay", "other"],
+    settlement_primary_intl: "escrow",
     clarify_preview: (seller.questions || []).slice(0, 3),
     disclaimer_zh: "平台不托管资金。报酬微信/支付宝等站外自结；报价仅为意向 stub，非法币承诺。",
     disclaimer_en:

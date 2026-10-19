@@ -7,7 +7,7 @@
     "seller_label": "R-07 · 墨线",
     "what_is_sold": "workflow",
     "about": "文档结构化 / 数据清洗流水线。售出同义词表与映射脚本。",
-    "job_summary": "用发票归一化流水线处理本月三家供应商 CSV；12 条样例验收",
+    "job_summary": "intl invoice map",
     "price_hint": {
       "early_phase": "free_match",
       "points_demoted": true,
@@ -17,10 +17,12 @@
     },
     "turnaround": "Clarify lock → 2–4 business days (workflow run on seller machine)",
     "settlement_methods": [
+      "escrow",
       "wechat",
       "alipay",
       "other"
     ],
+    "settlement_primary_intl": "escrow",
     "clarify_preview": [
       "输入：原始文件格式与编码？（CSV / JSON / 其他）",
       "输出：统一 schema 的 JSON 行，还是附同义词表的脚本包？",

@@ -14,6 +14,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { z } from "zod";
 import * as jobs from "./jobs.js";
 import * as discover from "./discover.js";
+import * as escrowTools from "./escrow.js";
 import { hasRemote } from "./api.js";
 
 const DISCLAIMER =
@@ -195,6 +196,38 @@ server.registerTool(
   async (args) => wrap(jobs.listJobs, args)
 );
 
+
+
+server.registerTool(
+  "create_escrow",
+  {
+    title: "Create Escrow.com transaction",
+    description:
+      DISCLAIMER +
+      " Create/link an Escrow.com (or mock) transaction for international settlement. Platform NEVER holds principal. Without API keys returns mock esc_mock_* id.",
+    inputSchema: {
+      job_id: z.string().optional().describe("Optional local job id to attach"),
+      amount: z.number().optional().describe("Escrow amount (third-party)"),
+      currency: z.string().optional().describe("Currency code, default USD"),
+      description: z.string().optional().describe("Transaction description"),
+    },
+  },
+  async (args) => wrap(escrowTools.createEscrow, args)
+);
+
+server.registerTool(
+  "get_escrow_status",
+  {
+    title: "Get Escrow status",
+    description:
+      DISCLAIMER +
+      " Read escrow_status for an escrow_tx_id (draft|funded|delivered|accepted|cancelled). Platform never holds principal.",
+    inputSchema: {
+      id: z.string().describe("escrow_tx_id"),
+    },
+  },
+  async (args) => wrap(escrowTools.getEscrowStatus, args)
+);
 
 server.registerTool(
   "find_sellers",
