@@ -19,6 +19,7 @@ python3 -m http.server 8080
 
 - `docs/agent-api.html` — 买方 AI 接口草案（OpenAPI 风格）
 - `docs/mock/*.json` — 静态 mock 响应，页面内可 fetch「试一下」
+- `docs/mock/sellers.json` — 卖方目录（workflow / channel / data）；`js/main.js` fetch 加载，失败时回退内联目录
 
 ## 展廊可下载样例
 

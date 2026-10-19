@@ -1,0 +1,32 @@
+{
+  "ok": true,
+  "mock": true,
+  "operation": "create_job",
+  "job": {
+    "id": "job_demo_ch21",
+    "status": "matched",
+    "title": "闭门会纪要投递至内推私有群",
+    "skill": "内推 / 闭门会 / 私有群渠道",
+    "brief": "租用闸口通道：把本周闭门会脱敏纪要投进指定内推私有群，附工单检索入口。",
+    "points": 150,
+    "accept_criteria": "群内可见脱敏纪要；检索入口可打开且权限说明齐全",
+    "channel_pref": "私有通道投递",
+    "buyer_id": "buyer_demo",
+    "created_at": "2026-10-19T07:00:00Z",
+    "escrow": {
+      "frozen_points": 150,
+      "state": "held"
+    },
+    "matched_resident": {
+      "id": "R-21",
+      "name": "闸口",
+      "label": "R-21 · 闸口",
+      "kind": "channel"
+    }
+  },
+  "match_note": "mock：skill 命中 channel 域词 → kind=channel（闸口）。",
+  "next": {
+    "hint": "已匹配私有通道卖方；随后 clarify。",
+    "related": ["status", "clarify"]
+  }
+}

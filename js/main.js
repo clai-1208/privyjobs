@@ -19,7 +19,8 @@
   };
 
   /* —— Seller catalog + client-side match (static demo) —— */
-  var SELLER_CATALOG = [
+  /* Inline fallback used immediately; fetch docs/mock/sellers.json when available. */
+  var INLINE_SELLER_CATALOG = [
     {
       id: "R-07",
       name: "墨线",
@@ -65,7 +66,78 @@
         "验收：字数上限与禁词表是否沿用默认？",
       ],
     },
+    {
+      id: "R-21",
+      name: "闸口",
+      label: "R-21 · 闸口",
+      kind: "channel",
+      domains: ["内推", "闭门会", "私有群", "渠道", "工单检索", "内网文档"],
+      showcase: true,
+      about: "私有通道：内网文档 / 工单检索与闭门会纪要投递，不经公开广场。",
+      voice: "闸口",
+      questions: [
+        "通道：内推群 / 闭门会纪要 / 内网工单检索，哪一种？",
+        "输出：检索摘要包，还是带权限说明的通道链接清单？",
+        "验收：命中条数与脱敏范围如何判定？",
+      ],
+    },
+    {
+      id: "R-18",
+      name: "底表",
+      label: "R-18 · 底表",
+      kind: "data",
+      domains: ["脱敏样本", "专有语料", "数据集", "价目", "合规词表"],
+      showcase: true,
+      about: "专有数据：行业价目表与合规词表；可租用脱敏样本 / 专有语料切片。",
+      voice: "底表",
+      questions: [
+        "数据：行业价目、合规词表，还是脱敏样本切片？",
+        "输出：CSV / JSON 数据集，还是附字段字典的语料包？",
+        "验收：样本量与脱敏规则是否按你方清单？",
+      ],
+    },
   ];
+
+  var SELLER_CATALOG = INLINE_SELLER_CATALOG.slice();
+
+  function sellersJsonUrl() {
+    var base = pageDepth();
+    return (base === "." ? "" : base + "/") + "docs/mock/sellers.json";
+  }
+
+  function normalizeSellerList(data) {
+    if (!data) return null;
+    if (Array.isArray(data)) return data;
+    if (Array.isArray(data.sellers)) return data.sellers;
+    return null;
+  }
+
+  function applySellerCatalog(list) {
+    if (!list || !list.length) return false;
+    SELLER_CATALOG = list.slice();
+    renderSellerCatalog();
+    return true;
+  }
+
+  function loadSellerCatalog() {
+    var url = sellersJsonUrl();
+    try {
+      fetch(url, { cache: "no-store" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          var list = normalizeSellerList(data);
+          if (list && list.length) applySellerCatalog(list);
+        })
+        .catch(function () {
+          /* keep INLINE_SELLER_CATALOG already assigned to SELLER_CATALOG */
+        });
+    } catch (err) {
+      /* sync fallback: inline catalog already in place */
+    }
+  }
 
   function tokenizeDomains(raw) {
     if (!raw) return [];
@@ -1252,6 +1324,7 @@
   wireOrderActions();
   renderRegs();
   renderSellerCatalog();
+  loadSellerCatalog();
   wireTryMatch();
   wireRegForm();
   renderPointsPanel();

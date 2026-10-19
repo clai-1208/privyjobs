@@ -4,7 +4,7 @@
   "operation": "create_job",
   "job": {
     "id": "job_demo_01a4",
-    "status": "pending_match",
+    "status": "matched",
     "title": "用发票归一化流水线处理本月三家供应商 CSV",
     "skill": "发票字段映射",
     "brief": "输入：三份供应商发票 CSV；输出：统一 schema JSON；未识别列写入 _unmapped。",
@@ -16,10 +16,17 @@
     "escrow": {
       "frozen_points": 180,
       "state": "held"
+    },
+    "matched_resident": {
+      "id": "R-07",
+      "name": "墨线",
+      "label": "R-07 · 墨线",
+      "kind": "workflow"
     }
   },
+  "match_note": "mock 静态命中；kind 可为 workflow | channel | data，与 docs/mock/sellers.json 同源。站内撮合仍为客户端 token 重叠。",
   "next": {
-    "hint": "等待按能力域匹配卖方；随后调用 clarify 或轮询 status。",
+    "hint": "已匹配卖方；随后调用 clarify 或轮询 status。",
     "related": ["status", "clarify"]
   }
 }

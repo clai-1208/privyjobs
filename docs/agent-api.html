@@ -35,6 +35,7 @@
       演示规则：锁定后 7 日未交付可退回；验收失败一次可要求返工，二次失败退回。
       所有响应均带 <code>"mock": true</code>。
       站内撮合仍为<strong>客户端</strong>技能域匹配（静态 Pages）；本 mock 不实现服务端 matching。
+      <code>matched_resident.kind</code> 可为 <code>workflow</code> / <code>channel</code> / <code>data</code>，与 <a href="mock/sellers.json"><code>mock/sellers.json</code></a> 同源。
     </div>
 
     <section class="section" style="padding-top:1.75rem;margin-top:0">
@@ -70,9 +71,15 @@
   "accept_criteria": "12 条样例全部映射正确",
   "channel_pref": "私有通道交付 zip"
 }</pre>
+        <p class="api-desc" style="margin-top:0.5rem;font-size:0.88rem;color:var(--ink-muted)">
+          响应含 <code>matched_resident</code>（含 <code>kind</code>）。默认同工作流卖方；亦可试通道 / 数据样例。
+        </p>
         <div class="btn-row" style="margin-top:0.85rem">
-          <button type="button" class="btn btn-primary api-try">试一下 · Try</button>
-          <a class="btn btn-ghost" href="mock/create_job.json" target="_blank" rel="noopener">打开 mock JSON</a>
+          <button type="button" class="btn btn-primary api-try">试一下 · workflow</button>
+          <a class="btn btn-ghost" href="mock/create_job.json" target="_blank" rel="noopener">workflow JSON</a>
+          <button type="button" class="btn btn-ghost api-try-alt" data-mock-alt="mock/create_job_channel.json">试一下 · channel</button>
+          <button type="button" class="btn btn-ghost api-try-alt" data-mock-alt="mock/create_job_data.json">试一下 · data</button>
+          <a class="btn btn-ghost" href="mock/sellers.json" target="_blank" rel="noopener">sellers.json</a>
         </div>
         <div class="preview-label api-resp-label hidden">Response（fetched mock）</div>
         <pre class="api-code api-resp hidden" aria-live="polite"></pre>
@@ -176,32 +183,41 @@
   <script src="../js/main.js"></script>
   <script>
   (function () {
+    function runFetch(op, url, triggerBtn) {
+      var label = op.querySelector(".api-resp-label");
+      var pre = op.querySelector(".api-resp");
+      if (!url || !pre) return;
+      var buttons = op.querySelectorAll(".api-try, .api-try-alt");
+      buttons.forEach(function (b) { b.disabled = true; });
+      pre.classList.remove("hidden");
+      if (label) label.classList.remove("hidden");
+      pre.textContent = "fetching " + url + " …";
+      fetch(url, { cache: "no-store" })
+        .then(function (r) {
+          if (!r.ok) throw new Error("HTTP " + r.status);
+          return r.json();
+        })
+        .then(function (data) {
+          pre.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(function (err) {
+          pre.textContent = "fetch failed: " + (err && err.message ? err.message : String(err));
+        })
+        .finally(function () {
+          buttons.forEach(function (b) { b.disabled = false; });
+        });
+    }
     document.querySelectorAll(".api-op").forEach(function (op) {
       var btn = op.querySelector(".api-try");
-      if (!btn) return;
-      btn.addEventListener("click", function () {
-        var url = op.getAttribute("data-mock");
-        var label = op.querySelector(".api-resp-label");
-        var pre = op.querySelector(".api-resp");
-        if (!url || !pre) return;
-        btn.disabled = true;
-        pre.classList.remove("hidden");
-        if (label) label.classList.remove("hidden");
-        pre.textContent = "fetching " + url + " …";
-        fetch(url, { cache: "no-store" })
-          .then(function (r) {
-            if (!r.ok) throw new Error("HTTP " + r.status);
-            return r.json();
-          })
-          .then(function (data) {
-            pre.textContent = JSON.stringify(data, null, 2);
-          })
-          .catch(function (err) {
-            pre.textContent = "fetch failed: " + (err && err.message ? err.message : String(err));
-          })
-          .finally(function () {
-            btn.disabled = false;
-          });
+      if (btn) {
+        btn.addEventListener("click", function () {
+          runFetch(op, op.getAttribute("data-mock"), btn);
+        });
+      }
+      op.querySelectorAll(".api-try-alt").forEach(function (alt) {
+        alt.addEventListener("click", function () {
+          runFetch(op, alt.getAttribute("data-mock-alt"), alt);
+        });
       });
     });
   })();
